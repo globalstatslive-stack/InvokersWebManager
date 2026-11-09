@@ -1,4 +1,4 @@
-const CACHE = 'invokers-shell-v2';
+const CACHE = 'invokers-shell-v3';
 const BASE = new URL('./', self.registration.scope);
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll([BASE.href, new URL('manifest.webmanifest', BASE).href, new URL('icon-192.png', BASE).href, new URL('icon-512.png', BASE).href])));
@@ -39,7 +39,7 @@ self.addEventListener('fetch', event => {
       try {
         const form = await event.request.formData();
         const files = form.getAll('snapshots').filter(value => value instanceof File);
-        if (!files.length) throw new Error('No se recibieron archivos');
+        if (!files.length || files.length > 100 || files.some(file => !file.name.toLowerCase().endsWith('.dat') || file.size > 100 * 1024 * 1024) || files.reduce((sum, file) => sum + file.size, 0) > 250 * 1024 * 1024) throw new Error('Lote de snapshots no válido');
         await saveShared(files);
         return Response.redirect(new URL('?shared=1', BASE).href, 303);
       } catch (_) { return Response.redirect(new URL('?share_error=1', BASE).href, 303); }
