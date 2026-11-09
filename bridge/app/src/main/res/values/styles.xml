@@ -1,0 +1,1 @@
+<resources><style name="BridgeTheme" parent="android:style/Theme.Material.Light.NoActionBar"><item name="android:colorAccent">#B47A32</item><item name="android:fontFamily">sans</item></style></resources>

@@ -2,13 +2,14 @@
   "name": "Invokers Web Manager",
   "short_name": "Invokers",
   "description": "Inventario local de Invokers: Titan Legacy",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "theme_color": "#0d111b",
   "background_color": "#0d111b",
+  "share_target": {"action": "./share", "method": "POST", "enctype": "multipart/form-data", "params": {"files": [{"name": "snapshots", "accept": [".dat", "application/octet-stream"]}]}},
   "icons": [
-    {"src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
-    {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+    {"src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
   ]
 }
