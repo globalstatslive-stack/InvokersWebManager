@@ -1,5 +1,9 @@
 # Invokers Web Manager
 
+**Web publicada para probar en Android:** https://globalstatslive-stack.github.io/InvokersWebManager/
+
+Desde Chrome en el móvil, abre esa dirección y usa «Añadir a pantalla de inicio» o «Instalar aplicación». En la guía de la propia web puedes descargar Invokers Bridge. La lectura directa de Shizuku en tu Android 16 todavía requiere una prueba real.
+
 Web móvil e instalable para organizar snapshots de **Invokers: Titan Legacy**. Proyecto independiente. No incluye recursos, código ni datos de GGNoLuck o del juego.
 
 ## Estado real de la versión 0.1

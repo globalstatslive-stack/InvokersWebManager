@@ -17,7 +17,7 @@
 - Optimización basada en estadísticas reales.
 - Validación del puente Android/Shizuku en el móvil del usuario; compilación y pruebas locales aprobadas.
 - Método autorizado de venta o equipamiento.
-- Comprobación del despliegue HTTPS y prueba del flujo completo Shizuku → puente → Chrome en el móvil.
+- Prueba del flujo completo Shizuku → puente → Chrome en el móvil.
 
 ## Evidencia
 
@@ -25,7 +25,8 @@
 - `npm test`: tres pruebas de firma, archivos faltantes y comparación.
 - `node scripts/e2e.mjs` con Chromium a 390 × 844 px: importación, recarga, comparación y borrado correctos.
 - `scripts/share-e2e.mjs`: cuatro archivos compartidos llegan a la vista previa de la PWA en Chromium, incluso bajo la subruta de GitHub Pages.
-- La pantalla móvil se revisó visualmente. No se ha probado aún el selector nativo ni la instalación PWA en el teléfono del usuario.
+- GitHub Pages activo: `https://globalstatslive-stack.github.io/InvokersWebManager/` devuelve HTTP 200. Manifiesto y service worker válidos; el APK publicado coincide en SHA-256 con la compilación local.
+- La pantalla móvil se revisó visualmente. No se ha probado aún el selector nativo, la lectura de Shizuku ni la instalación PWA en el teléfono del usuario.
 
 ## Retirada de RAID
 
