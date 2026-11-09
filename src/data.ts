@@ -117,19 +117,30 @@ export async function clearImports(): Promise<void> {
   } finally { db.close() }
 }
 
-export async function takeSharedFiles(): Promise<File[]> {
+export type SharedBatch = { id: 'latest'; files: File[]; receivedAt: string }
+export async function readSharedFiles(): Promise<SharedBatch | undefined> {
   const db = await openDatabase()
   try {
     return await new Promise((resolve, reject) => {
+      const tx = db.transaction(INBOX, 'readonly')
+      const request = tx.objectStore(INBOX).get('latest')
+      request.onsuccess = () => resolve(request.result as SharedBatch | undefined)
+      tx.onerror = () => reject(tx.error)
+      tx.onabort = () => reject(tx.error)
+    })
+  } finally { db.close() }
+}
+export async function clearSharedFiles(receivedAt: string): Promise<void> {
+  const db = await openDatabase()
+  try {
+    await new Promise<void>((resolve, reject) => {
       const tx = db.transaction(INBOX, 'readwrite')
       const store = tx.objectStore(INBOX)
       const request = store.get('latest')
-      let files: File[] = []
       request.onsuccess = () => {
-        files = (request.result?.files ?? []) as File[]
-        store.delete('latest')
+        if ((request.result as SharedBatch | undefined)?.receivedAt === receivedAt) store.delete('latest')
       }
-      tx.oncomplete = () => resolve(files)
+      tx.oncomplete = () => resolve()
       tx.onerror = () => reject(tx.error)
       tx.onabort = () => reject(tx.error)
     })

@@ -2,7 +2,7 @@
 
 Puente auxiliar de **solo lectura**. Usa la API pública [Shizuku 13.1.5](https://github.com/RikkaApps/Shizuku-API), concretamente `UserService`, para ejecutar un lector de archivos con identidad shell. La ruta fuente está fijada a `Android/data/hitzone.anima.spirit.guardians/files/aggregate_snapshots`. Solo expone nombres `.dat` válidos y descriptores de lectura. No ejecuta comandos de shell, no hace peticiones de red y no abre contraseñas.
 
-El proceso de la app recibe los descriptores, limita el lote a 250 MiB, copia los archivos a su caché privado y los ofrece con `FileProvider` mediante `ACTION_SEND_MULTIPLE`. El usuario elige manualmente la PWA instalada en el menú Compartir. La PWA usa Web Share Target para abrir la vista previa antes de guardar en IndexedDB. El botón «Borrar copias temporales» elimina los archivos de la caché del puente.
+El proceso de la app recibe los descriptores, limita el lote a 250 MiB, copia los archivos a su caché privado y los ofrece con `FileProvider` mediante `ACTION_SEND_MULTIPLE`. La primera vez, el usuario elige la PWA instalada en el menú Compartir. Si Android informa qué WebAPK se eligió, el puente lo recuerda y en lecturas posteriores intenta abrirlo directamente. La PWA usa Web Share Target para guardar el lote automáticamente en IndexedDB. El botón «Borrar copias temporales» elimina los archivos de la caché del puente.
 
 ## Compilar
 
@@ -16,4 +16,4 @@ APK: `app/build/outputs/apk/debug/app-debug.apk`. La copia publicada para la web
 
 ## Estado de validación
 
-Compilación, dos pruebas de validación de nombres y lint (0 errores) pasan. El receptor PWA y la transferencia por `share_target` se probaron en Chromium. **No se ha probado todavía la lectura real de la carpeta del juego ni el destino Compartir en Android 16**. Shizuku depende de que su servicio esté activo; después de reiniciar el teléfono puede ser necesario arrancarlo mediante depuración inalámbrica. Se necesita una prueba del usuario con los doce `.dat` reales antes de afirmar que sincroniza la cuenta.
+La compilación, las pruebas de validación de nombres y lint pasaron para la versión inicial. El receptor PWA y la transferencia por `share_target` se probaron en Chromium. El usuario confirmó que la primera versión del puente leyó doce archivos reales en Android 16; queda probar la entrega a la PWA y el recuerdo del destino con esta actualización. Shizuku depende de que su servicio esté activo; después de reiniciar el teléfono puede ser necesario arrancarlo mediante depuración inalámbrica. Se necesita validar el contenido de los `.dat` antes de afirmar que se ha interpretado la cuenta.

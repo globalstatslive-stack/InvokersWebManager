@@ -17,7 +17,10 @@ try {
   })
   assert(result.includes('shared=1'), `El receptor no redirigió correctamente: ${result}`)
   await page.goto(root + '?shared=1')
-  await page.getByRole('dialog', { name: 'Revisar archivos' }).waitFor()
-  await page.getByText('Se han leído 4 archivos .dat', { exact: false }).waitFor()
-  console.log('PWA share target: cuatro archivos recibidos y vista previa abierta')
+  await page.getByRole('status').getByText('4 archivos recibidos y guardados automáticamente', { exact: false }).waitFor()
+  assert.equal(await page.getByRole('dialog').count(), 0)
+  await page.reload()
+  await page.getByText('4 archivos guardados', { exact: false }).first().waitFor()
+  assert.equal(await page.getByRole('dialog').count(), 0)
+  console.log('PWA share target: cuatro archivos guardados automáticamente y conservados tras recargar')
 } finally { await browser.close() }

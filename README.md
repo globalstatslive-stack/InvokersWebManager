@@ -2,15 +2,15 @@
 
 **Web publicada para probar en Android:** https://globalstatslive-stack.github.io/InvokersWebManager/
 
-Desde Chrome en el móvil, abre esa dirección y usa «Añadir a pantalla de inicio» o «Instalar aplicación». En la guía de la propia web puedes descargar Invokers Bridge. La lectura directa de Shizuku en tu Android 16 todavía requiere una prueba real.
+Desde Chrome en el móvil, abre esa dirección y usa «Añadir a pantalla de inicio» o «Instalar aplicación». En la guía de la propia web puedes descargar Invokers Bridge. En la prueba del usuario, el puente ya leyó 12 archivos desde Android 16; falta verificar que lleguen a la PWA.
 
 Web móvil e instalable para organizar snapshots de **Invokers: Titan Legacy**. Proyecto independiente. No incluye recursos, código ni datos de GGNoLuck o del juego.
 
 ## Estado real de la versión 0.1
 
-Funciona la recepción de archivos compartidos con una PWA instalada y la selección de una carpeta `aggregate_snapshots` o de archivos `.dat` individuales desde Chrome Android, con vista previa, detección de cuatro nombres conocidos, lectura de tamaño y firma binaria, huellas SHA-256, guardado local en IndexedDB, historial limitado a cinco lotes, comparación de archivos cambiados y borrado de los datos guardados. La interfaz es adaptable a móvil y puede instalarse como PWA si se sirve por HTTPS.
+Funciona la recepción de archivos compartidos con una PWA instalada: los `.dat` recibidos se validan y guardan automáticamente en IndexedDB. La selección manual de una carpeta `aggregate_snapshots` o de archivos `.dat` individuales desde Chrome Android conserva la vista previa. La web detecta cuatro nombres conocidos, lee tamaño y firma binaria, calcula huellas SHA-256, conserva hasta cinco lotes, compara archivos cambiados y permite borrar los datos guardados. La interfaz es adaptable a móvil y puede instalarse como PWA si se sirve por HTTPS.
 
-**Todavía no interpreta personajes, Titanes, reliquias ni accesorios.** El formato de los doce `.dat` sigue sin verificar porque no se han aportado muestras. Los números de colección se muestran como «—». La app marca un lote como «archivos guardados» o «incompleto», nunca como colección sincronizada. El puente permite iniciar la lectura directa desde el móvil, pero el flujo completo con Shizuku y Chrome requiere una prueba en Android 16. No hay ventas.
+**Todavía no interpreta personajes, Titanes, reliquias ni accesorios.** El formato de los doce `.dat` sigue sin verificar porque no se han aportado muestras. Los números de colección se muestran como «—». La app marca un lote como «archivos guardados» o «incompleto», nunca como colección sincronizada. El usuario ya verificó la lectura de doce archivos con el puente en Android 16; la recepción completa en Chrome requiere otra prueba. No hay ventas.
 
 ## Ejecutar y probar
 
@@ -40,9 +40,9 @@ La prueba funcional usa archivos sintéticos de dos bytes **solo para comprobar 
 
 ## Acceso directo desde Android 16 (fase de prueba)
 
-La web publicada incluye [Invokers Bridge](bridge/), una app Android pequeña que usa el **UserService oficial de Shizuku** con identidad shell para leer únicamente los `.dat` de la ruta fija `aggregate_snapshots`. La app copia los archivos a su caché privado y los envía mediante el menú Compartir de Android. La PWA instalada declara un Web Share Target que recibe los archivos, muestra una vista previa y pide confirmación antes de guardarlos en IndexedDB. No abre contraseñas, no escribe en el juego y no transmite archivos al alojamiento web.
+La web publicada incluye [Invokers Bridge](bridge/), una app Android pequeña que usa el **UserService oficial de Shizuku** con identidad shell para leer únicamente los `.dat` de la ruta fija `aggregate_snapshots`. La app copia los archivos a su caché privado y los envía mediante el menú Compartir de Android. La PWA instalada declara un Web Share Target que recibe y guarda los archivos automáticamente en IndexedDB. Si el usuario elige la PWA la primera vez y Android informa del WebAPK elegido, el puente recuerda el destino y en la próxima lectura intenta abrirlo directamente. No abre contraseñas, no escribe en el juego y no transmite archivos al alojamiento web.
 
-Se compilaron y probaron el puente y el receptor PWA por separado. **La integración completa aún no se ha probado en un Android 16 real.** Para probarla: instala la PWA desde Chrome, instala el APK del puente desde la sección «Cómo sincronizar», inicia Shizuku y autoriza el puente, abre Invokers Bridge, pulsa «Leer y compartir snapshots» y elige la PWA en Compartir. Si falla, registra el mensaje que muestre el puente o qué destino aparece en el menú Compartir. Shizuku puede requerir volver a iniciarse tras reiniciar el móvil.
+Se probaron el puente y el receptor PWA por separado; el usuario confirmó en su Android 16 que Shizuku permitió leer doce archivos. **La entrega completa a la PWA sigue pendiente de prueba en ese teléfono.** Para probarla: instala la PWA desde Chrome, actualiza el APK del puente desde la sección «Cómo sincronizar», inicia Shizuku y autoriza el puente, abre Invokers Bridge, pulsa «Leer y compartir snapshots» y elige la PWA en Compartir si aparece el menú. La web debe abrir «Archivos» con el lote guardado. Si falla, registra el mensaje que muestre el puente o qué destino aparece en el menú Compartir. Shizuku puede requerir volver a iniciarse tras reiniciar el móvil.
 
 El APK del puente es una compilación de desarrollo; su primera instalación puede requerir autorizar «Instalar aplicaciones desconocidas» para el navegador que lo descargue. No ofrece venta ni equipamiento.
 

@@ -8,25 +8,27 @@
 - Vista previa de nombres, tamaños, huellas SHA-256 y cabeceras hexadecimales; reconocimiento de contenedores GZIP, ZIP y SQLite por sus firmas estándar, sin asumir la estructura interna.
 - IndexedDB con historial de hasta cinco lotes, comparación por huellas y borrado completo.
 - Guía del procedimiento Android validado por el usuario.
-- Invokers Bridge de solo lectura con UserService de Shizuku y envío mediante el menú Compartir; APK compilado y pruebas locales aprobadas.
+- Invokers Bridge de solo lectura con UserService de Shizuku y envío mediante el menú Compartir; el usuario confirmó que leyó doce archivos en Android 16.
+- Los archivos compartidos se validan y guardan automáticamente al abrir la PWA. La selección manual conserva su vista previa.
+- El puente recuerda un destino WebAPK «Invokers» elegido por el usuario cuando Android lo comunica y permite olvidarlo con «Cambiar destino de compartir».
 
 ## Pendiente de muestras y validación
 
 - Formato de los doce `.dat`; parser de personajes, Titanes, reliquias y accesorios.
 - Contrastar los resultados interpretados con el juego.
 - Optimización basada en estadísticas reales.
-- Validación del puente Android/Shizuku en el móvil del usuario; compilación y pruebas locales aprobadas.
+- Validación de la entrega completa puente → PWA en el móvil del usuario.
 - Método autorizado de venta o equipamiento.
-- Prueba del flujo completo Shizuku → puente → Chrome en el móvil.
+- Prueba del recuerdo del destino WebAPK en Android.
 
 ## Evidencia
 
 - `npm run build`: correcto.
 - `npm test`: tres pruebas de firma, archivos faltantes y comparación.
 - `node scripts/e2e.mjs` con Chromium a 390 × 844 px: importación, recarga, comparación y borrado correctos.
-- `scripts/share-e2e.mjs`: cuatro archivos compartidos llegan a la vista previa de la PWA en Chromium, incluso bajo la subruta de GitHub Pages.
+- `scripts/share-e2e.mjs`: cuatro archivos compartidos se guardan automáticamente y persisten tras recargar la PWA en Chromium.
 - GitHub Pages activo: `https://globalstatslive-stack.github.io/InvokersWebManager/` devuelve HTTP 200. Manifiesto y service worker válidos; el APK publicado coincide en SHA-256 con la compilación local.
-- La pantalla móvil se revisó visualmente. No se ha probado aún el selector nativo, la lectura de Shizuku ni la instalación PWA en el teléfono del usuario.
+- La pantalla móvil se revisó visualmente. El usuario confirmó la lectura de doce archivos con Shizuku en Android 16; faltan la recepción PWA y el recuerdo del destino en el teléfono.
 
 ## Retirada de RAID
 

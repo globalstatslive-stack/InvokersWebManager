@@ -1,6 +1,8 @@
 package es.invokers.bridge
 
 import android.app.Activity
+import android.app.PendingIntent
+import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.ComponentName
 import android.content.Intent
@@ -60,11 +62,15 @@ class MainActivity : Activity() {
         add("Puente de solo lectura. Necesita Shizuku activo y tu autorización. No solicita contraseña ni modifica el juego.", 16f, 0xffc2cedb.toInt())
         status = add("Comprobando Shizuku…", 15f, 0xffe8bd73.toInt())
         column.addView(Button(this).apply { text = "LEER Y COMPARTIR SNAPSHOTS"; setOnClickListener { begin() } })
+        column.addView(Button(this).apply { text = "CAMBIAR DESTINO DE COMPARTIR"; setOnClickListener {
+            getSharedPreferences("share-target", MODE_PRIVATE).edit().remove("component").apply()
+            show("Destino olvidado. En la próxima lectura podrás elegir la PWA en Compartir.")
+        } })
         column.addView(Button(this).apply { text = "BORRAR COPIAS TEMPORALES"; setOnClickListener {
             if (connecting) show("Espera a que termine la lectura antes de borrar las copias.")
             else { File(cacheDir, "shares").deleteRecursively(); show("Copias temporales del puente borradas.") }
         } })
-        add("Después de leer, selecciona Invokers Web Manager en Compartir. La web abrirá una vista previa antes de guardar los datos.", 14f, 0xffa3b3c4.toInt())
+        add("La primera vez, selecciona Invokers Web Manager en Compartir. La web guardará los archivos automáticamente. Si Android lo permite, el puente recordará tu elección para la próxima lectura.", 14f, 0xffa3b3c4.toInt())
         add("Tras reiniciar el teléfono, Shizuku puede necesitar que actives otra vez la depuración inalámbrica.", 14f, 0xffa3b3c4.toInt())
         setContentView(ScrollView(this).apply { addView(column); isFillViewport = true })
         Shizuku.addBinderReceivedListenerSticky(binderReady)
@@ -124,8 +130,25 @@ class MainActivity : Activity() {
                 clipData = ClipData.newUri(contentResolver, "Snapshots de Invokers", uris.first()).also { clip -> uris.drop(1).forEach { clip.addItem(ClipData.Item(it)) } }
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
-            show("${uris.size} archivos leídos. Selecciona la PWA en Compartir y confirma la importación.")
-            startActivity(Intent.createChooser(send, "Compartir con Invokers Web Manager"))
+            val saved = getSharedPreferences("share-target", MODE_PRIVATE).getString("component", null)
+                ?.let(ComponentName::unflattenFromString)
+            if (saved != null && isInvokersWebApk(this, saved.packageName)) {
+                try {
+                    startActivity(Intent(send).setComponent(saved))
+                    show("${uris.size} archivos leídos. Abriendo Invokers Web Manager para guardarlos…")
+                    return@runOnUiThread
+                } catch (_: ActivityNotFoundException) {
+                    getSharedPreferences("share-target", MODE_PRIVATE).edit().remove("component").apply()
+                } catch (_: SecurityException) {
+                    getSharedPreferences("share-target", MODE_PRIVATE).edit().remove("component").apply()
+                }
+            }
+            val callback = PendingIntent.getBroadcast(
+                this, 0, Intent(this, ShareTargetReceiver::class.java),
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            )
+            show("${uris.size} archivos leídos. Elige Invokers Web Manager en Compartir; la web los guardará automáticamente.")
+            startActivity(Intent.createChooser(send, "Compartir con Invokers Web Manager", callback.intentSender))
         }
     }
     override fun onDestroy() {
