@@ -3,6 +3,7 @@
 ## Implementado
 
 - Web React/TypeScript/Vite con diseño propio oscuro, adaptable a móvil.
+- Versión 0.3: galería con ilustraciones SVG originales de Invokers y Titanes, trece iconos de equipo, colores de rareza, detalles desplegables y filtros de tipo y rareza. Las imágenes representan categorías, no personajes concretos.
 - PWA con manifiesto, iconos, caché de la interfaz y receptor Web Share Target, probado en Chromium.
 - Importación local de carpeta o archivos `.dat` mediante el selector del navegador.
 - Vista previa de nombres, tamaños, huellas SHA-256 y cabeceras; reconocimiento del contenedor MemoryPack.
@@ -19,6 +20,7 @@
 
 - Contrastar en el móvil los recuentos y propietarios con el juego.
 - Catálogo de nombres y cálculo de estadísticas completas de cada personaje.
+- Retratos individuales y recursos visuales del juego con una fuente autorizada y correspondencias verificadas de identificadores.
 - Optimizador de builds completas, equipos y calculadoras con fórmulas verificadas.
 - Validación de la entrega completa puente → PWA en el móvil del usuario.
 - Método autorizado de venta o equipamiento.

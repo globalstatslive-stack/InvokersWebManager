@@ -6,7 +6,9 @@ Desde Chrome en el móvil, abre esa dirección y usa «Añadir a pantalla de ini
 
 Web móvil e instalable para organizar snapshots de **Invokers: Titan Legacy**. Proyecto independiente. No incluye recursos, código ni datos de GGNoLuck o del juego.
 
-## Estado real de la versión 0.2
+## Estado real de la versión 0.3
+
+La colección usa una galería adaptable a móvil con ilustraciones SVG originales: retratos genéricos para Invokers y Titanes y trece iconos de ranura para reliquias y accesorios. Las tarjetas muestran nivel, rango, rareza, propietario y detalles desplegables. El equipo se filtra por tipo, rareza y disponibilidad; el simulador comparte sus ilustraciones. Son imágenes de categoría, no retratos oficiales ni una identificación visual de cada personaje.
 
 Funciona la recepción de archivos compartidos con una PWA instalada: los `.dat` se validan, interpretan y guardan automáticamente en IndexedDB. La selección manual de una carpeta o de archivos `.dat` individuales conserva la vista previa. La web reconoce el contenedor MemoryPack, calcula huellas SHA-256 y conserva hasta cinco lotes.
 
