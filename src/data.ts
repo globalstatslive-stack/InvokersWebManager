@@ -1,8 +1,11 @@
+import { decodeCollection, type Collection } from './memorypack'
+
 export const REQUIRED_NAMES = [
   'PlayerHeroesModel.dat',
   'PlayerAnimasModel.dat',
   'PlayerRelicsModel.dat',
   'PlayerAccessoriesModel.dat',
+  'PlayerModel.dat',
 ] as const
 
 export type StoredFile = {
@@ -18,8 +21,12 @@ export type ImportRecord = {
   importedAt: string
   files: StoredFile[]
   missing: string[]
+  collection?: Collection
+  interpretationError?: string
+  decoderVersion?: number
 }
 export type FileChange = { name: string; kind: 'nuevo' | 'cambiado' | 'eliminado' | 'igual' }
+export type CollectionChange = { label: string; count: number }
 const DB_NAME = 'invokers-web-manager'
 const STORE = 'imports'
 const INBOX = 'share-inbox'
@@ -32,6 +39,7 @@ export function inspectHeader(bytes: Uint8Array): { sample: string; formatHint: 
   if (head.length >= 2 && head[0] === 0x1f && head[1] === 0x8b) return { sample, formatHint: 'Contenedor GZIP identificado; contenido sin interpretar' }
   if (head.length >= 4 && head[0] === 0x50 && head[1] === 0x4b && head[2] === 0x03 && head[3] === 0x04) return { sample, formatHint: 'Contenedor ZIP identificado; contenido sin interpretar' }
   if (head.length >= 16 && new TextDecoder().decode(head.slice(0, 16)) === 'SQLite format 3\0') return { sample, formatHint: 'SQLite identificado; esquema sin interpretar' }
+  if (head.length >= 4 && head[0] >= 1 && head[0] <= 12 && head[1] === 3 && head[2] === 8 && head[3] === 8) return { sample, formatHint: 'Contenedor MemoryPack identificado' }
   return { sample, formatHint: 'Formato sin identificar' }
 }
 
@@ -46,6 +54,22 @@ export function diffFiles(current: ImportRecord, previous?: ImportRecord): FileC
   return [
     ...current.files.map(file => ({ name: file.name, kind: !before.has(file.name.toLowerCase()) ? 'nuevo' : before.get(file.name.toLowerCase()) === file.digest ? 'igual' : 'cambiado' }) as FileChange),
     ...previous.files.filter(file => !now.has(file.name.toLowerCase())).map(file => ({ name: file.name, kind: 'eliminado' }) as FileChange),
+  ]
+}
+export function diffCollection(current: ImportRecord, previous?: ImportRecord): CollectionChange[] {
+  if (!current.collection || !previous?.collection) return []
+  const now = current.collection, before = previous.collection
+  const heroes = new Map(before.invokers.map(x => [x.inventoryId, x]))
+  const titans = new Map(before.titans.map(x => [x.inventoryId, x]))
+  const gearBefore = new Map([...before.relics, ...before.accessories].map(x => [`${x.kind}-${x.inventoryId}`, x]))
+  const gearNow = new Map([...now.relics, ...now.accessories].map(x => [`${x.kind}-${x.inventoryId}`, x]))
+  return [
+    { label: 'Invokers nuevos', count: now.invokers.filter(x => !heroes.has(x.inventoryId)).length },
+    { label: 'Invokers mejorados', count: now.invokers.filter(x => { const old = heroes.get(x.inventoryId); return old && (x.level > old.level || x.rank > old.rank || x.awakeLevel > old.awakeLevel) }).length },
+    { label: 'Titanes nuevos', count: now.titans.filter(x => !titans.has(x.inventoryId)).length },
+    { label: 'Piezas nuevas', count: [...gearNow.keys()].filter(key => !gearBefore.has(key)).length },
+    { label: 'Piezas ausentes', count: [...gearBefore.keys()].filter(key => !gearNow.has(key)).length },
+    { label: 'Piezas con otro propietario', count: [...gearNow].filter(([key, item]) => gearBefore.has(key) && item.equippedHeroId !== gearBefore.get(key)?.equippedHeroId).length },
   ]
 }
 
@@ -63,7 +87,24 @@ export async function prepareFiles(files: File[]): Promise<ImportRecord> {
     const digest = Array.from(new Uint8Array(hash), byte => byte.toString(16).padStart(2, '0')).join('')
     stored.push({ name: file.name, size: file.size, digest, ...inspectHeader(bytes), blob: file })
   }
-  return { id: crypto.randomUUID(), importedAt: new Date().toISOString(), files: stored, missing: missingNames(stored.map(file => file.name)) }
+  return interpretImport({ id: crypto.randomUUID(), importedAt: new Date().toISOString(), files: stored, missing: missingNames(stored.map(file => file.name)) })
+}
+
+const DECODER_VERSION = 1
+/** Interpreta también las importaciones guardadas por versiones anteriores. */
+export async function interpretImport(record: ImportRecord): Promise<ImportRecord> {
+  if (record.decoderVersion === DECODER_VERSION) return record
+  const names = new Set(record.files.map(file => file.name.toLowerCase()))
+  const basics = ['PlayerHeroesModel.dat', 'PlayerAnimasModel.dat', 'PlayerRelicsModel.dat']
+  if (basics.some(name => !names.has(name.toLowerCase()))) return record
+  try {
+    const files = await Promise.all(record.files.map(async file => ({ name: file.name, bytes: new Uint8Array(await file.blob.arrayBuffer()) })))
+    return { ...record, collection: decodeCollection(files), interpretationError: undefined, decoderVersion: DECODER_VERSION,
+      missing: missingNames(record.files.map(file => file.name)) }
+  } catch (error) {
+    return { ...record, collection: undefined, interpretationError: error instanceof Error ? error.message : 'Formato no reconocido', decoderVersion: DECODER_VERSION,
+      missing: missingNames(record.files.map(file => file.name)) }
+  }
 }
 
 function openDatabase(): Promise<IDBDatabase> {

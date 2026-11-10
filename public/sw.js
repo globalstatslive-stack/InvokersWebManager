@@ -1,4 +1,4 @@
-const CACHE = 'invokers-shell-v3';
+const CACHE = 'invokers-shell-v4';
 const BASE = new URL('./', self.registration.scope);
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll([BASE.href, new URL('manifest.webmanifest', BASE).href, new URL('icon-192.png', BASE).href, new URL('icon-512.png', BASE).href])));
