@@ -148,7 +148,10 @@ export async function saveImport(record: ImportRecord): Promise<void> {
       const tx = db.transaction(STORE, 'readwrite')
       const store = tx.objectStore(STORE)
       store.put(record)
-      for (const old of previous.slice(4)) store.delete(old.id)
+      // Se conservan 5 lotes, y siempre la caja oficial más reciente: aporta las estadísticas base
+      // a las importaciones de la carpeta del juego.
+      const keepOfficial = [record, ...previous].find(r => r.source === 'official-link')?.id
+      for (const old of previous.slice(4)) if (old.id !== keepOfficial) store.delete(old.id)
       tx.oncomplete = () => resolve()
       tx.onerror = () => reject(tx.error)
       tx.onabort = () => reject(tx.error)
