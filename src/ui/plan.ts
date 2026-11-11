@@ -9,23 +9,47 @@ export type PlanEntry = {
   /** Ranuras que cambian: id de la pieza o null para dejarla vacía. */
   relics: Record<string, number | null>; accessories: Record<string, number | null>
   changes: number; gold: number; damageGain: number; at: string
+  /** Build completa prevista (todas las ranuras): reserva también las piezas que se quedan. */
+  target?: { relics: Record<string, number | null>; accessories: Record<string, number | null> }
+  /** Objetivo con el que se creó (p. ej. «Ulgorim · fase 16»). */
+  goal?: string
+  /** Estadísticas antes y estimadas después, para compararlas con las observadas al reimportar. */
+  before?: Record<string, number>; estimated?: Record<string, number>
 }
+export const TRACKED_STATS = ['attack', 'health', 'defense', 'criticalRate', 'criticalDamage', 'accuracy', 'resistance', 'comboSpeed', 'skillSpeed', 'skillRecovery', 'manaGeneration']
 const keyFor = (box: Box) => `nexo.plan.${box.profile.name}`
 const read = (k: string): PlanEntry[] => { try { const v = JSON.parse(localStorage.getItem(k) ?? '[]'); return Array.isArray(v) ? v : [] } catch { return [] } }
 
-export function entryFrom(hero: Hero, r: BuildResult): PlanEntry {
+export function entryFrom(hero: Hero, r: BuildResult, goal?: string): PlanEntry {
   const relics: Record<string, number | null> = {}, accessories: Record<string, number | null> = {}
   for (const c of r.changes) (RELIC_SLOTS.includes(c.slot) ? relics : accessories)[c.slot] = c.to?.id ?? null
-  return { heroId: hero.id, name: hero.name, portrait: hero.portrait, rarity: hero.rarity, relics, accessories, changes: r.changes.length, gold: r.goldCost, damageGain: r.damageBefore ? r.damageAfter / r.damageBefore - 1 : 0, at: new Date().toISOString() }
+  const pick = (m: Record<string, { id: number } | null>) => Object.fromEntries(Object.entries(m).map(([k, g]) => [k, g?.id ?? null]))
+  const keep = (st: Record<string, number>) => Object.fromEntries(TRACKED_STATS.map(k => [k, st[k] ?? 0]))
+  return { goal, target: { relics: pick(r.relics), accessories: pick(r.accessories) }, before: keep(r.before), estimated: keep(r.after), heroId: hero.id, name: hero.name, portrait: hero.portrait, rarity: hero.rarity, relics, accessories, changes: r.changes.length, gold: r.goldCost, damageGain: r.damageBefore ? r.damageAfter / r.damageBefore - 1 : 0, at: new Date().toISOString() }
 }
 /** Piezas que el plan asigna a Invokers distintos de `except`. */
 export function reservedBy(plan: PlanEntry[], except: number): Set<string> {
   const out = new Set<string>()
   for (const e of plan) if (e.heroId !== except) {
-    for (const id of Object.values(e.relics)) if (id !== null) out.add(`relic${id}`)
-    for (const id of Object.values(e.accessories)) if (id !== null) out.add(`accessory${id}`)
+    for (const id of Object.values(e.target?.relics ?? e.relics)) if (id !== null) out.add(`relic${id}`)
+    for (const id of Object.values(e.target?.accessories ?? e.accessories)) if (id !== null) out.add(`accessory${id}`)
   }
   return out
+}
+/** Piezas de `entry` que el plan ya reserva para otro Invoker (no puede haber dos dueños). */
+export function planConflicts(plan: PlanEntry[], entry: PlanEntry): string[] {
+  const taken = reservedBy(plan, entry.heroId)
+  return [...Object.values(entry.target?.relics ?? entry.relics).filter((id): id is number => id !== null).map(id => `relic${id}`),
+    ...Object.values(entry.target?.accessories ?? entry.accessories).filter((id): id is number => id !== null).map(id => `accessory${id}`)].filter(k => taken.has(k))
+}
+export type Progress = { applied: string[]; pending: string[]; done: boolean; observed: Record<string, number> | null }
+/** Comprueba, con la caja importada ahora, qué cambios del plan ya están hechos en el juego. */
+export function progressOf(entry: PlanEntry, hero: Hero | undefined): Progress {
+  const applied: string[] = [], pending: string[] = []
+  for (const [slot, id] of Object.entries(entry.relics)) ((hero?.relics[slot] ?? null) === id ? applied : pending).push(slot)
+  for (const [slot, id] of Object.entries(entry.accessories)) ((hero?.accessories[slot] ?? null) === id ? applied : pending).push(slot)
+  const done = !!hero && pending.length === 0
+  return { applied, pending, done, observed: done && hero.gearBonus ? Object.fromEntries(TRACKED_STATS.map(k => [k, hero.stats[k] ?? 0])) : null }
 }
 /** Formato de preset del portal oficial: { name, category, loadouts: [{ heroId, relics, accessories }] }. */
 export function presetPayload(plan: PlanEntry[], name: string) {
@@ -52,7 +76,8 @@ export function usePlan(box: Box | undefined) {
   const save = useCallback((next: PlanEntry[]) => { setPlan(next); try { localStorage.setItem(key, JSON.stringify(next)) } catch { /* sin almacenamiento */ } }, [key])
   return {
     plan,
-    upsert: (e: PlanEntry) => save([...plan.filter(x => x.heroId !== e.heroId), e]),
+    /** Añade o sustituye la entrada; devuelve las piezas en conflicto (y no guarda) si alguna ya es de otro Invoker del plan. */
+    upsert: (e: PlanEntry): string[] => { const c = planConflicts(plan, e); if (!c.length) save([...plan.filter(x => x.heroId !== e.heroId), e]); return c },
     remove: (heroId: number) => save(plan.filter(x => x.heroId !== heroId)),
     clear: () => save([]),
   }

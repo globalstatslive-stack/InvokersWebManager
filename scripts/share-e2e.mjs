@@ -17,8 +17,8 @@ try {
   }, JSON.stringify(sampleBox()))
   assert(url.includes('shared=1'), `El receptor no redirigió correctamente: ${url}`)
   await page.goto(root + '?shared=1')
-  await page.locator('.profile-hero').waitFor()
+  await page.locator('.account-strip').waitFor()
   await page.reload()
-  await page.locator('.profile-hero').waitFor()
+  await page.locator('.account-strip').waitFor()
   console.log('PWA share target: la caja compartida se importa automáticamente y persiste tras recargar.')
 } finally { await browser.close() }

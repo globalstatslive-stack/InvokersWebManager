@@ -49,6 +49,8 @@ export type BuildResult = {
   relics: Record<string, Gear | null>; accessories: Record<string, Gear | null>
   before: Stats; after: Stats; changes: Change[]; goldCost: number
   minimumsMet: boolean; unmet: string[]; score: number; scoreBefore: number
+  /** false si no existe ninguna combinación que cumpla el conjunto obligatorio: no es una propuesta válida. */
+  feasible: boolean; problems: string[]
   damageBefore: number; damageAfter: number
   /** Con objetivo de simulación: índice (100 = equipo actual) y combate simulado. */
   index?: number; sim?: SimResult; simBefore?: SimResult
@@ -107,7 +109,8 @@ export function optimize(index: BoxIndex, hero: Hero, opts: OptimizeOptions): Bu
   const piece = (kind: 'relic' | 'accessory', id: number | undefined) => id === undefined ? undefined : pieces.get(`${kind}${id}`)
   const relics = index.box.relics.filter(allowed).map(g => pieces.get(gearKey(g))!)
   const accessories = index.box.accessories.filter(g => allowed(g) && g.faction === hero.faction && hero.awakeLevel >= (index.box.accessorySlotAwake[g.slot] ?? 0)).map(g => pieces.get(gearKey(g))!)
-  const current = index.equipped(hero).map(g => pieces.get(gearKey(g))!)
+  /** Equipo actual tal cual (referencia «antes»); con nivel máximo, las piezas candidatas se evalúan subidas. */
+  const actual = index.equipped(hero)
   const minimums = Object.entries(opts.minimums ?? {}).filter(([, v]) => v > 0)
   const aversion = opts.moveAversion ?? 0.15
   const changeCost = opts.changeCost ?? 0
@@ -150,7 +153,7 @@ export function optimize(index: BoxIndex, hero: Hero, opts: OptimizeOptions): Bu
     for (const [k, v] of minimums) if ((stats[k] ?? 0) < v) w[k] = (w[k] ?? 0) + MIN_PENALTY
     return w
   }
-  if (sim) { const s0 = projectStats(hero, current, index.rules); simBase = { sim: runSim(s0), stats: s0 } }
+  if (sim) { const s0 = projectStats(hero, actual, index.rules); simBase = { sim: runSim(s0), stats: s0 } }
   const piecesOf = (pick: Pick) => [...Object.values(pick.relics), ...Object.values(pick.accessories)].filter((x): x is Gear => !!x)
   // 1) Programación dinámica exacta sobre la linealización, repetida hasta converger.
   let best: { pick: Pick; j: number; stats: Stats } | null = null
@@ -203,11 +206,13 @@ export function optimize(index: BoxIndex, hero: Hero, opts: OptimizeOptions): Bu
     if (!improved) break
   }
   const final = best!
-  const now = evaluate(current)
+  const now = evaluate(actual)
   const build = (b: { pick: Pick; j: number; stats: Stats }): BuildResult => {
     const unmet = minimums.filter(([k, v]) => (b.stats[k] ?? 0) < v).map(([k]) => k)
     const extra = sim && simBase ? (() => { const r = runSim(b.stats); return { sim: r, simBefore: simBase!.sim, index: indexOf(sim.mix, { sim: r, stats: b.stats }, simBase!) } })() : {}
-    return { ...finalize(b.pick), before: now.stats, after: b.stats, unmet, minimumsMet: unmet.length === 0, score: b.j, scoreBefore: now.j, damageBefore: damageValue(now.stats), damageAfter: damageValue(b.stats), ...extra }
+    const problems: string[] = []
+    if (opts.requiredSet && (setCounts(piecesOf(b.pick)).get(opts.requiredSet.set) ?? 0) < opts.requiredSet.pieces) problems.push(`No hay piezas disponibles para ${opts.requiredSet.pieces} del conjunto exigido.`)
+    return { ...finalize(b.pick), feasible: problems.length === 0, problems, before: now.stats, after: b.stats, unmet, minimumsMet: unmet.length === 0, score: b.j, scoreBefore: now.j, damageBefore: damageValue(now.stats), damageAfter: damageValue(b.stats), ...extra }
   }
   const result = build(final)
   // 3) Propuestas alternativas: la mejor combinación de cada par de conjuntos, evaluada con la fórmula completa.

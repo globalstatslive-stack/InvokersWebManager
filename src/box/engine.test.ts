@@ -77,6 +77,32 @@ describe('motor de estadísticas', () => {
     const r = optimize(index, box.heroes[0], { weights: { attack: 10 }, pool: 'free', maxLevel: true })
     expect(r.relics.Weapon!.main.value).toBe(0.5)
   })
+  it('regresión: con «nivel máximo» la referencia «antes» sigue siendo el equipo real', () => {
+    const raw = fixture()
+    for (const r of raw.relics.slice(0, 8)) (r as Record<string, unknown>).mainAtMax = { stat: 'health', mode: 'flat', value: 999 }
+    const box = parseOfficialBox(raw), index = new BoxIndex(box)
+    const r = optimize(index, box.heroes[0], { weights: { attack: 10 }, pool: 'free', maxLevel: true, alternatives: 3 })
+    expect(r.before).toEqual(box.heroes[0].stats)
+    for (const a of r.alternatives!) expect(a.before).toEqual(box.heroes[0].stats)
+  })
+  it('regresión: un conjunto obligatorio imposible no se presenta como propuesta válida', () => {
+    const box = parseOfficialBox(fixture()), index = new BoxIndex(box)
+    const r = optimize(index, box.heroes[0], { weights: { attack: 10 }, pool: 'free', requiredSet: { set: 'CriticalRate', pieces: 5 } })
+    expect(r.feasible).toBe(false)
+    expect(r.problems.length).toBeGreaterThan(0)
+    const ok = optimize(index, box.heroes[0], { weights: { attack: 10 }, pool: 'free', requiredSet: { set: 'Attack', pieces: 5 } })
+    expect(ok.feasible).toBe(true)
+  })
+  it('regresión: el importador rechaza referencias a piezas inexistentes, de otra ranura o de otro propietario', () => {
+    const missing = fixture(); missing.heroes[0].relicIdBySlot.Weapon = 999
+    expect(() => parseOfficialBox(missing)).toThrow(/no existe/)
+    const wrongSlot = fixture(); wrongSlot.heroes[0].relicIdBySlot.Weapon = 2
+    expect(() => parseOfficialBox(wrongSlot)).toThrow(/es de Shield/)
+    const wrongOwner = fixture(); wrongOwner.relics[0].equippedHeroId = 2
+    expect(() => parseOfficialBox(wrongOwner)).toThrow()
+    const orphan = fixture(); orphan.relics[12].equippedHeroId = 1
+    expect(() => parseOfficialBox(orphan)).toThrow(/no la lleva/)
+  })
   it('da recomendaciones sin errores', () => {
     const box = parseOfficialBox(fixture()), index = new BoxIndex(box)
     expect(Array.isArray(sellCandidates(box))).toBe(true)

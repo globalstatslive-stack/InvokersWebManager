@@ -9,7 +9,7 @@ const root = process.env.INVOKERS_TEST_URL || 'http://127.0.0.1:5173/'
 const json = process.env.NEXO_BOX_JSON ? readFileSync(process.env.NEXO_BOX_JSON, 'utf8') : JSON.stringify(sampleBox())
 const executablePath = [process.env.CHROMIUM_PATH ?? '', '/opt/pw-browsers/chromium', '/usr/bin/chromium'].find(p => p && existsSync(p))
 const browser = await chromium.launch({ ...(executablePath ? { executablePath } : {}), args: ['--no-sandbox', '--disable-dev-shm-usage'] })
-const context = await browser.newContext({ viewport: { width: 390, height: 844 } })
+const context = await browser.newContext({ viewport: { width: Number(process.env.NEXO_WIDTH || 390), height: 844 } })
 const errors = []
 try {
   const page = await context.newPage()
@@ -17,38 +17,62 @@ try {
   await page.goto(`${root}#/importar`)
   await page.getByRole('heading', { name: 'Importar tu caja' }).waitFor()
   // La pestaña de ordenador muestra la ruta del juego para copiar.
-  await page.getByRole('tab', { name: /Desde el juego/ }).click()
+  await page.getByRole('tab', { name: /Carpeta del juego/ }).click()
   assert.ok((await page.locator('.path-row code').innerText()).includes('Hit_Zone'))
   await page.getByRole('tab', { name: /Con tu enlace/ }).click()
   await page.evaluate(() => document.querySelector('details.other-ways')?.setAttribute('open', ''))
   // 1) Pegar el JSON de la caja.
   await page.getByLabel('Datos de la caja').fill(json)
   await page.getByRole('button', { name: 'Importar texto' }).click()
-  await page.locator('.profile-hero').waitFor()
+  await page.locator('.account-strip').waitFor()
   const name = JSON.parse(json).profile.name
-  assert.ok((await page.locator('.profile-copy h1').innerText()).includes(name))
+  assert.ok((await page.locator('.account-strip h1').innerText()).includes(name))
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'desbordamiento horizontal en el inicio')
-  // 2) Navegación por las secciones principales.
-  for (const [hash, selector] of [['#/invokers', '.hero-card'], ['#/titanes', '.titan-card'], ['#/equipo', '.gear-card'], ['#/equipos', '.team-card'], ['#/codice', '.hero-card'], ['#/asesor/revision', '.review-row']]) {
+  // 2) Navegación por las secciones principales, sin desbordamiento horizontal.
+  for (const [hash, selector] of [['#/coleccion', '.h-card'], ['#/coleccion/piezas', '.gear-list li'], ['#/titanes', '.titan-card'], ['#/equipos', '.team-card'], ['#/codice', '.hero-card'], ['#/asesor/revision', '.review-row'], ['#/objetivo', '.boss-card']]) {
     await page.evaluate(h => { location.hash = h }, hash)
-    await page.locator(selector).first().waitFor()
+    await page.locator(selector).first().waitFor({ timeout: 20000 })
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `desbordamiento horizontal en ${hash}`)
   }
-  // 3) Ficha y optimizador.
-  await page.evaluate(() => { location.hash = '#/invokers' })
-  await page.locator('.hero-card').first().click()
+  // Colección: filtros plegables con contador de filtros activos.
+  await page.evaluate(() => { location.hash = '#/coleccion' })
+  await page.getByRole('button', { name: /Filtros/ }).click()
+  await page.getByLabel('Clase').selectOption('RangedAttacker')
+  await page.locator('.filter-btn .count').getByText('1').waitFor()
+  await page.getByRole('button', { name: /Quitar 1 filtro/ }).click()
+  // Pieza libre: «¿a quién le sirve?».
+  const freeId = JSON.parse(json).relics.find(r => r.equippedHeroId === null).id
+  await page.evaluate(id => { location.hash = `#/pieza/relic-${id}` }, freeId)
+  await page.getByRole('heading', { name: '¿A quién le sirve?' }).waitFor()
+  // 3) Ficha y optimizador (cálculo en Web Worker).
+  await page.evaluate(() => { location.hash = '#/coleccion' })
+  await page.locator('.h-card').first().click()
   await page.getByRole('button', { name: 'Optimizar equipo' }).click()
   await page.locator('.combat').waitFor({ timeout: 30000 })
   await page.locator('.stat-table.compare tr').first().waitFor()
-  // Propuestas alternativas y plan.
   await page.getByRole('button', { name: /Añadir al plan/ }).click()
-  await page.locator('.plan-list li').first().waitFor()
+  await page.getByRole('status').getByText(/Añadido a tu plan|No se añadió/).waitFor()
+  // Objetivo: jefe y fase oficiales → equipo → diagnóstico → planes → plan.
+  await page.evaluate(() => { location.hash = '#/objetivo' })
+  await page.locator('.boss-card').waitFor()
+  const add = page.getByLabel('Añadir Invoker')
+  // Con una caja real el equipo puede venir completo (5) desde el récord de mazmorra.
+  for (let i = 0; i < 2 && await add.count(); i++) { const v = await add.locator('option').nth(1).getAttribute('value'); await add.selectOption(v) }
+  await page.locator('.diag').nth(1).waitFor()
+  await page.getByRole('button', { name: 'Calcular planes del equipo' }).click()
+  await page.locator('.plan-option').nth(2).waitFor({ timeout: 180000 })
+  assert.equal(await page.locator('.plan-option').count(), 3)
+  await page.getByRole('button', { name: /Añadir «Equilibrio» al plan/ }).click()
+  await page.getByRole('status').getByText(/Añadido|avisos/).waitFor()
+  // Plan: comprobación al reimportar y envío al portal.
+  await page.evaluate(() => { location.hash = '#/plan' })
+  await page.locator('.plan-row').first().waitFor()
   const planHref = await page.getByRole('link', { name: /Enviar a invokers.com/ }).getAttribute('href')
   assert.ok(planHref.startsWith('https://invokers.com/hub/optimizer/?heroes=') && planHref.includes('&from=Nexo#nexo-plan='), planHref)
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'desbordamiento horizontal en el plan')
   // 4) Persistencia tras recargar (el plan también se conserva).
   await page.reload()
-  await page.locator('.combat').waitFor({ timeout: 30000 })
-  await page.locator('.plan-list li').first().waitFor()
+  await page.locator('.plan-row').first().waitFor()
   // 5) Marcador mágico: una página simulada de invokers.com envía la caja a la web.
   await context.route('https://invokers.com/**', r => new URL(r.request().url()).pathname.startsWith('/api/lamb/')
     ? r.fulfill({ contentType: 'application/json', body: json }) : r.fulfill({ contentType: 'text/html', body: '<p>caja</p>' }))
@@ -62,7 +86,7 @@ try {
   const popup = context.waitForEvent('page')
   await portal.evaluate(code)
   const received = await popup
-  await received.locator('.profile-hero').waitFor({ timeout: 20000 })
+  await received.locator('.account-strip').waitFor({ timeout: 20000 })
   // 5b) El marcador guarda el plan como preset en el portal (API simulada), tras confirmar.
   let presetBody
   await context.route('https://invokers.com/api/box/presets', r => { presetBody = JSON.parse(r.request().postData()); return r.fulfill({ status: 201, contentType: 'application/json', body: '{"id":"p1"}' }) })
@@ -74,8 +98,8 @@ try {
   await planPage.waitForTimeout(500)
   assert.ok(presetBody, 'el marcador no envió el preset')
   assert.equal(presetBody.category, 'Nexo')
-  assert.ok(presetBody.loadouts.length === 1 && Number.isInteger(presetBody.loadouts[0].heroId))
-  assert.ok(Object.keys(presetBody.loadouts[0].relics).length > 0)
+  assert.ok(presetBody.loadouts.length >= 1 && presetBody.loadouts.every(l => Number.isInteger(l.heroId)))
+  assert.ok(presetBody.loadouts.some(l => Object.keys(l.relics).length > 0))
   assert.deepEqual(dialogs, ['confirm'])
   assert.ok(!(await planPage.evaluate(() => location.hash)).includes('nexo-plan'))
   await received.evaluate(() => { location.hash = '#/datos' })
@@ -85,5 +109,5 @@ try {
   await received.getByRole('button', { name: 'Borrar todos los datos' }).click()
   await received.getByRole('heading', { name: 'Importar tu caja' }).waitFor()
   assert.deepEqual(errors, [])
-  console.log('E2E móvil: pegar caja, secciones, ficha, optimizador, plan, recarga, marcador mágico (caja y preset) y borrado correctos.')
+  console.log('E2E móvil: importar, secciones sin desbordamiento, filtros, pieza, optimizador en worker, objetivo → planes → plan, recarga, marcador (caja y preset) y borrado correctos.')
 } finally { await browser.close() }

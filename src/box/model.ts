@@ -116,6 +116,26 @@ function gear(raw: unknown, kind: 'relic' | 'accessory'): Gear {
 }
 const decodeFixed = (x: unknown) => { const out: Record<string, number> = {}; for (const [k, v] of Object.entries(numbers(x))) out[k] = v / FIXED; return out }
 
+/** Coherencia entre Invokers y piezas: cada ranura apunta a una pieza existente de esa ranura cuyo propietario es ese
+ * Invoker, y cada pieza equipada aparece en la ranura de su propietario. Una pieza no puede estar en dos sitios. */
+export function checkAssignments(heroes: Hero[], relics: Gear[], accessories: Gear[]): void {
+  const RELIC = ['Weapon', 'Shield', 'Helmet', 'Pauldrons', 'Gauntlets', 'Chestplate', 'Belt', 'Boots'], ACC = ['Amulet', 'Earrings', 'Banner', 'Talisman', 'Flasks']
+  for (const [kind, list, slots, of] of [['reliquia', relics, RELIC, (h: Hero) => h.relics], ['accesorio', accessories, ACC, (h: Hero) => h.accessories]] as const) {
+    const byId = new Map(list.map(g => [g.id, g]))
+    const used = new Set<number>()
+    for (const g of list) if (!slots.includes(g.slot)) fail(`${kind} ${g.id}: ranura desconocida «${g.slot}»`)
+    for (const h of heroes) for (const [slot, id] of Object.entries(of(h))) {
+      if (!slots.includes(slot)) fail(`${h.name}: ranura desconocida «${slot}»`)
+      const g = byId.get(id) ?? fail(`${h.name} lleva la ${kind} ${id}, que no existe en la caja`)
+      if (g.slot !== slot) fail(`${h.name}: la ${kind} ${id} es de ${g.slot}, no de ${slot}`)
+      if (g.equippedHeroId !== h.id) fail(`${h.name} lleva la ${kind} ${id}, pero la pieza indica otro propietario`)
+      if (used.has(id)) fail(`la ${kind} ${id} está asignada dos veces`)
+      used.add(id)
+    }
+    for (const g of list) if (g.equippedHeroId !== null && !used.has(g.id)) fail(`la ${kind} ${g.id} indica un propietario que no la lleva`)
+  }
+}
+
 /** Lee el JSON de `/api/lamb/<código>`. Valida la estructura y las referencias entre piezas y propietarios. */
 export function parseOfficialBox(value: unknown): Box {
   const root = obj(value)
@@ -147,6 +167,7 @@ export function parseOfficialBox(value: unknown): Box {
   unique(heroes.map(h => h.id), 'Invokers'); unique(titans.map(h => h.id), 'Titanes'); unique(relics.map(g => g.id), 'reliquias'); unique(accessories.map(g => g.id), 'accesorios')
   const heroIds = new Set(heroes.map(h => h.id))
   for (const g of [...relics, ...accessories]) if (g.equippedHeroId !== null && !heroIds.has(g.equippedHeroId)) fail('una pieza pertenece a un Invoker ausente')
+  checkAssignments(heroes, relics, accessories)
   const rules = root.rules ? obj(root.rules) : {}
   const setRules: SetRule[] = list(rules.relicSets).map(s => ({
     set: String(s.set), name: String(s.name ?? s.set), three: list(s.three).map(bonus), five: list(s.five).map(bonus), eight: list(s.eight).map(bonus),
