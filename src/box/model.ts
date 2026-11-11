@@ -55,6 +55,8 @@ export type Box = {
   exact: boolean
   /** Prefijo remoto de las imágenes del juego para recursos que no están en la web. */
   assetBase: string | null
+  /** Presente si la cuenta combina la carpeta del juego con la última caja oficial. */
+  merge?: { officialSnapshot: string | null; exactHeroes: number; changedHeroes: number }
 }
 
 const FIXED = 2 ** 32

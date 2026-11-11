@@ -51,7 +51,7 @@ export default function App() {
   const reload = useCallback(async () => {
     const list = await listImports()
     setRecords(list)
-    const [a, b] = await Promise.all([accountFrom(list[0]).catch(() => undefined), accountFrom(list[1]).catch(() => undefined)])
+    const [a, b] = await Promise.all([accountFrom(list[0], list).catch(() => undefined), accountFrom(list[1], list).catch(() => undefined)])
     setAccount(a); setPrevious(b)
   }, [])
   const importFiles = useCallback(async (files: File[]) => {

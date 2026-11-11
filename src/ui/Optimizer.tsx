@@ -11,12 +11,18 @@ import type { Gear, Hero } from '../box/model'
 
 export function Optimizer({ heroId }: { heroId?: number }) {
   const { account, go } = useAccount()
-  const heroes = useMemo(() => [...(account?.box.heroes ?? [])].sort((a, b) => b.power - a.power), [account])
-  const hero = (heroId !== undefined ? account?.index.heroes.get(heroId) : undefined) ?? heroes[0]
+  const heroes = useMemo(() => [...(account?.box.heroes ?? [])].filter(h => h.basis && h.gearBonus).sort((a, b) => b.power - a.power), [account])
   if (!account) return <NeedsAccount />
-  if (!hero) return <Empty title="No hay Invokers" />
-  if (!account.box.exact) return <><PageHead kicker="Herramientas" title="Optimizador" /><Empty title="Se necesita la caja oficial">El optimizador exacto usa las estadísticas base que publica el portal oficial. Importa tu enlace de caja compartida para activarlo.</Empty></>
-  return <OptimizerFor key={hero.id} hero={hero} heroes={heroes} onHero={id => go(`/optimizador/${id}`)} />
+  if (!heroes.length && account.box.merge) return <><PageHead kicker="Herramientas" title="Optimizador" /><Empty title="No se pudo combinar la carpeta con tu enlace">Ningún Invoker de la carpeta del juego coincide con la caja del enlace{account.box.merge.officialSnapshot ? ` del ${new Date(account.box.merge.officialSnapshot).toLocaleDateString('es-ES')}` : ''} ({account.box.merge.changedHeroes} han cambiado de nivel, rango o despertar). Pulsa «Refresh link» en invokers.com e importa el enlace de nuevo.</Empty></>
+  if (!heroes.length) return <><PageHead kicker="Herramientas" title="Optimizador" /><Empty title="Importa tu enlace una vez" action={<button className="btn primary" onClick={() => go('/importar')}>Importar enlace</button>}>El optimizador exacto usa las estadísticas base que publica el portal oficial. Importa el enlace de tu caja al menos una vez; después puedes seguir actualizando desde la carpeta del juego.</Empty></>
+  const asked = heroId !== undefined ? account.index.heroes.get(heroId) : undefined
+  const hero = asked && asked.basis && asked.gearBonus ? asked : heroes[0]
+  const merge = account.box.merge
+  return <>
+    {asked && hero !== asked && <div className="note warn">{asked.name} ha cambiado de nivel, rango o despertar desde tu última importación por enlace, así que su base no es exacta. Pulsa «Refresh link» en invokers.com e importa el enlace para optimizarlo.</div>}
+    {merge && merge.changedHeroes > 0 && <div className="note">Combinando tu carpeta del juego con la caja del enlace{merge.officialSnapshot ? ` del ${new Date(merge.officialSnapshot).toLocaleDateString('es-ES')}` : ''}: {merge.exactHeroes} Invokers exactos, {merge.changedHeroes} han cambiado desde entonces (actualiza el enlace para incluirlos).</div>}
+    <OptimizerFor key={hero.id} hero={hero} heroes={heroes} onHero={id => go(`/optimizador/${id}`)} />
+  </>
 }
 
 function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; onHero: (id: number) => void }) {
