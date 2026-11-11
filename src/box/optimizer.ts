@@ -8,6 +8,7 @@
 import type { Bonus, Gear, Hero } from './model'
 import { ACCESSORY_SLOTS, PERCENT_OF_BASE, RELIC_SLOTS } from './i18n'
 import { BoxIndex, projectStats, setCounts, TIERS, type Stats } from './stats'
+import { indexOf, simulate, type Kit, type Mix, type SimResult, type SimSettings } from './combat'
 
 export type Pool = 'free' | 'unlocked' | 'all'
 export type OptimizeOptions = {
@@ -22,7 +23,9 @@ export type OptimizeOptions = {
   /** Penaliza mover piezas de otros Invokers (0 = sin penalización). */
   moveAversion?: number
   /** 'damage' maximiza ATQ × (1 + crítico × daño crítico) además de los pesos del resto. */
-  objective?: 'weights' | 'damage'
+  objective?: 'weights' | 'damage' | 'sim'
+  /** Con objective = 'sim': simulación de combate del campeón y reparto del índice. */
+  sim?: { kit: Kit; levels: number[]; settings: SimSettings; mix: Mix }
   /** Evalúa cada pieza con su principal al nivel máximo (como si se subiera). */
   maxLevel?: boolean
   /** Piezas reservadas por el plan para otros Invokers (`relic12`, `accessory7`). */
@@ -33,6 +36,7 @@ export type OptimizeOptions = {
 type Pick = { relics: Record<string, Gear | null>; accessories: Record<string, Gear | null> }
 const DAMAGE_STATS = new Set(['attack', 'criticalRate', 'criticalDamage', 'damage'])
 const MIN_PENALTY = 60
+const SIM_STATS = ['attack', 'defense', 'health', 'criticalRate', 'criticalDamage', 'accuracy', 'comboSpeed', 'skillSpeed', 'skillRecovery', 'manaGeneration']
 /** Daño efectivo medio por golpe (crítico limitado al 100 %). */
 export function damageValue(s: Stats): number {
   const cr = Math.min(1, Math.max(0, s.criticalRate ?? 0))
@@ -44,6 +48,8 @@ export type BuildResult = {
   before: Stats; after: Stats; changes: Change[]; goldCost: number
   minimumsMet: boolean; unmet: string[]; score: number; scoreBefore: number
   damageBefore: number; damageAfter: number
+  /** Con objetivo de simulación: índice (100 = equipo actual) y combate simulado. */
+  index?: number; sim?: SimResult; simBefore?: SimResult
   /** Otras propuestas ordenadas por valor (la primera es esta misma build). */
   alternatives?: BuildResult[]
 }
@@ -106,14 +112,20 @@ export function optimize(index: BoxIndex, hero: Hero, opts: OptimizeOptions): Bu
   /** Puntos por cada 100 % (en log) de daño efectivo: peso «damage» 0–10. */
   const DAMAGE_POINTS = 60 * (opts.weights.damage ?? 10)
   const unit = (k: string) => (PERCENT_OF_BASE.has(k) ? (hero.basis?.[k] || 1) : 1) * (STAT_SCALE[k] ?? (k.endsWith('Tolerance') ? TOLERANCE_SCALE : 10))
-  const linearWeights = Object.entries(opts.weights).filter(([k, w]) => w && !(damage && DAMAGE_STATS.has(k)))
+  const sim = opts.objective === 'sim' && opts.sim ? opts.sim : null
+  const linearWeights = Object.entries(opts.weights).filter(([k, w]) => w && k !== 'damage' && !(damage && DAMAGE_STATS.has(k)))
   const base = damageValue(hero.stats) || 1
+  const runSim = (stats: Stats) => simulate(index.box, sim!.kit, sim!.levels, stats, sim!.settings)
+  let simBase: { sim: SimResult; stats: Stats } | null = null
+  /** Puntos del índice de simulación: 600 por cada 100 % (en log), como el objetivo de daño. */
+  const simPoints = (stats: Stats) => sim && simBase ? 6 * (opts.weights.damage ?? 10) * 10 * Math.log(indexOf(sim.mix, { sim: runSim(stats), stats }, simBase) / 100) : 0
   /** Valor exacto de una build: daño efectivo (log), pesos lineales y penalización por mínimos. */
   const evaluate = (pieces: Gear[]) => {
     const stats = projectStats(hero, pieces, index.rules)
     let j = 0
     for (const [k, w] of linearWeights) j += w * ((stats[k] ?? 0) - (hero.stats[k] ?? 0)) / unit(k)
     if (damage) j += DAMAGE_POINTS * Math.log(Math.max(1e-9, damageValue(stats)) / base)
+    if (sim) j += simPoints(stats)
     for (const [k, v] of minimums) j -= MIN_PENALTY * Math.max(0, v - (stats[k] ?? 0)) / unit(k)
     for (const g of pieces) if (g.equippedHeroId !== null && g.equippedHeroId !== hero.id) j -= aversion
     return { stats, j }
@@ -127,15 +139,28 @@ export function optimize(index: BoxIndex, hero: Hero, opts: OptimizeOptions): Bu
       w.criticalRate = (w.criticalRate ?? 0) + ((stats.criticalRate ?? 0) < 1 ? DAMAGE_POINTS * a * cd / f * unit('criticalRate') : 0)
       w.criticalDamage = (w.criticalDamage ?? 0) + DAMAGE_POINTS * a * cr / f * unit('criticalDamage')
     }
+    if (sim) for (const k of SIM_STATS) {
+      // Gradiente numérico: puntos que da «una subestadística» más de cada estadística.
+      const d = simPoints({ ...stats, [k]: (stats[k] ?? 0) + unit(k) }) - simPoints(stats)
+      if (d > 1e-9) w[k] = (w[k] ?? 0) + d
+    }
     for (const [k, v] of minimums) if ((stats[k] ?? 0) < v) w[k] = (w[k] ?? 0) + MIN_PENALTY
     return w
   }
+  if (sim) { const s0 = projectStats(hero, current, index.rules); simBase = { sim: runSim(s0), stats: s0 } }
   const piecesOf = (pick: Pick) => [...Object.values(pick.relics), ...Object.values(pick.accessories)].filter((x): x is Gear => !!x)
   // 1) Programación dinámica exacta sobre la linealización, repetida hasta converger.
   let best: { pick: Pick; j: number; stats: Stats } | null = null
   // Arranques múltiples: la linealización inicial decide el óptimo local que se alcanza.
   const seeds: Record<string, number>[] = [gradient(hero.stats)]
   if (damage) for (const mix of [0, 0.25, 0.5, 0.75, 1]) seeds.push({ ...gradient(hero.stats), attack: 10 * (1 - mix) + 2, criticalRate: 10 * mix + 1, criticalDamage: 8 * mix + 1 })
+  if (sim) {
+    const g = gradient(hero.stats), top = Math.max(1, ...Object.values(g))
+    // Variantes: priorizar crítico, la estadística de la que escala y la precisión (tiene un umbral que el gradiente no ve).
+    seeds.push({ ...g, criticalRate: top, criticalDamage: top * 0.8 }, { ...g, attack: (g.attack ?? 0) * 2, defense: (g.defense ?? 0) * 2, health: (g.health ?? 0) * 2 })
+    if (sim.mix.control > 0) seeds.push({ ...g, accuracy: top }, { ...g, accuracy: top * 2.5 }, { ...g, accuracy: top * 6 })
+    seeds.push({ ...g, skillRecovery: top, manaGeneration: top * 0.7, comboSpeed: top * 0.7, skillSpeed: top * 0.5 })
+  }
   for (const seed of seeds) {
     const { pick } = solve(index, hero, relics, accessories, seed, aversion)
     const e = evaluate(piecesOf(pick))
@@ -178,7 +203,8 @@ export function optimize(index: BoxIndex, hero: Hero, opts: OptimizeOptions): Bu
   const now = evaluate(current)
   const build = (b: { pick: Pick; j: number; stats: Stats }): BuildResult => {
     const unmet = minimums.filter(([k, v]) => (b.stats[k] ?? 0) < v).map(([k]) => k)
-    return { ...finalize(b.pick), before: now.stats, after: b.stats, unmet, minimumsMet: unmet.length === 0, score: b.j, scoreBefore: now.j, damageBefore: damageValue(now.stats), damageAfter: damageValue(b.stats) }
+    const extra = sim && simBase ? (() => { const r = runSim(b.stats); return { sim: r, simBefore: simBase!.sim, index: indexOf(sim.mix, { sim: r, stats: b.stats }, simBase!) } })() : {}
+    return { ...finalize(b.pick), before: now.stats, after: b.stats, unmet, minimumsMet: unmet.length === 0, score: b.j, scoreBefore: now.j, damageBefore: damageValue(now.stats), damageAfter: damageValue(b.stats), ...extra }
   }
   const result = build(final)
   // 3) Propuestas alternativas: la mejor combinación de cada par de conjuntos, evaluada con la fórmula completa.

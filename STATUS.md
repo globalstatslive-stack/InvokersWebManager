@@ -24,7 +24,16 @@
 - Envío del plan al portal como preset mediante el marcador mágico (probado de extremo a extremo con la API del portal simulada; pendiente de probar con la sesión real).
 - La carpeta del juego se combina con la última caja del enlace para el optimizador.
 
+## Versión 0.7
+
+- Catálogo de habilidades de los 242 Invokers (11 niveles) desde la API pública de fichas.
+- Simulador de combate por campeón y objetivo «Combate simulado» en el optimizador; perfil automático del kit.
+- Contraste con una simulación de referencia para Ozmol: lanzamientos y daño dentro de ~8 %.
+- Extensión de Chrome para guardar el plan como preset sin marcador.
+
 ## Pendiente
+
+- Validar en el juego los supuestos de tiempos y maná (contar definitivas en 3 min).
 
 - Probar el marcador mágico en Chrome Android real con el enlace del usuario.
 - Simulación de daño con habilidades y defensa enemiga; optimización de equipos completos (repartir piezas entre varios Invokers).
