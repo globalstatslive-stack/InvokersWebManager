@@ -1,22 +1,28 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ArrowUpRight, Bookmark, ClipboardPaste, Copy, Download, FileJson, FolderOpen, Link2, Loader2, Server, Smartphone } from 'lucide-react'
+import { ArrowUpRight, Bookmark, Check, ClipboardPaste, Copy, Download, FolderOpen, Loader2, Monitor, RefreshCw, Server, ShieldCheck, Smartphone, Upload } from 'lucide-react'
 import { useAccount } from './account'
-import { PageHead } from './common'
+import { GameImg } from './Art'
+import { CHARACTERS } from '../catalog'
+
+const HERO_ART = ['IRN036', 'LTS038', 'CAM004', 'FRB003']
 import { sharedBoxUrl } from '../officialImport'
-import { folderPreference, readFolder, type FolderPreference, type ReadDirectory } from '../folderSync'
+import { droppedFiles, folderPreference, fromInput, readFolder, selectSnapshots, type FolderPreference, type ReadDirectory } from '../folderSync'
 
 const store = {
   get: (k: string) => { try { return localStorage.getItem(k) ?? '' } catch { return '' } },
   set: (k: string, v: string) => { try { localStorage.setItem(k, v) } catch { /* sin almacenamiento */ } },
 }
 export const LINK_KEY = 'nexo.link', PROXY_KEY = 'nexo.proxy'
+/** Proxy público por defecto (vacío hasta desplegar proxy/cloudflare-worker.js). Con él, el enlace se importa con un toque. */
+export const DEFAULT_PROXY = ''
+export const proxyUrl = () => store.get(PROXY_KEY).trim() || DEFAULT_PROXY
 export const slugOf = (link: string) => sharedBoxUrl(link).searchParams.get('b')!
 export const apiUrl = (slug: string) => `https://invokers.com/api/lamb/${encodeURIComponent(slug)}`
 const APP = () => `${location.origin}${location.pathname}`
 
-/** Descarga la caja directamente (si el portal lo permite) o mediante el proxy configurado. */
+/** Descarga la caja mediante el proxy configurado o, si el portal lo permite, directamente. */
 export async function fetchBox(link: string): Promise<File> {
-  const slug = slugOf(link), proxy = store.get(PROXY_KEY).trim()
+  const slug = slugOf(link), proxy = proxyUrl()
   const url = proxy ? (proxy.includes('{slug}') ? proxy.replace('{slug}', encodeURIComponent(slug)) : `${proxy.replace(/\/$/, '')}/?b=${encodeURIComponent(slug)}`) : apiUrl(slug)
   const res = await fetch(url, { credentials: 'omit' })
   if (!res.ok) throw Error(res.status === 404 ? 'El enlace no existe o ha caducado. Pulsa «Refresh link» en el portal.' : `El servidor respondió ${res.status}.`)
@@ -31,31 +37,58 @@ export function bookmarklet(app: string): string {
   return `javascript:${encodeURIComponent(code)}`
 }
 
+type Os = 'windows' | 'mac'
+const PATHS: Record<Os, string> = {
+  windows: '%USERPROFILE%\\AppData\\LocalLow\\Hit_Zone\\Invokers',
+  mac: '~/Library/Application Support/Hit_Zone/Invokers',
+}
+const isMobile = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches && innerWidth < 900)
+const pickerApi = () => (window as unknown as { showDirectoryPicker?: (o: { mode: 'read'; id?: string; startIn?: string }) => Promise<ReadDirectory> }).showDirectoryPicker
+
 export function ImportPage({ receiving }: { receiving?: boolean }) {
   const { importFiles, account } = useAccount()
+  const [method, setMethod] = useState<'file' | 'link'>(() => isMobile() ? 'link' : 'file')
+  const [os, setOs] = useState<Os>(() => /Mac/i.test(navigator.platform || navigator.userAgent) ? 'mac' : 'windows')
   const [link, setLink] = useState(() => store.get(LINK_KEY))
   const [proxy, setProxy] = useState(() => store.get(PROXY_KEY))
   const [paste, setPaste] = useState('')
-  const [busy, setBusy] = useState(false), [error, setError] = useState(''), [status, setStatus] = useState(''), [fallback, setFallback] = useState(false)
+  const [busy, setBusy] = useState(false), [error, setError] = useState(''), [status, setStatus] = useState(''), [needsHelp, setNeedsHelp] = useState(false)
+  const [copied, setCopied] = useState(false), [dragging, setDragging] = useState(false)
   const [pref, setPref] = useState<FolderPreference>()
-  const files = useRef<HTMLInputElement>(null), folder = useRef<HTMLInputElement>(null)
+  const folderInput = useRef<HTMLInputElement>(null), jsonInput = useRef<HTMLInputElement>(null)
   const marklet = useMemo(() => bookmarklet(APP()), [])
-  const linkRef = useRef<HTMLAnchorElement>(null)
-  useEffect(() => { linkRef.current?.setAttribute('href', marklet) }, [marklet])
+  const markletRef = useRef<HTMLAnchorElement>(null)
+  useEffect(() => { markletRef.current?.setAttribute('href', marklet) }, [marklet, method, needsHelp])
   useEffect(() => { void folderPreference().then(setPref).catch(() => undefined) }, [])
-  const picker = (window as unknown as { showDirectoryPicker?: (o: { mode: 'read' }) => Promise<ReadDirectory> }).showDirectoryPicker
   let slug = ''
   try { slug = link.trim() ? slugOf(link) : '' } catch { slug = '' }
 
   async function run(task: () => Promise<void>) {
     setBusy(true); setError(''); setStatus('')
-    try { await task() } catch (e) { setError(e instanceof Error ? e.message : String(e)) } finally { setBusy(false) }
+    try { await task() } catch (e) { if (!(e instanceof DOMException && e.name === 'AbortError')) setError(e instanceof Error ? e.message : String(e)) } finally { setBusy(false) }
+  }
+  const remember = async (handle: ReadDirectory) => { const p = { handle, auto: pref?.auto ?? false }; await folderPreference(p).catch(() => undefined); setPref(p) }
+  const chooseFolder = () => run(async () => {
+    const picker = pickerApi()
+    if (!picker) { folderInput.current?.click(); return }
+    const handle = await picker({ mode: 'read', id: 'invokers' })
+    await remember(handle)
+    await importFiles(await readFolder({ handle, auto: false }, true))
+  })
+  const refreshFolder = () => pref && run(async () => importFiles(await readFolder(pref, true)))
+  const onFolderInput = (list: FileList | null) => { if (list?.length) { const files = Array.from(list); void run(async () => importFiles(selectSnapshots(fromInput(files)))) } }
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault(); setDragging(false)
+    const files = Array.from(e.dataTransfer.files)
+    if (files.length === 1 && files[0].name.toLowerCase().endsWith('.json')) { void run(() => importFiles(files)); return }
+    const items = e.dataTransfer.items
+    void run(async () => { const { files, handle } = await droppedFiles(items); if (handle) await remember(handle); await importFiles(files) })
   }
   const fromLink = () => run(async () => {
     store.set(LINK_KEY, link.trim())
     try { await importFiles([await fetchBox(link)]) }
     catch (e) {
-      if (e instanceof TypeError) { setFallback(true); throw Error(store.get(PROXY_KEY) ? 'No se pudo contactar con tu proxy. Revisa la dirección en «Avanzado».' : 'El portal oficial no permite la lectura directa desde otras webs. Usa el marcador mágico o copia y pega los datos (abajo). Solo hace falta configurarlo una vez.') }
+      if (e instanceof TypeError) { setNeedsHelp(true); throw Error(proxyUrl() ? 'No se pudo contactar con el proxy. Revisa su dirección en «Avanzado».' : 'El portal oficial no deja leer la caja desde otras webs. Termina con una de las dos opciones de abajo: solo lleva unos segundos.') }
       throw e
     }
   })
@@ -64,85 +97,121 @@ export function ImportPage({ receiving }: { receiving?: boolean }) {
     if (!text.startsWith('{')) throw Error('Pega el contenido completo que empieza por «{».')
     await importFiles([new File([text], 'caja-pegada.json', { type: 'application/json' })]); setPaste('')
   })
-  const fromFiles = (list: FileList | null) => { if (list?.length) { const chosen = Array.from(list); void run(() => importFiles(chosen)) } }
-  const chooseFolder = () => run(async () => {
-    if (!picker) { folder.current?.click(); return }
-    const p = { handle: await picker({ mode: 'read' }), auto: false }
-    await folderPreference(p); setPref(p)
-    await importFiles(await readFolder(p, true))
-  })
-  const bridge = () => { try { const url = sharedBoxUrl(link); window.location.href = `intent://import?url=${encodeURIComponent(url.href)}#Intent;scheme=invokersbridge;package=es.invokers.bridge;end` } catch (e) { setError(String(e instanceof Error ? e.message : e)) } }
-  const copy = async (text: string, what: string) => { try { await navigator.clipboard.writeText(text); setStatus(`${what} copiado.`) } catch { setError('No se pudo copiar. Mantén pulsado el texto para copiarlo.') } }
+  const copy = async (text: string, done?: () => void) => { try { await navigator.clipboard.writeText(text); done?.() } catch { setError('No se pudo copiar. Selecciona el texto y cópialo a mano.') } }
+  const banner = account ? [...account.box.heroes].sort((a, b) => b.power - a.power).slice(0, 4) : HERO_ART.map(code => CHARACTERS.find(c => c.code === code)).filter((c): c is NonNullable<typeof c> => !!c).map((c, i) => ({ id: i, portrait: c.portrait }))
 
   return <div className="import">
-    <PageHead kicker="Sincronizar" title={receiving ? 'Recibiendo tu caja…' : 'Importar tu cuenta'}>
-      {receiving ? 'Esta pestaña espera los datos del marcador. Si no llegan en unos segundos, vuelve a la pestaña de invokers.com.' : 'Usa el enlace de tu caja compartida de invokers.com. Contiene Invokers, Titanes, todo el equipo, tus equipos de combate y las estadísticas exactas.'}
-    </PageHead>
+    <section className="import-hero">
+      <div className="import-hero-art">{banner.map((h, i) => <GameImg key={h.id} path={h.portrait} alt="" className={`ih ih${i}`} />)}</div>
+      <span className="kicker">Sincronizar</span>
+      <h1>{receiving ? 'Recibiendo tu caja…' : 'Importar tu caja'}</h1>
+      <p>{receiving ? 'Esta pestaña espera los datos del marcador de invokers.com.' : 'En ordenador, importa la carpeta del juego: un clic y se recuerda. En móvil y tableta, pega el enlace de tu caja compartida.'}</p>
+    </section>
     {receiving && <div className="note"><Loader2 className="spin" size={16} /> Esperando datos de invokers.com…</div>}
     {error && <div className="note warn" role="alert">{error}</div>}
     {status && <div className="note ok" role="status">{status}</div>}
 
-    <section className="panel import-main">
-      <h2><Link2 size={19} /> Enlace de tu caja</h2>
-      <div className="link-row">
-        <input type="url" value={link} onChange={e => setLink(e.target.value)} placeholder="https://invokers.com/lamb/?b=…" spellCheck={false} autoComplete="off" aria-label="Enlace de caja compartida" />
-        <button className="btn primary" disabled={!slug || busy} onClick={fromLink}>{busy ? <Loader2 className="spin" size={17} /> : <Download size={17} />} Importar</button>
-      </div>
-      {link.trim() && !slug && <small className="warn-text">El enlace debe tener la forma https://invokers.com/lamb/?b=…</small>}
-      <ol className="steps-mini">
-        <li>En <a href="https://invokers.com/hub/box/invokers/" target="_blank" rel="noreferrer">tu caja del portal <ArrowUpRight size={12} /></a> activa «compartir» y pulsa «Refresh link» para una instantánea nueva.</li>
-        <li>Copia el enlace y pégalo arriba. Lo recordamos para la próxima vez.</li>
-      </ol>
-      {account?.box.expiresAt && <small className="muted">El enlace actual caduca el {new Date(account.box.expiresAt).toLocaleDateString('es-ES')}.</small>}
-    </section>
-
-    <div className={`import-methods ${fallback ? 'highlight' : ''}`}>
-      <section className="panel method">
-        <h3><Bookmark size={18} /> Marcador mágico <span className="badge">recomendado</span></h3>
-        <p>Un marcador que lee tu caja desde la propia página de invokers.com y la envía aquí. Se configura una vez y funciona con un toque.</p>
-        <div className="row-actions">
-          <a ref={linkRef} className="btn bookmarklet" onClick={e => { e.preventDefault(); setStatus('Arrastra este botón a tu barra de marcadores (ordenador) o copia el código (móvil).') }}>⚡ Nexo · Importar</a>
-          <button className="btn" onClick={() => copy(marklet, 'Código del marcador')}><Copy size={16} /> Copiar código</button>
-        </div>
-        <details><summary>Cómo usarlo en Android</summary><ol>
-          <li>Pulsa «Copiar código».</li><li>En Chrome guarda cualquier página como marcador, edítalo, llámalo <b>nexo</b> y pega el código en la URL.</li>
-          <li>Abre tu enlace de caja de invokers.com, escribe <b>nexo</b> en la barra de direcciones y elige el marcador.</li><li>Se abrirá esta web con tu cuenta importada.</li>
-        </ol></details>
-      </section>
-      <section className="panel method">
-        <h3><ClipboardPaste size={18} /> Copiar y pegar</h3>
-        <p>Abre los datos de tu caja, selecciónalo todo, cópialo y pégalo aquí.</p>
-        <div className="row-actions"><a className={`btn ${slug ? '' : 'disabled'}`} href={slug ? apiUrl(slug) : undefined} target="_blank" rel="noreferrer"><ArrowUpRight size={16} /> Abrir datos de mi caja</a></div>
-        <textarea value={paste} onChange={e => setPaste(e.target.value)} placeholder='{"owner":false,"profile":…}' rows={3} aria-label="Datos de la caja" />
-        <button className="btn primary" disabled={!paste.trim() || busy} onClick={fromPaste}>Importar texto</button>
-      </section>
-      <section className="panel method">
-        <h3><FileJson size={18} /> Desde archivos</h3>
-        <p>El JSON de la caja (por ejemplo, descargado por el marcador) o los snapshots <code>.dat</code> del juego.</p>
-        <div className="row-actions">
-          <button className="btn" onClick={() => files.current?.click()}><FileJson size={16} /> Elegir JSON o .dat</button>
-          <button className="btn" onClick={chooseFolder}><FolderOpen size={16} /> Carpeta de snapshots</button>
-        </div>
-        {pref && <small className="muted">Carpeta recordada: {pref.handle.name} · <button className="link" onClick={() => run(async () => importFiles(await readFolder(pref, true)))}>actualizar</button></small>}
-      </section>
-      <section className="panel method">
-        <h3><Smartphone size={18} /> Invokers Bridge (Android)</h3>
-        <p>App auxiliar que descarga el enlace y lo comparte con esta web instalada. También lee los snapshots con Shizuku.</p>
-        <div className="row-actions">
-          <button className="btn" disabled={!slug} onClick={bridge}>Abrir enlace con Bridge</button>
-          <a className="btn" href="./bridge.apk" download="invokers-bridge-0.2.0-debug.apk"><Download size={16} /> APK 0.2</a>
-        </div>
-      </section>
+    <div className="method-tabs" role="tablist" aria-label="Forma de importar">
+      <button role="tab" aria-selected={method === 'file'} className={method === 'file' ? 'on' : ''} onClick={() => setMethod('file')}>
+        <Monitor size={22} /><span><b>Desde el juego</b><small>PC y Mac · carpeta del juego</small></span>{!isMobile() && <em className="badge">Recomendado</em>}
+      </button>
+      <button role="tab" aria-selected={method === 'link'} className={method === 'link' ? 'on' : ''} onClick={() => setMethod('link')}>
+        <Smartphone size={22} /><span><b>Con tu enlace</b><small>Móvil y tableta · caja compartida</small></span>{isMobile() && <em className="badge">Recomendado</em>}
+      </button>
     </div>
-    <details className="panel advanced">
-      <summary><Server size={16} /> Avanzado: importación con un clic mediante tu propio proxy</summary>
-      <p>Si despliegas el proxy incluido en el repositorio (<code>proxy/cloudflare-worker.js</code>, gratuito en Cloudflare Workers), el botón «Importar» funciona directamente con el enlace. Solo reenvía cajas públicas de invokers.com y no guarda nada.</p>
-      <div className="link-row">
-        <input value={proxy} onChange={e => setProxy(e.target.value)} placeholder="https://nexo-proxy.tu-cuenta.workers.dev" spellCheck={false} aria-label="URL del proxy" />
-        <button className="btn" onClick={() => { store.set(PROXY_KEY, proxy.trim()); setStatus(proxy.trim() ? 'Proxy guardado en este navegador.' : 'Proxy desactivado.') }}>Guardar</button>
-      </div>
-    </details>
-    <input ref={files} type="file" hidden multiple accept=".dat,.json,application/json,application/octet-stream" onChange={e => { fromFiles(e.target.files); e.target.value = '' }} />
-    <input ref={folder} type="file" hidden multiple {...{ webkitdirectory: '' }} onChange={e => { fromFiles(e.target.files); e.target.value = '' }} />
+
+    {method === 'file' ? <div className="import-grid">
+      <section className="panel steps">
+        <h2>¿Cómo importar?</h2>
+        <ol>
+          <li>Abre tu caja en el juego y espera unos segundos: el juego guarda los archivos solo. Puedes dejarlo abierto.</li>
+          <li>
+            <span>Copia la ruta de la carpeta del juego:</span>
+            <div className="os-switch" role="group" aria-label="Sistema"><button className={os === 'windows' ? 'on' : ''} onClick={() => setOs('windows')}>Windows</button><button className={os === 'mac' ? 'on' : ''} onClick={() => setOs('mac')}>Mac</button></div>
+            <div className="path-row"><code>{PATHS[os]}</code><button className="btn small" onClick={() => copy(PATHS[os], () => { setCopied(true); setTimeout(() => setCopied(false), 2000) })}>{copied ? <><Check size={15} /> ¡Copiada!</> : <><Copy size={15} /> Copiar</>}</button></div>
+          </li>
+          <li>{os === 'windows' ? <>Pulsa <b>Importar mi caja</b>, pega la ruta en la barra de direcciones del selector y pulsa <kbd>Intro</kbd>.</> : <>Pulsa <b>Importar mi caja</b>, pulsa <kbd>⌘</kbd> <kbd>⇧</kbd> <kbd>G</kbd>, pega la ruta y pulsa <kbd>Intro</kbd>.</>}</li>
+          <li>Selecciona la carpeta <b>Invokers</b> y confirma. ¡Listo! La próxima vez basta con <b>Actualizar</b>.</li>
+        </ol>
+      </section>
+      <section className={`panel dropzone ${dragging ? 'over' : ''}`} onDragOver={e => { e.preventDefault(); setDragging(true) }} onDragLeave={() => setDragging(false)} onDrop={onDrop}>
+        <div className="drop-inner">
+          <Upload size={30} />
+          <button className="btn primary big" disabled={busy} onClick={chooseFolder}>{busy ? <Loader2 className="spin" size={18} /> : <FolderOpen size={18} />} Importar mi caja</button>
+          <p>Sigue los pasos para elegir la carpeta correcta. También puedes <b>arrastrar aquí</b> la carpeta del juego o sus archivos.</p>
+          {pref && <div className="remembered">
+            <span><FolderOpen size={15} /> Carpeta recordada: <b>{pref.handle.name}</b></span>
+            <button className="btn small" disabled={busy} onClick={refreshFolder}><RefreshCw size={15} /> Actualizar ahora</button>
+            <label className="check"><input type="checkbox" checked={pref.auto} onChange={e => { const p = { ...pref, auto: e.target.checked }; setPref(p); void folderPreference(p) }} /> Actualizar al abrir Nexo</label>
+          </div>}
+        </div>
+      </section>
+      <p className="fine wide">La carpeta del juego da tus Invokers, Titanes y piezas. Para el <b>optimizador exacto</b> y los registros de combate, importa también tu enlace: aporta las estadísticas base que publica el portal.</p>
+    </div> :
+
+    <div className="import-grid single">
+      <section className="panel steps">
+        <h2>Pega el enlace de tu caja</h2>
+        <div className="link-row">
+          <input type="url" value={link} onChange={e => setLink(e.target.value)} placeholder="https://invokers.com/lamb/?b=…" spellCheck={false} autoComplete="off" aria-label="Enlace de caja compartida" />
+          <button className="btn primary" disabled={!slug || busy} onClick={fromLink}>{busy ? <Loader2 className="spin" size={17} /> : <Download size={17} />} Importar</button>
+        </div>
+        {link.trim() && !slug && <small className="warn-text">El enlace debe tener la forma https://invokers.com/lamb/?b=…</small>}
+        <ol>
+          <li>Abre <a href="https://invokers.com/hub/box/invokers/" target="_blank" rel="noreferrer">tu caja en invokers.com <ArrowUpRight size={12} /></a> e inicia sesión.</li>
+          <li>Activa «compartir» y pulsa <b>Refresh link</b> para una instantánea nueva.</li>
+          <li>Copia el enlace, pégalo arriba y pulsa <b>Importar</b>. Lo recordamos para la próxima vez.</li>
+        </ol>
+        {account?.box.expiresAt && <small className="muted">Tu enlace actual caduca el {new Date(account.box.expiresAt).toLocaleDateString('es-ES')}.</small>}
+      </section>
+      {(needsHelp || !proxyUrl()) && <div className={`import-methods ${needsHelp ? 'highlight' : ''}`}>
+        <section className="panel method">
+          <h3><ClipboardPaste size={18} /> Copiar y pegar</h3>
+          <ol className="mini">
+            <li><a className={`btn small ${slug ? '' : 'disabled'}`} href={slug ? apiUrl(slug) : undefined} target="_blank" rel="noreferrer"><ArrowUpRight size={15} /> Abrir datos de mi caja</a></li>
+            <li>Mantén pulsado el texto → <b>Seleccionar todo</b> → <b>Copiar</b>.</li>
+            <li>Vuelve aquí, pega y pulsa <b>Importar texto</b>.</li>
+          </ol>
+          <textarea value={paste} onChange={e => setPaste(e.target.value)} placeholder='{"owner":false,"profile":…}' rows={3} aria-label="Datos de la caja" />
+          <button className="btn primary" disabled={!paste.trim() || busy} onClick={fromPaste}>Importar texto</button>
+        </section>
+        <section className="panel method">
+          <h3><Bookmark size={18} /> Marcador mágico</h3>
+          <p>Se configura una vez. Después, en tu enlace de invokers.com, abre el marcador y la caja llega aquí sola.</p>
+          <div className="row-actions">
+            <a ref={markletRef} className="btn bookmarklet" onClick={e => { e.preventDefault(); setStatus('En ordenador, arrastra este botón a la barra de marcadores. En móvil, usa «Copiar código».') }}>⚡ Nexo · Importar</a>
+            <button className="btn" onClick={() => copy(marklet, () => setStatus('Código del marcador copiado.'))}><Copy size={16} /> Copiar código</button>
+          </div>
+          <details><summary>Configurarlo en el móvil</summary><ol>
+            <li>Pulsa «Copiar código».</li><li>En Chrome, guarda cualquier página como marcador, edítalo, llámalo <b>nexo</b> y pega el código como URL.</li>
+            <li>Abre tu enlace de invokers.com, escribe <b>nexo</b> en la barra de direcciones y toca el marcador.</li>
+          </ol></details>
+        </section>
+      </div>}
+      <p className="fine wide">¿Tienes el JSON de la caja guardado? <button className="link" onClick={() => jsonInput.current?.click()}>Impórtalo desde un archivo</button>.</p>
+      <details className="panel advanced">
+        <summary><Server size={16} /> Avanzado: importar el enlace con un toque (proxy propio)</summary>
+        <p>Despliega gratis <code>proxy/cloudflare-worker.js</code> en Cloudflare Workers y guarda aquí su dirección. Solo reenvía cajas públicas de invokers.com y no guarda nada.</p>
+        <div className="link-row">
+          <input value={proxy} onChange={e => setProxy(e.target.value)} placeholder="https://nexo-proxy.tu-cuenta.workers.dev" spellCheck={false} aria-label="URL del proxy" />
+          <button className="btn" onClick={() => { store.set(PROXY_KEY, proxy.trim()); setStatus(proxy.trim() ? 'Proxy guardado en este navegador.' : 'Proxy desactivado.') }}>Guardar</button>
+        </div>
+      </details>
+    </div>}
+
+    <section className="grid-2 trust">
+      <div className="panel"><h3 className="sub"><ShieldCheck size={15} /> Lo que hace Nexo</h3><ul className="ticks">
+        <li>Lee la caja que guarda el juego o la que publica tu enlace, en tu navegador.</li>
+        <li>Guarda tus importaciones solo en este dispositivo para ver tu progreso.</li>
+        <li>Actualiza con un clic desde la carpeta recordada o el enlace guardado.</li>
+      </ul></div>
+      <div className="panel"><h3 className="sub">Lo que no hace</h3><ul className="dashes">
+        <li>No envía tus datos a ningún servidor de Nexo.</li>
+        <li>No encuentra la carpeta por sí solo: tú la eliges una vez (por eso te damos la ruta).</li>
+        <li>No escribe nada en el juego ni en su carpeta.</li>
+      </ul></div>
+    </section>
+    <input ref={folderInput} type="file" hidden multiple {...{ webkitdirectory: '' }} onChange={e => { onFolderInput(e.target.files); e.target.value = '' }} />
+    <input ref={jsonInput} type="file" hidden accept=".json,application/json" onChange={e => { const f = e.target.files; if (f?.length) { const files = Array.from(f); void run(() => importFiles(files)) } e.target.value = '' }} />
   </div>
 }

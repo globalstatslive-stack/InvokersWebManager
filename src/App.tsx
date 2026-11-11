@@ -12,7 +12,8 @@ import { Optimizer } from './ui/Optimizer'
 import { Advisor } from './ui/Advisor'
 import { Teams } from './ui/Teams'
 import { Codex } from './ui/Codex'
-import { fetchBox, ImportPage, LINK_KEY, PROXY_KEY } from './ui/ImportPage'
+import { fetchBox, ImportPage, LINK_KEY, proxyUrl } from './ui/ImportPage'
+import { folderPreference, readFolder } from './folderSync'
 import { DataPage } from './ui/DataPage'
 import { fmtInt } from './box/i18n'
 
@@ -72,6 +73,9 @@ export default function App() {
       const shared = await readSharedFiles()
       if (shared?.files.length) { await importFiles(shared.files); await clearSharedFiles(shared.receivedAt) }
       if (location.search) history.replaceState(null, '', location.pathname + location.hash)
+      // Carpeta recordada con «Actualizar al abrir Nexo»: solo si el navegador conserva el permiso.
+      const pref = await folderPreference().catch(() => undefined)
+      if (pref?.auto && !shared?.files.length) await readFolder(pref, false).then(files => importFiles(files)).catch(() => undefined)
     })().catch(e => setToast({ text: `Error al abrir los datos: ${e instanceof Error ? e.message : e}`, bad: true })).finally(() => setLoading(false))
   }, [reload, importFiles])
 
@@ -87,11 +91,16 @@ export default function App() {
     return () => removeEventListener('message', onMessage)
   }, [importFiles])
 
+  /** Actualiza desde la última fuente disponible: carpeta recordada o enlace con proxy. */
   async function sync() {
-    const link = stored(LINK_KEY)
-    if (!link || !stored(PROXY_KEY)) { go('/importar'); return }
+    const link = stored(LINK_KEY), pref = await folderPreference().catch(() => undefined)
+    const viaLink = !!link && !!proxyUrl()
+    const preferFolder = pref && (account?.record.source !== 'official-link' || !viaLink)
+    if (!preferFolder && !viaLink) { go('/importar'); return }
     setSyncing(true)
-    try { await importFiles([await fetchBox(link)]) } catch (e) { setToast({ text: e instanceof Error ? e.message : String(e), bad: true }); go('/importar') } finally { setSyncing(false) }
+    try { await importFiles(preferFolder ? await readFolder(pref!, true) : [await fetchBox(link)]) }
+    catch (e) { setToast({ text: e instanceof Error ? e.message : String(e), bad: true }); go('/importar') }
+    finally { setSyncing(false) }
   }
 
   const ctx = useMemo(() => ({ account, previous, records, go, importFiles, reload }), [account, previous, records, go, importFiles, reload])
@@ -132,7 +141,8 @@ export default function App() {
             {profile.avatar && <GameImg path={profile.avatar} alt="" className="avatar" />}
             <span><b>{profile.name}</b><small>Nv. {profile.level} · {fmtInt(profile.totalPower || account!.box.heroes.reduce((s, h) => s + h.power, 0))}</small></span>
           </div>}
-          <button className="btn small" onClick={sync} disabled={syncing} title="Actualizar la cuenta"><RefreshCw size={15} className={syncing ? 'spin' : ''} /><span className="hide-sm">Actualizar</span></button>
+          {account ? <button className="btn small" onClick={sync} disabled={syncing} title="Actualizar la cuenta"><RefreshCw size={15} className={syncing ? 'spin' : ''} /><span className="hide-sm">Actualizar</span></button>
+            : <a className="btn small primary" href="#/importar"><Download size={15} />Importar caja</a>}
         </header>
         {toast && <div className={`toast ${toast.bad ? 'bad' : ''}`} role="status"><span>{toast.text}</span><button className="icon-btn" aria-label="Cerrar" onClick={() => setToast(undefined)}><X size={16} /></button></div>}
         <main className="content">{loading ? <div className="loading">Cargando tu cuenta…</div> : page}</main>

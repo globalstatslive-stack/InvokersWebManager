@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
 import { ArrowRight, Clock3, Gem, Shield, Sparkles, Swords, Trophy, Wand2 } from 'lucide-react'
 import { useAccount } from './account'
-import { NeedsAccount, Meter } from './common'
+import { Meter } from './common'
+import { ImportPage } from './ImportPage'
 import { ElementIcon, FactionIcon, GameImg, Portrait, Stars } from './Art'
 import { CLASS_LABEL, ELEMENT_LABEL, fmtInt, RARITIES, RARITY_LABEL, t } from '../box/i18n'
 import { diagnose, sellCandidates, teamHeroIds, upgradeQueue } from '../box/advisor'
@@ -20,7 +21,7 @@ export function Dashboard() {
     const free = [...box.relics, ...box.accessories].filter(g => g.equippedHeroId === null).length
     return { heroes, rarity, factions, issues, free, sell: sellCandidates(box).length, upgrades: upgradeQueue(box, index).length, geared: box.heroes.filter(h => Object.keys(h.relics).length).length }
   }, [account])
-  if (!account || !data) return <><Welcome /><NeedsAccount /></>
+  if (!account || !data) return <ImportPage />
   const { box } = account
   const top = data.heroes.slice(0, 8)
   const expires = box.expiresAt ? Math.ceil((Date.parse(box.expiresAt) - Date.now()) / 86400000) : null
@@ -76,11 +77,4 @@ function Kpi({ icon, label, value, sub, onClick }: { icon: React.ReactNode; labe
 }
 function Todo({ icon, title, text, onClick }: { icon: React.ReactNode; title: string; text: string; onClick: () => void }) {
   return <button className="todo-row" onClick={onClick}><span className="todo-icon">{icon}</span><span><b>{title}</b><small>{text}</small></span><ArrowRight size={17} /></button>
-}
-function Welcome() {
-  return <section className="welcome">
-    <span className="kicker">Invokers: Titan Legacy</span>
-    <h1>Tu cuenta, <em>al detalle.</em></h1>
-    <p>Optimizador exacto de builds, asesor de venta y mejoras, revisión de equipos, registros de combate y catálogo completo. Todo en tu navegador, con los retratos y objetos reales del juego.</p>
-  </section>
 }

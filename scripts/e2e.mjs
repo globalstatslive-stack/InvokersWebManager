@@ -15,7 +15,11 @@ try {
   const page = await context.newPage()
   page.on('pageerror', e => errors.push(String(e)))
   await page.goto(`${root}#/importar`)
-  await page.getByRole('heading', { name: 'Importar tu cuenta' }).waitFor()
+  await page.getByRole('heading', { name: 'Importar tu caja' }).waitFor()
+  // La pestaña de ordenador muestra la ruta del juego para copiar.
+  await page.getByRole('tab', { name: /Desde el juego/ }).click()
+  assert.ok((await page.locator('.path-row code').innerText()).includes('Hit_Zone'))
+  await page.getByRole('tab', { name: /Con tu enlace/ }).click()
   // 1) Pegar el JSON de la caja.
   await page.getByLabel('Datos de la caja').fill(json)
   await page.getByRole('button', { name: 'Importar texto' }).click()
@@ -42,6 +46,7 @@ try {
   await context.route('https://invokers.com/**', r => new URL(r.request().url()).pathname.startsWith('/api/lamb/')
     ? r.fulfill({ contentType: 'application/json', body: json }) : r.fulfill({ contentType: 'text/html', body: '<p>caja</p>' }))
   await page.evaluate(() => { location.hash = '#/importar' })
+  await page.getByRole('tab', { name: /Con tu enlace/ }).click()
   await page.waitForSelector('a.bookmarklet[href^="javascript:"]', { state: 'attached' })
   const code = decodeURIComponent((await page.locator('a.bookmarklet').getAttribute('href')).replace(/^javascript:/, ''))
   const portal = await context.newPage()
@@ -55,7 +60,7 @@ try {
   // 6) Borrado.
   received.once('dialog', d => d.accept())
   await received.getByRole('button', { name: 'Borrar todos los datos' }).click()
-  await received.getByText('Aún no hay cuenta importada').waitFor()
+  await received.getByRole('heading', { name: 'Importar tu caja' }).waitFor()
   assert.deepEqual(errors, [])
   console.log('E2E móvil: pegar caja, secciones, ficha, optimizador, recarga, marcador mágico y borrado correctos.')
 } finally { await browser.close() }
