@@ -44,7 +44,7 @@ try {
   await page.getByRole('button', { name: /Añadir al plan/ }).click()
   await page.locator('.plan-list li').first().waitFor()
   const planHref = await page.getByRole('link', { name: /Enviar a invokers.com/ }).getAttribute('href')
-  assert.ok(planHref.startsWith('https://invokers.com/hub/box/invokers/#nexo-plan='))
+  assert.ok(planHref.startsWith('https://invokers.com/hub/optimizer/?heroes=') && planHref.includes('&from=Nexo#nexo-plan='), planHref)
   // 4) Persistencia tras recargar (el plan también se conserva).
   await page.reload()
   await page.locator('.dmg-strip').waitFor()
@@ -76,7 +76,7 @@ try {
   assert.equal(presetBody.category, 'Nexo')
   assert.ok(presetBody.loadouts.length === 1 && Number.isInteger(presetBody.loadouts[0].heroId))
   assert.ok(Object.keys(presetBody.loadouts[0].relics).length > 0)
-  assert.deepEqual(dialogs, ['confirm', 'alert'])
+  assert.deepEqual(dialogs, ['confirm'])
   assert.ok(!(await planPage.evaluate(() => location.hash)).includes('nexo-plan'))
   await received.evaluate(() => { location.hash = '#/datos' })
   assert.ok(await received.locator('.records li').count() >= 2, 'el marcador no guardó una segunda importación')

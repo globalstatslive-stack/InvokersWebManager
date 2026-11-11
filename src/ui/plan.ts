@@ -33,10 +33,12 @@ export function presetPayload(plan: PlanEntry[], name: string) {
 }
 const pick = (m: Record<string, number | null>, slots: string[]) => Object.fromEntries(Object.entries(m).filter(([s]) => slots.includes(s)))
 const b64url = (text: string) => btoa(String.fromCharCode(...new TextEncoder().encode(text))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
-/** Página del portal donde el marcador de Nexo guarda el preset con la sesión del jugador. */
-export const PORTAL_BOX = 'https://invokers.com/hub/box/invokers/'
+/** Optimizador oficial: acepta `?heroes=1,2&from=` para abrirse con esos Invokers cargados.
+ * El fragmento `#nexo-plan=` lo lee el marcador de Nexo para guardar el preset con la sesión del jugador. */
+export const PORTAL_OPTIMIZER = 'https://invokers.com/hub/optimizer/'
 export function portalUrl(plan: PlanEntry[], name: string): string {
-  return `${PORTAL_BOX}#nexo-plan=${b64url(JSON.stringify(presetPayload(plan, name)))}`
+  const heroes = plan.map(e => e.heroId).slice(0, 5).join(',')
+  return `${PORTAL_OPTIMIZER}?heroes=${heroes}&from=Nexo#nexo-plan=${b64url(JSON.stringify(presetPayload(plan, name)))}`
 }
 
 export function usePlan(box: Box | undefined) {

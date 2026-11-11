@@ -28,10 +28,11 @@ function PlanPanel({ plan, remove, clear, go }: { plan: PlanEntry[]; remove: (id
       <button className="btn" onClick={() => { if (confirm('¿Vaciar el plan?')) clear() }}>Vaciar</button>
     </div>
     <ol className="steps-mini">
-      <li>Pulsa <b>Enviar a invokers.com</b>: se abre tu caja del portal con el plan (inicia sesión si te lo pide).</li>
-      <li>En esa pestaña, usa el <b>marcador mágico de Nexo</b> (Importar → Con tu enlace → Otras formas). Te pedirá confirmación y guardará el plan como <b>preset</b>.</li>
-      <li>En el portal, abre <b>Presets</b>, revisa los cambios y el oro, y pulsa <b>Apply</b>. Los cambios se aplican en tu cuenta y los verás al entrar en el juego.</li>
+      <li>Pulsa <b>Enviar a invokers.com</b>: se abre el optimizador oficial con tus Invokers (inicia sesión si te lo pide).</li>
+      <li>Toca el <b>marcador de Nexo</b> y confirma: el plan queda guardado en <b>Presets</b> y la página se recarga.</li>
+      <li>En <b>Presets</b>, pulsa <b>Apply</b> para revisar el oro y equipar.</li>
     </ol>
+    <p className="fine">El marcador se configura una sola vez (Importar → Con tu enlace → Otras formas). Es necesario porque solo una página de invokers.com puede escribir en tu cuenta.</p>
   </section>
 }
 
