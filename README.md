@@ -4,17 +4,23 @@
 
 Desde Chrome en el móvil, abre esa dirección y usa «Añadir a pantalla de inicio» o «Instalar aplicación». En la guía de la propia web puedes descargar Invokers Bridge. En la prueba del usuario, el puente ya leyó 12 archivos desde Android 16; falta verificar que lleguen a la PWA.
 
-Web móvil e instalable para organizar snapshots de **Invokers: Titan Legacy**. Proyecto independiente. No incluye recursos, código ni datos de GGNoLuck o del juego.
+Web móvil e instalable para organizar snapshots de **Invokers: Titan Legacy**. Proyecto independiente. No incorpora código ni recursos propietarios de GGNoLuck. Incluye ilustraciones del juego conforme a su política de contenido de fans.
 
-## Estado real de la versión 0.3
+## Estado real de la versión 0.4
 
-La colección usa una galería adaptable a móvil con ilustraciones SVG originales: retratos genéricos para Invokers y Titanes y trece iconos de ranura para reliquias y accesorios. Las tarjetas muestran nivel, rango, rareza, propietario y detalles desplegables. El equipo se filtra por tipo, rareza y disponibilidad; el simulador comparte sus ilustraciones. Son imágenes de categoría, no retratos oficiales ni una identificación visual de cada personaje.
+La colección muestra **retratos oficiales y nombres reales** de 242 Invokers y 39 Titanes, con 122 correspondencias verificadas para los snapshots de prueba. Usa una estética propia bajo el nombre Nexo, filtros por nombre, rareza, facción, rol y elemento, duplicados agrupados y fichas con equipo de cada copia. Las ilustraciones se publican conforme a la política oficial de contenido de fans. Véase [catálogo y procedencia](docs/CATALOG.md).
+
+La pantalla «Cómo sincronizar» incluye importación por carpeta y por enlace oficial. Un navegador que admite File System Access puede recordar una carpeta, actualizarla sin seleccionarla de nuevo y, con una opción explícita, leerla al volver a esa pantalla mientras conserve permiso. En Android sin esa API se mantiene el selector de archivos y el acceso con Shizuku.
+
+**Enlace de caja oficial:** pega `https://invokers.com/lamb/?b=…` y pulsa «Importar enlace con Bridge (Android)». Requiere actualizar el puente a 0.2.0. El puente descarga la instantánea pública por HTTPS y la comparte como JSON con la PWA instalada. Este modo no necesita Shizuku, contraseñas ni un servidor intermedio. La web también importa ese JSON desde el selector. El portal no permite leer el endpoint desde GitHub Pages mediante CORS; no se ofrece una lectura directa ficticia. La caja debe actualizarse con «Refresh link» en el portal antes de repetir la importación.
+
+El JSON oficial se ha probado con el enlace facilitado por el usuario: 378 Invokers, 50 Titanes, 881 reliquias y 87 accesorios. Conserva los propietarios y las estadísticas publicadas para cada Invoker; estas se identifican como valores de la instantánea y no se recalculan con el simulador. La entrega completa puente → PWA sigue requiriendo una prueba en el teléfono.
 
 Funciona la recepción de archivos compartidos con una PWA instalada: los `.dat` se validan, interpretan y guardan automáticamente en IndexedDB. La selección manual de una carpeta o de archivos `.dat` individuales conserva la vista previa. La web reconoce el contenedor MemoryPack, calcula huellas SHA-256 y conserva hasta cinco lotes.
 
 El lector independiente extrae **Invokers, Titanes, reliquias y accesorios**, con identificadores de instancia, niveles, rangos, bonificaciones y propietarios de equipo. Comprueba tamaños, recuentos y referencias cruzadas antes de marcar la colección como interpretada. Las importaciones antiguas se interpretan al abrir la versión nueva; la sección «Historial» compara altas, mejoras y cambios de propietario entre lotes interpretados.
 
-La colección muestra identificadores de modelo en lugar de nombres: los `.dat` no contienen nombres y todavía no hay un catálogo independiente autorizado. «Herramientas» permite comparar una ranura con piezas libres y revisar candidatos a venta **sin ejecutar cambios en el juego**. No calcula todavía la build completa, los costes ni las composiciones de equipo. La entrega del puente a la PWA sigue pendiente de confirmación en el Android del usuario.
+Los snapshots se vinculan a las identidades observadas y al catálogo oficial. Las identidades desconocidas conservan su ID y un aviso; no se asigna un retrato por semejanza numérica. «Herramientas» permite comparar una ranura con piezas libres y revisar candidatos a venta **sin ejecutar cambios en el juego**. No calcula todavía la build completa, los costes ni las composiciones de equipo. La entrega del puente a la PWA sigue pendiente de confirmación en el Android del usuario.
 
 ## Ejecutar y probar
 
@@ -61,6 +67,6 @@ La selección de carpetas mediante `webkitdirectory` puede depender de la versi�
 
 ## Referencia y límites
 
-Se estudiaron las páginas públicas de [GGNoLuck](https://www.ggnoluck.com/es/) sobre importación, optimizador, clasificación y calculadoras. El código y la interfaz de este proyecto son propios; no se incorporó el módulo WebAssembly, el catálogo, imágenes ni otros recursos de GGNoLuck. El formato binario se implementó conforme a la [especificación pública de MemoryPack](https://github.com/Cysharp/MemoryPack#binary-wire-format-specification) y se contrastó con los archivos reales facilitados por el usuario.
+Se estudiaron las páginas públicas de [GGNoLuck](https://www.ggnoluck.com/es/) sobre importación, optimizador, clasificación y calculadoras. El código y la interfaz de este proyecto son propios; no se incorporó el módulo WebAssembly, el catálogo completo, imágenes ni otros recursos de GGNoLuck. Las 122 correspondencias técnicas observadas en el informe local de referencia se documentan por separado en docs/CATALOG.md. El formato binario se implementó conforme a la [especificación pública de MemoryPack](https://github.com/Cysharp/MemoryPack#binary-wire-format-specification) y se contrastó con los archivos reales facilitados por el usuario.
 
-Quedan pendientes el catálogo de nombres, las estadísticas totales del personaje, las composiciones de equipo, las calculadoras que requieren fórmulas verificadas y la validación completa del puente en Android. Venta y equipamiento dentro del juego requieren un mecanismo de escritura legítimo y pruebas del resultado real. Ninguna operación de ese tipo está activa.
+Quedan pendientes la cobertura de nuevas identidades de snapshots y el cálculo propio de estadísticas totales del personaje, las composiciones de equipo, las calculadoras que requieren fórmulas verificadas y la validación completa del puente en Android. Venta y equipamiento dentro del juego requieren un mecanismo de escritura legítimo y pruebas del resultado real. Ninguna operación de ese tipo está activa.

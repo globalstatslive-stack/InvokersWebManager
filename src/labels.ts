@@ -4,12 +4,16 @@ export const RELIC_SLOTS: Record<number, string> = { 1: 'Arma', 2: 'Escudo', 3: 
 export const ACCESSORY_SLOTS: Record<number, string> = { 1: 'Amuleto', 2: 'Pendientes', 3: 'Estandarte', 4: 'Talismán', 5: 'Frascos' }
 export const RARITIES: Record<number, string> = { 1: 'Común', 2: 'Poco común', 3: 'Rara', 4: 'Épica', 5: 'Legendaria' }
 export const SETS: Record<number, string> = {
+  1: 'Tolerancia a aplastamiento', 2: 'Tolerancia a choque de maná', 3: 'Tolerancia a escarcha',
+  4: 'Tolerancia a aturdimiento', 5: 'Tolerancia a parálisis', 6: 'Tolerancia a pesadilla',
+  7: 'Tolerancia a niebla mental', 8: 'Tolerancia a fatiga', 9: 'Tolerancia a plaga',
+  10: 'Tolerancia a quemadura de maná', 11: 'Tolerancia a atrofia', 12: 'Tolerancia a putrefacción',
   101: 'Ataque', 102: 'Defensa', 103: 'Vida', 104: 'Prob. crítico', 105: 'Daño crítico',
   106: 'Precisión', 107: 'Resistencia', 108: 'Instinto', 109: 'Maná', 110: 'Vel. habilidad',
   111: 'Recuperación', 112: 'Robo de vida', 113: 'Ignorar defensa', 114: 'Apoyo',
   115: 'Reducir mejoras', 117: 'Evento 2', 118: 'Jefe de clan 1',
 }
-export const FACTIONS: Record<number, string> = { 1: 'Eldrin', 2: 'Magi', 3: 'Stonehearts', 5: 'Freeborn', 6: 'Beastbloods', 7: 'Nocturna', 9: 'Ironbands', 11: 'Cambion', 12: 'Lightseekers' }
+export const FACTIONS: Record<number, string> = { 1: 'Eldrinos', 2: 'Magos', 3: 'Petrocordis', 5: 'Libertarios', 6: 'Bestiales', 7: 'Nocturnos', 9: 'Férreos', 11: 'Cambiones', 12: 'Luminarios' }
 export const STATS: Record<number, string> = {
   1: 'Ataque', 2: 'Defensa', 3: 'Vida', 4: 'Ataque %', 5: 'Defensa %', 6: 'Vida %',
   7: 'Prob. crítico', 8: 'Daño crítico', 9: 'Precisión', 10: 'Resistencia',

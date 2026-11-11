@@ -11,8 +11,11 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.IBinder
 import android.os.ParcelFileDescriptor
+import android.text.InputType
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
@@ -22,10 +25,12 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
 
-/** Lee solo los snapshots mediante el UserService oficial de Shizuku. */
+/** Dos entradas de solo lectura: snapshots locales y enlace público del portal oficial. */
 class MainActivity : Activity() {
     private lateinit var status: TextView
-    private var connecting = false
+    private lateinit var linkInput: EditText
+    @Volatile private var connecting = false
+    @Volatile private var downloading = false
     private val requestCode = 100
     private val permissionResult = Shizuku.OnRequestPermissionResultListener { code, result ->
         if (code == requestCode) {
@@ -34,7 +39,7 @@ class MainActivity : Activity() {
         }
     }
     private val binderReady = Shizuku.OnBinderReceivedListener { refresh() }
-    private val binderDead = Shizuku.OnBinderDeadListener { show("Shizuku se ha detenido. Inícialo de nuevo desde depuración inalámbrica.") }
+    private val binderDead = Shizuku.OnBinderDeadListener { if (!downloading) show("Shizuku se ha detenido. Puedes importar por enlace o iniciarlo de nuevo para leer los .dat.") }
     private val args by lazy { Shizuku.UserServiceArgs(ComponentName(packageName, SnapshotReaderService::class.java.name)).daemon(false).processNameSuffix("reader").debuggable(BuildConfig.DEBUG).version(BuildConfig.VERSION_CODE) }
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, binder: IBinder) {
@@ -58,16 +63,32 @@ class MainActivity : Activity() {
             column.addView(this)
         }
         add("INVOKERS BRIDGE", 14f, 0xffe8bd73.toInt())
-        add("Snapshots directos desde Android", 28f, -1)
-        add("Puente de solo lectura. Necesita Shizuku activo y tu autorización. No solicita contraseña ni modifica el juego.", 16f, 0xffc2cedb.toInt())
-        status = add("Comprobando Shizuku…", 15f, 0xffe8bd73.toInt())
+        add("Tu colección en la web", 28f, -1)
+        add("Importa un enlace oficial compartido o lee los archivos del juego con Shizuku. No solicita contraseña ni modifica el juego.", 16f, 0xffc2cedb.toInt())
+        status = add("Preparando importación…", 15f, 0xffe8bd73.toInt())
+        add("ENLACE OFICIAL · SIN SHIZUKU", 13f, 0xffe8bd73.toInt())
+        linkInput = EditText(this).apply {
+            hint = "https://invokers.com/lamb/?b=…"
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
+            setTextColor(0xffe6edf5.toInt())
+            setHintTextColor(0xffa3b3c4.toInt())
+            textSize = 14f
+            isSingleLine = true
+            isSaveEnabled = false
+            importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_NO
+            contentDescription = "Enlace oficial de colección compartida"
+        }
+        column.addView(linkInput)
+        column.addView(Button(this).apply { text = "IMPORTAR ENLACE Y ABRIR LA WEB"; setOnClickListener { importLink(linkInput.text.toString()) } })
+        add("Se descargará únicamente la colección de ese enlace desde invokers.com. La copia JSON se entrega a la web en tu dispositivo. El enlace puede caducar y no se renueva desde este puente.", 13f, 0xffa3b3c4.toInt())
+        add("ARCHIVOS DEL JUEGO · CON SHIZUKU", 13f, 0xffe8bd73.toInt())
         column.addView(Button(this).apply { text = "LEER Y COMPARTIR SNAPSHOTS"; setOnClickListener { begin() } })
         column.addView(Button(this).apply { text = "CAMBIAR DESTINO DE COMPARTIR"; setOnClickListener {
             getSharedPreferences("share-target", MODE_PRIVATE).edit().remove("component").apply()
             show("Destino olvidado. En la próxima lectura podrás elegir la PWA en Compartir.")
         } })
         column.addView(Button(this).apply { text = "BORRAR COPIAS TEMPORALES"; setOnClickListener {
-            if (connecting) show("Espera a que termine la lectura antes de borrar las copias.")
+            if (connecting || downloading) show("Espera a que termine la importación antes de borrar las copias.")
             else { File(cacheDir, "shares").deleteRecursively(); show("Copias temporales del puente borradas.") }
         } })
         add("La primera vez, selecciona Invokers Web Manager en Compartir. La web guardará los archivos automáticamente. Si Android lo permite, el puente recordará tu elección para la próxima lectura.", 14f, 0xffa3b3c4.toInt())
@@ -77,11 +98,61 @@ class MainActivity : Activity() {
         Shizuku.addBinderDeadListener(binderDead)
         Shizuku.addRequestPermissionResultListener(permissionResult)
         refresh()
+        if (savedInstanceState == null) receiveLink(intent)
     }
-    private fun show(message: String) = runOnUiThread { if (::status.isInitialized) status.text = message }
-    private fun refresh() { show(if (runCatching { Shizuku.pingBinder() }.getOrDefault(false)) "Shizuku activo. Listo para leer los .dat." else "Inicia Shizuku con depuración inalámbrica antes de continuar.") }
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        receiveLink(intent)
+    }
+    private fun show(message: String) = runOnUiThread { if (::status.isInitialized && !isDestroyed) status.text = message }
+    private fun refresh() {
+        if (connecting || downloading) return
+        show(if (runCatching { Shizuku.pingBinder() }.getOrDefault(false)) "Listo para importar un enlace o leer los .dat con Shizuku." else "Listo para importar por enlace. Para leer los .dat, inicia Shizuku.")
+    }
+    private fun receiveLink(incoming: Intent?) {
+        val text = when (incoming?.action) {
+            Intent.ACTION_VIEW -> {
+                val uri = incoming.data ?: return
+                if (uri.scheme != "invokersbridge" || uri.host != "import" || uri.userInfo != null || uri.port != -1 ||
+                    !uri.path.isNullOrEmpty() || uri.fragment != null || uri.queryParameterNames != setOf("url") ||
+                    uri.getQueryParameters("url").size != 1) {
+                    show("La solicitud de importación no tiene un enlace oficial válido.")
+                    return
+                }
+                uri.getQueryParameter("url") ?: return
+            }
+            Intent.ACTION_SEND -> if (incoming.type == "text/plain") incoming.getStringExtra(Intent.EXTRA_TEXT)?.trim() else null
+            else -> null
+        } ?: return
+        // El token no se conserva en preferencias ni en el Intent de la actividad.
+        setIntent(Intent(this, MainActivity::class.java))
+        linkInput.setText(text)
+        importLink(text)
+    }
+    private fun importLink(link: String) {
+        if (connecting || downloading) { show("Ya hay una importación en curso."); return }
+        try { SharedLinkPolicy.token(link) }
+        catch (e: IllegalArgumentException) { show(e.message ?: "Enlace oficial no válido."); return }
+        downloading = true
+        show("Descargando la colección compartida desde invokers.com…")
+        Thread {
+            val directory = File(cacheDir, "shares/${UUID.randomUUID()}")
+            try {
+                require(directory.mkdirs()) { "No se pudo preparar el almacenamiento local" }
+                val partial = File(directory, "invokers-shared-box.json.tmp")
+                FileOutputStream(partial).use { SharedBoxDownloader().download(link, it) }
+                val destination = File(directory, "invokers-shared-box.json")
+                require(partial.renameTo(destination)) { "No se pudo preparar la colección" }
+                val uri = FileProvider.getUriForFile(this, "$packageName.files", destination)
+                shareFiles(arrayListOf(uri), "application/json", "Colección oficial descargada")
+            } catch (e: Exception) {
+                directory.deleteRecursively()
+                show(if (e is SharedBoxException) e.message ?: "No se pudo descargar la colección." else "No se pudo preparar la importación. Vuelve a intentarlo.")
+            } finally { downloading = false }
+        }.start()
+    }
     private fun begin() {
-        if (connecting) return
+        if (connecting || downloading) return
         if (!runCatching { Shizuku.pingBinder() }.getOrDefault(false)) { refresh(); return }
         when {
             Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED -> bindReader()
@@ -123,9 +194,13 @@ class MainActivity : Activity() {
             require(temp.renameTo(destination)) { "No se pudo preparar $name" }
             uris.add(FileProvider.getUriForFile(this, "$packageName.files", destination))
         }
+        shareFiles(uris, "application/octet-stream", "${uris.size} archivos leídos")
+    }
+    private fun shareFiles(uris: ArrayList<android.net.Uri>, mime: String, message: String) {
         runOnUiThread {
+            if (isFinishing || isDestroyed) return@runOnUiThread
             val send = Intent(Intent.ACTION_SEND_MULTIPLE).apply {
-                type = "application/octet-stream"
+                type = mime
                 putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris)
                 clipData = ClipData.newUri(contentResolver, "Snapshots de Invokers", uris.first()).also { clip -> uris.drop(1).forEach { clip.addItem(ClipData.Item(it)) } }
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -135,7 +210,7 @@ class MainActivity : Activity() {
             if (saved != null && isInvokersWebApk(this, saved.packageName)) {
                 try {
                     startActivity(Intent(send).setComponent(saved))
-                    show("${uris.size} archivos leídos. Abriendo Invokers Web Manager para guardarlos…")
+                    show("$message. Abriendo Invokers Web Manager para validar y guardar…")
                     return@runOnUiThread
                 } catch (_: ActivityNotFoundException) {
                     getSharedPreferences("share-target", MODE_PRIVATE).edit().remove("component").apply()
@@ -147,7 +222,7 @@ class MainActivity : Activity() {
                 this, 0, Intent(this, ShareTargetReceiver::class.java),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
             )
-            show("${uris.size} archivos leídos. Elige Invokers Web Manager en Compartir; la web los guardará automáticamente.")
+            show("$message. Elige Invokers Web Manager en Compartir; la web validará la importación.")
             startActivity(Intent.createChooser(send, "Compartir con Invokers Web Manager", callback.intentSender))
         }
     }

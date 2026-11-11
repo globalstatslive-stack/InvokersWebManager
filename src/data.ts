@@ -1,3 +1,4 @@
+import { decodeOfficialBox } from './officialImport'
 import { decodeCollection, type Collection } from './memorypack'
 
 export const REQUIRED_NAMES = [
@@ -23,6 +24,7 @@ export type ImportRecord = {
   missing: string[]
   collection?: Collection
   interpretationError?: string
+  source?: 'official-link' | 'files'
   decoderVersion?: number
 }
 export type FileChange = { name: string; kind: 'nuevo' | 'cambiado' | 'eliminado' | 'igual' }
@@ -75,6 +77,13 @@ export function diffCollection(current: ImportRecord, previous?: ImportRecord): 
 
 export async function prepareFiles(files: File[]): Promise<ImportRecord> {
   if (!files.length) throw new Error('Selecciona al menos un archivo .dat.')
+  if (files.length === 1 && files[0].name.toLowerCase().endsWith('.json')) {
+    const file=files[0]
+    if(file.size>20*1024*1024) throw Error('La caja JSON supera 20 MiB.')
+    const buffer=await file.arrayBuffer(), collection=decodeOfficialBox(JSON.parse(new TextDecoder().decode(buffer)))
+    const hash=await crypto.subtle.digest('SHA-256',buffer)
+    return {id:crypto.randomUUID(),importedAt:new Date().toISOString(),source:'official-link',decoderVersion:1,collection,missing:[],files:[{name:file.name,size:file.size,digest:Array.from(new Uint8Array(hash),b=>b.toString(16).padStart(2,'0')).join(''),sample:'',formatHint:'Caja compartida oficial · JSON',blob:file}]}
+  }
   const dat = files.filter(file => file.name.toLowerCase().endsWith('.dat'))
   if (dat.length !== files.length) throw new Error('La selección contiene archivos que no terminan en .dat. Selecciona solo los snapshots de Invokers.')
   if (new Set(dat.map(file => file.name.toLowerCase())).size !== dat.length) throw new Error('Hay nombres de archivo repetidos. Selecciona una sola carpeta de snapshots.')

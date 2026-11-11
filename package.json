@@ -1,13 +1,13 @@
 {
   "name": "invokers-web-manager",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "test": "vitest run"
+    "test": "vitest run && node scripts/check-game-assets.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

@@ -1,0 +1,2936 @@
+{
+  "retrieved": "2026-11-10",
+  "policy": "https://www.invokers.com/en/terms/fan-content-policy/",
+  "assets": [
+    {
+      "path": "game/characters/Freeborn/FRB003/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB003/portrait.webp",
+      "sha256": "c17c428f5af111d61081ec6ace0a460f8c966f5e2fcbf3e4e8333ef02bbf2ceb"
+    },
+    {
+      "path": "game/elements/earth.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/elements/earth.webp",
+      "sha256": "e155b8b7bf4e9083c67b331d63ef13988eb6ddaeea335ae403a4e3616fa8244e"
+    },
+    {
+      "path": "game/factions/FRB/small.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/factions/FRB/small.webp",
+      "sha256": "0173b1b5d58ed6d63574e282d1017b20fac6a503a61208361fc27e36f4c0761e"
+    },
+    {
+      "path": "game/classes/tank.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/classes/tank.webp",
+      "sha256": "68085290bf1ac016946e8a361aee72ba07e07e0bd4f7cfdfd20e8459305b8bf7"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS038/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS038/portrait.webp",
+      "sha256": "89b56ad2ef831242733ec43bb37e4fed5170035c0acdc717343cb60961fb4af0"
+    },
+    {
+      "path": "game/elements/water.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/elements/water.webp",
+      "sha256": "34e0c1b13953bd9284ab188cb4228c72efccfaccdf5d758535948af3db2e9f17"
+    },
+    {
+      "path": "game/factions/LTS/small.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/factions/LTS/small.webp",
+      "sha256": "edfbefcba86da79df8f75da5f1d6b976b91ac51936154c977c527dc9992861b1"
+    },
+    {
+      "path": "game/classes/melee_attacker.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/classes/melee_attacker.webp",
+      "sha256": "5146909188a5b284143b8c98f24e5ad14ab63b647a685f9b906948100e920a9f"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN012/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN012/portrait.webp",
+      "sha256": "9fefcd5e56adbc88ab4dc830494546bb3c605ec8ac8fe86c91bee5c8946053d1"
+    },
+    {
+      "path": "game/elements/fire.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/elements/fire.webp",
+      "sha256": "ca05d5a443132d199a4cbf2db93bee708cce6d8fc2bb20cd1778faac8993f5d9"
+    },
+    {
+      "path": "game/factions/IRN/small.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/factions/IRN/small.webp",
+      "sha256": "c835639e3ea69893c7428bcbf6d9fca2bce62628aa87774b617855768824c4de"
+    },
+    {
+      "path": "game/characters/Cambion/CAM004/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM004/portrait.webp",
+      "sha256": "0b49f54277227b72023daadaafb0ff8147b25345ff5a5cf9725db37bb757ee20"
+    },
+    {
+      "path": "game/factions/CAM/small.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/factions/CAM/small.webp",
+      "sha256": "8fdf80e670bf2e239cb3e0c6e9f52305845336136461895ea5c25a1437da4d55"
+    },
+    {
+      "path": "game/classes/support.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/classes/support.webp",
+      "sha256": "e198995ee7923c350d9cf8fb4657e46814d30e968af680777164b07e05998da2"
+    },
+    {
+      "path": "game/characters/Magi/MAG017/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/MAG017/portrait.webp",
+      "sha256": "afe96dc0da0379593ffea7ee0a4212eef51d3a54c12f46eb8f3a8c67ee57aeee"
+    },
+    {
+      "path": "game/factions/MAG/small.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/factions/MAG/small.webp",
+      "sha256": "7a817f1d1dcf0fa17c0237ee216b63aade7c3ceff54da3fa3fa02e0ae12e6550"
+    },
+    {
+      "path": "game/classes/ranged_attacker.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/classes/ranged_attacker.webp",
+      "sha256": "9b25eadd66bbb9a2ac50686482030eda8453782f9082eb24f2152019c902d804"
+    },
+    {
+      "path": "game/characters/Magi/MAG021/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/MAG021/portrait.webp",
+      "sha256": "7a8ca083cf4e8cf4c5742eb3782bca5379c7d460a6403db52ae215295b6ae66e"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD030/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD030/portrait.webp",
+      "sha256": "fc5f5ea3fcc30549168f2e1bac3d3217eed866b018263a1d638638973310aa27"
+    },
+    {
+      "path": "game/factions/ELD/small.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/factions/ELD/small.webp",
+      "sha256": "3860e84ea4c9901169211b928ccc5fa4942692598f68971f967677ab277d4b96"
+    },
+    {
+      "path": "game/characters/Magi/MAG013/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/MAG013/portrait.webp",
+      "sha256": "89be6ca202947d1cbf54734dd2d2092096f4ac9f87ace55af5e228adaa69b8f7"
+    },
+    {
+      "path": "game/characters/Cambion/CAM011/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM011/portrait.webp",
+      "sha256": "c1d854e1ae4f98e37c3ad1737520176669cd7a527c7f7f98cdf6855071a4d850"
+    },
+    {
+      "path": "game/elements/light.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/elements/light.webp",
+      "sha256": "6d9701971ed22bd5e0166e3242692e778fa57a1ff433851b1bc30798fc1946a1"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD037/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD037/portrait.webp",
+      "sha256": "c8d22a5acb5116c765866594411214ed9331d094369ad53e55876bcdeb920d31"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS014/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS014/portrait.webp",
+      "sha256": "61d70822f9efaa0ef63d39b9378191cb1e4d2a7b8c10c5b6620d2f1212fcfe60"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS025/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS025/portrait.webp",
+      "sha256": "d842a2f7930005d1232c74ee2f52594014bb64c26e29f76538eeb076bb387c0d"
+    },
+    {
+      "path": "game/characters/Beastbloods/BST011/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Beastbloods/BST011/portrait.webp",
+      "sha256": "3df7ba546ab429246041f8634d25d209fc7197419cec92864b5299754b0294e9"
+    },
+    {
+      "path": "game/factions/BST/small.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/factions/BST/small.webp",
+      "sha256": "6125d863a1c79dd0091d6a4c26b91e25a3bb374f834e20774b7d4843865deb1f"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC006/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC006/portrait.webp",
+      "sha256": "9b6ce20ccec512944d7575585f4944983339d280decfa981a9fd006051806597"
+    },
+    {
+      "path": "game/elements/wind.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/elements/wind.webp",
+      "sha256": "fa7f3c4193f41530e32b5e4887bbe318a74b3546e720a4a99018d396bfe412dc"
+    },
+    {
+      "path": "game/factions/NOC/small.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/factions/NOC/small.webp",
+      "sha256": "c7aae67c16795964978af5f03681563bfae48167dd86a4c851e1c5382072cc46"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC015/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC015/portrait.webp",
+      "sha256": "112b71a4c08e0d6e283d03f2af5c1b214b72a27d706374c51d5f2df4a2cdbc22"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD041/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD041/portrait.webp",
+      "sha256": "f52581a345f943eb3df2086f61f94446793a48210791e3ac299b248cefffaae8"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB007/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB007/portrait.webp",
+      "sha256": "ce5c90c18c61e1065b860e09b097688cfb7607dee135fb6e16493c19097b1349"
+    },
+    {
+      "path": "game/characters/Cambion/CAM003/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM003/portrait.webp",
+      "sha256": "8f1f7007f76ad9aabba3a406d97aa69395cd17fff7e0d4dc58198125ed07bf7c"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS033/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS033/portrait.webp",
+      "sha256": "3249c0fd24793429124b04b7ea2f0f41ea8541d45104db9df3e219ab6b438e84"
+    },
+    {
+      "path": "game/characters/Magi/MAG010/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/MAG010/portrait.webp",
+      "sha256": "750432071c255bdb5a7094b8733f8ce19173dafbab84d3c190497fdd03160a33"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN027/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN027/portrait.webp",
+      "sha256": "1250e86cf38581c4069f0705463bba37bba7a6b94aa182935c6b14b653e36032"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC004/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC004/portrait.webp",
+      "sha256": "4f5834376a326e65d2887c3e795e70b801cbf80508f9cd24fc57f0d1c94ac496"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN006/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN006/portrait.webp",
+      "sha256": "9b4701bd7216addd22e6de06f3f4576f088733d081330372727d86d100371505"
+    },
+    {
+      "path": "game/elements/dark.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/elements/dark.webp",
+      "sha256": "0decd5af328242551ce137c811bf594c8927c90c9611f093c0cfdbf16bcae42a"
+    },
+    {
+      "path": "game/factions/STO/small.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/factions/STO/small.webp",
+      "sha256": "f48ca46176118ddc0f125df98607a4a166c131cce78a14917e33b174db1d9bfe"
+    },
+    {
+      "path": "game/characters/Magi/MAG007/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/MAG007/portrait.webp",
+      "sha256": "c245ea38fbc5c024b71be6251efc97c9f9fb1e0dc02704e955c04546ad373386"
+    },
+    {
+      "path": "game/characters/Cambion/CAM025/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM025/portrait.webp",
+      "sha256": "bdbb9eae3d84d8329eac2945d2c37c668e9bb42df0d5edefddc99ada53d16675"
+    },
+    {
+      "path": "game/characters/Cambion/CAM021/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM021/portrait.webp",
+      "sha256": "5f5bf23f6eaf03c6dfe352e376498bf09e6c481d362092346ffea36d7c923f74"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB002/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB002/portrait.webp",
+      "sha256": "0741865f4af6736f790a2fc665a316766ce5bb99e8dc8ef0cc08c97303f80329"
+    },
+    {
+      "path": "game/characters/Cambion/CAM022/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM022/portrait.webp",
+      "sha256": "8915e81c2ce26c7ddffd0ddade3f990cfc44013c018289b4e74d9139c42f8407"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD008/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD008/portrait.webp",
+      "sha256": "d4ba5a6f6d7cccb9117d9b120115f74ef780ddab6b3435d70cd3e5d880e03446"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS005/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS005/portrait.webp",
+      "sha256": "f135ff812b21254714a552cecd544db0b35448db851e2e228be93db893495d9d"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB019/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB019/portrait.webp",
+      "sha256": "10f856fc95887c69dcf36f7ec5321a470e28e9e460920449181e99285d032007"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS021/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS021/portrait.webp",
+      "sha256": "7c4b5aff62d7b6c53e3529e7abf18b0e48040402cf4be60c144ec8c614b24232"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN022/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN022/portrait.webp",
+      "sha256": "d462b9227e893ea4c309a481ee1327ebb592bd40b2bd412e16ac6f358df79084"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD006/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD006/portrait.webp",
+      "sha256": "9b3c5ea25471c07788f7099b80f06fd4ec2d0383732ac60b4dc749e5b353f416"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN021/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN021/portrait.webp",
+      "sha256": "f3cb39f0518d188d500efcac70337835229f5e1f7be1560a587da57f97dea71a"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC039/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC039/portrait.webp",
+      "sha256": "a5e8e2247cb7d15f66cf0b544dadff0e48be06adbffe64d308f2e11fdbe8dbe6"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS015/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS015/portrait.webp",
+      "sha256": "92c7ba255fb24ddd480ea1739d250cad4bb875a34fddb44ec2453306d09a58a5"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB013/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB013/portrait.webp",
+      "sha256": "bc28fc75cec6c7a6525ee2b986b2c305b8e559cfaac987b4c5a10f605cb689ea"
+    },
+    {
+      "path": "game/characters/Magi/MAG004/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/MAG004/portrait.webp",
+      "sha256": "1fcb9e09b375cbf82eff5b2d663bf4bf4c1cedb1064f7c6d3ddf7f29aaca8ac5"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD025/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD025/portrait.webp",
+      "sha256": "62ef164e48053968febabdc80938c088a6307258b229562774ae76bcc7c0a6e8"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS009/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS009/portrait.webp",
+      "sha256": "f73c5c5379ea34faa0491dbf7233e6c2acfba353695e09cf603dcbf7e7144a1e"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD012/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD012/portrait.webp",
+      "sha256": "f1a8946a04009fe9eccc759e6adecd403c6ee7facee4a5432bde35762921d82f"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD040/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD040/portrait.webp",
+      "sha256": "b9405ccf0e80d41ac85d07b71db8988ebb704b6d7b8045a8d494fc13de2a6751"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD031/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD031/portrait.webp",
+      "sha256": "4b9ec9fa02990af7013b21853744fd60f0541a7a973c5cecdbc581db28ca83b5"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS020/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS020/portrait.webp",
+      "sha256": "291dde14082b43534347bd6dd9a8357aa9e99cbd86e5c5baec30c6157c8d5809"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS012/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS012/portrait.webp",
+      "sha256": "1cf03ca21d63561f0aefd231449c21701e48f1b8641536c6403e234a040b515a"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB001/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB001/portrait.webp",
+      "sha256": "fa10d05d72dda92021554d8b9b1e9d4e8ce8d1accd4d10961c370a3fe9dbf429"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN019/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN019/portrait.webp",
+      "sha256": "c2ead2d2fa09015431cb83c19b59915630656d402aa62019c8540c009a54923d"
+    },
+    {
+      "path": "game/characters/Magi/MAG001/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/MAG001/portrait.webp",
+      "sha256": "fe88421966dbc4ddc4348363ed74338e501573e8ef6fe162d232da8c586207f0"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS023/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS023/portrait.webp",
+      "sha256": "1231626e7d1024f89d3a812da3f2746e2ea23b4c2bcd4e560fd5a05b536265cc"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC030/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC030/portrait.webp",
+      "sha256": "fcf33cab6b63706b22e6f041cb38d530891b48cc0388032cd2ba7127de793e47"
+    },
+    {
+      "path": "game/characters/Beastbloods/BST007/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Beastbloods/BST007/portrait.webp",
+      "sha256": "6ebea536989a90c141629fd793fe134361a8d9e6a01d7c12c0727f1c0e6c520b"
+    },
+    {
+      "path": "game/characters/Cambion/CAM010/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM010/portrait.webp",
+      "sha256": "26de4ec84daadcb4143b43c319c3b605fa9d0c91c11876a41d0a99c3a8344cab"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN026/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN026/portrait.webp",
+      "sha256": "07c62c421df2bbbe6199a04352d63422e9feeafc06a59671660f38493e7149f5"
+    },
+    {
+      "path": "game/characters/Cambion/CAM001/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM001/portrait.webp",
+      "sha256": "cf7670641f300f3082b9adfa4e3b5bfd10c417926db32bcc843eee448b441c01"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN004/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN004/portrait.webp",
+      "sha256": "0d5d7b67ca7ceba73d01ed6b07ff6a5f5860e64a4780e9e4ae2f6f2686e4bc3a"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN002/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN002/portrait.webp",
+      "sha256": "48d0b30d4ed74eaca849b7715220a87f886b3280477f89f3b40e7e7de2b057f7"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD014/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD014/portrait.webp",
+      "sha256": "94b56e0dba04cac7d7e1a88642cca238118bddafc5c8ed66f3b1498f140d48bd"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD039/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD039/portrait.webp",
+      "sha256": "1a8bffc6717a3fa09ff3dcbd6e5cd2141521c20bb6c9a03f36998fa53eaf7468"
+    },
+    {
+      "path": "game/characters/Magi/MAG015/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/MAG015/portrait.webp",
+      "sha256": "99ed49cefa16c5bbdc3e5646b486991606c840103c0de55680237fd0cb1f0181"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD007/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD007/portrait.webp",
+      "sha256": "e325687153ba4ee08052d5036482593254e978831a173deaddb244c5c3fbd080"
+    },
+    {
+      "path": "game/characters/Magi/MAG008/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/MAG008/portrait.webp",
+      "sha256": "7f9b90df56b62999a3295c533d7fce009dd6b75927d3d35a2fa1964c97a320ce"
+    },
+    {
+      "path": "game/characters/Beastbloods/BST014/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Beastbloods/BST014/portrait.webp",
+      "sha256": "a33d90d9487a7e66de8323d9329496aa403cc39373d77d60abf8f10f2b41339f"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN011/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN011/portrait.webp",
+      "sha256": "c5763beaea21e32eb5e24fbe8506cdf50fd10275fc6be5459f726182a36d2580"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN001/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN001/portrait.webp",
+      "sha256": "de5315bd8a9b6dd41aec2bf79d2b76932b4d3ad04639943d4bfafd2eef49f563"
+    },
+    {
+      "path": "game/characters/Cambion/CAM016/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM016/portrait.webp",
+      "sha256": "16d97bc16517f235ee5ad1329858bfc536a0d1430f7ffc254ea274de527af496"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN018/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN018/portrait.webp",
+      "sha256": "39040af761e286df11c8484f212d3d2201f432e4a3ad500d1839f4f8d684571c"
+    },
+    {
+      "path": "game/characters/Cambion/CAM026/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM026/portrait.webp",
+      "sha256": "fc01753f29e14f6a388680dbc1983710590ebf0bb761ed02aa84b498ea6aee56"
+    },
+    {
+      "path": "game/characters/Cambion/CAM029/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM029/portrait.webp",
+      "sha256": "3b3191d36a5aeafe8f20d560adc2b59320ab8750e8c751b735ba476aec918488"
+    },
+    {
+      "path": "game/characters/Cambion/CAM007/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM007/portrait.webp",
+      "sha256": "1a6f7ed41afb452fe7c37b7485aeb3a6a446c95deb2f92c6107f97a78c77ee31"
+    },
+    {
+      "path": "game/characters/Cambion/CAM009/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM009/portrait.webp",
+      "sha256": "c49fa0ea6059c9044b2f62257677408dba7b68cba604b7d7bf1365940df40b30"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN004/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN004/portrait.webp",
+      "sha256": "450df82bb07d141bcd94fdc2715a40c9e544b27fab3dbe79f9e87a7f83a2d27f"
+    },
+    {
+      "path": "game/characters/Magi/MAG012/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/MAG012/portrait.webp",
+      "sha256": "665bafaccebe87d063b802d882d0235e7ef27f554b6e8e9442cb09409254f940"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC033/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC033/portrait.webp",
+      "sha256": "941d8f8ecf0943a24c390f53e90c6aa02650bbebc590fce377fe86b43c604ddf"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN008/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN008/portrait.webp",
+      "sha256": "0f7049f177ef147b339a46cf2c53e799ac6b7d9fb99b419e19f9cc6a9e25515c"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC044/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC044/portrait.webp",
+      "sha256": "84886fb59be972dde432139abdd932048c38e100d595c21177df24ca4e7ac16d"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD027/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD027/portrait.webp",
+      "sha256": "2eac8e26ad5711d154e141df85621b504e8b5316aa15bd594db5939ac73c9870"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN009/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN009/portrait.webp",
+      "sha256": "f1258396d8465049646aa8275eb2222698ed6bde29a6083036f8dfb12044269e"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN031/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN031/portrait.webp",
+      "sha256": "13ccdfb02afc1b5f58e83d4f662dcae683440c65a2c00d7cbf888699b6a7da23"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD034/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD034/portrait.webp",
+      "sha256": "bd9be468793e1a199c92cab32f2d397d3e7a06532a349cc410c098f6674645ea"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS022/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS022/portrait.webp",
+      "sha256": "edfc8968360d312fe32d57171f91e04ab2b9eb6c6315393093c3e71faf1c56db"
+    },
+    {
+      "path": "game/characters/Beastbloods/BST010/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Beastbloods/BST010/portrait.webp",
+      "sha256": "2125e5e7b503169deb1b6c616a626254484842a402312578c7075a3ffc278d4d"
+    },
+    {
+      "path": "game/characters/Cambion/CAM020/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM020/portrait.webp",
+      "sha256": "d699cddcf21e85eb8c2fdc28d89cd60a721a2799536527e7ac577ba723eeeca9"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS027/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS027/portrait.webp",
+      "sha256": "ca88aa401aa508b3056e4e7edd1aa69264ecce32ca02eec1e51a8f4a9ba49dad"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN016/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN016/portrait.webp",
+      "sha256": "6a6c24273be43707521babd7f2d9bb20a6bf726d253ac602420a4b9061d14aa3"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN007/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN007/portrait.webp",
+      "sha256": "a7b08ca40746bc1c065acc88ac4d355ccb4ee984cd129fb3acfac0f5cd50ae96"
+    },
+    {
+      "path": "game/characters/Beastbloods/BST012/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Beastbloods/BST012/portrait.webp",
+      "sha256": "232abbe532fd823617cd6f875c566edf13e59a84eb339c5f74222c00fcad7dbb"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN011/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN011/portrait.webp",
+      "sha256": "bd26bc37aa2ec8f564776fccd7b0f74cc9a8bb5546d7d85ddf202037b88dda6a"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN013/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN013/portrait.webp",
+      "sha256": "5035b973642afaaa3be3800e45ac1e7ad2b3ba3f94b6da97f903b0ed5b17e9f2"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB023/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB023/portrait.webp",
+      "sha256": "b81f458617640c37d1aa8f881ab61b1f5168794c55f710fdd291d618d58702aa"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS017/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS017/portrait.webp",
+      "sha256": "7437fdba9bdfd4f3f92b122cfdaaf4bd8f8b86453818dedaf0aa498f47e32346"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB009/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB009/portrait.webp",
+      "sha256": "eb0b3da361839a4be81465764ae4512d148cf38a7738d0368500a89e07004604"
+    },
+    {
+      "path": "game/characters/Cambion/CAM023/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM023/portrait.webp",
+      "sha256": "4d929268fb12055a44377c82f00e969d23850fb64af1e1dbd2cd17d227faf588"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS008/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS008/portrait.webp",
+      "sha256": "bc973d678f0431ea6acd85d7d6fbb78921260d519bd343e3bdc406f047132e63"
+    },
+    {
+      "path": "game/characters/Cambion/CAM006/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM006/portrait.webp",
+      "sha256": "897dbe4ecef9913fa9b707f72f8fec13cbb0447c292382a70db64684e606157d"
+    },
+    {
+      "path": "game/characters/Cambion/CAM015/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM015/portrait.webp",
+      "sha256": "67e53825c725a8eda13ed74abb3053529dbeb5bd85f2c5e6201c6a52505dbbb6"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS019/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS019/portrait.webp",
+      "sha256": "6d17c693f5abf7f56db1c997db10a96107f8dcc1d10361ca82c533204aa36376"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN009/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN009/portrait.webp",
+      "sha256": "84b86b652789b567cff13d38473a9e45b53db04abc9c503b556abf1f50def23d"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB018/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB018/portrait.webp",
+      "sha256": "26cf913230c790c6d2a421965b6aa4b93d88557235fe76af7f144bad6227800f"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB012/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB012/portrait.webp",
+      "sha256": "11044774b1cc7c079798502decc0c673af0714a909f8135665856010583dc015"
+    },
+    {
+      "path": "game/characters/Magi/MAG002/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/MAG002/portrait.webp",
+      "sha256": "a51bcc2198edeebc8f6105680bc17025354e18a6ee8a9dffab0e0b20a4697f41"
+    },
+    {
+      "path": "game/characters/Cambion/CAM012/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM012/portrait.webp",
+      "sha256": "e8d5099e16eaa16674317a7a399e137cb5db963c935e711c0c4e0d25674e31f4"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC025/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC025/portrait.webp",
+      "sha256": "451520bc64e31df563c34d91c655d9b900f7f839a5fcb7dadf0568d86ff08a39"
+    },
+    {
+      "path": "game/characters/Cambion/CAM002/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM002/portrait.webp",
+      "sha256": "e77dad853eb55c0bf070556c262c847bb779ca0b2f2af9e141969c0f5b083720"
+    },
+    {
+      "path": "game/characters/Cambion/CAM008/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM008/portrait.webp",
+      "sha256": "56cfb7ba1a488b7219fe81c305be0e0f6026cc84198ba9926100cc8999a527c1"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN020/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN020/portrait.webp",
+      "sha256": "713ac000d82fd63aad8da5b5f1eb485b2fbd39dc64fd32f7ae15fa0594d9429e"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN014/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN014/portrait.webp",
+      "sha256": "cf2d45b7889df2345b991a63f28ef87bcf2a8b87af91dc2e3caa8022e2a89532"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB011/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB011/portrait.webp",
+      "sha256": "7bf06cb6911d99a1b56e2e820db3d437c34c19e6927e33de492adb5b4837e741"
+    },
+    {
+      "path": "game/characters/Beastbloods/BST002/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Beastbloods/BST002/portrait.webp",
+      "sha256": "8b45608a34e3dc36390555a583a90c87b437cb7134d2069f913ddfe2696538a5"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN024/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN024/portrait.webp",
+      "sha256": "06f537f32d68c5327af38af2cbbf30f03e4ff9b2f8cfe0b2b5027cc5a43eece1"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB010/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB010/portrait.webp",
+      "sha256": "a6e197660c72b272f120b4bf872e4814008d42e149282b2eee4e9a825912f42a"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN025/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN025/portrait.webp",
+      "sha256": "95eb583c9f9be6c98a3e7451413fdc3af85d24eb1f1046bd8be5699e6541933a"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS037/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS037/portrait.webp",
+      "sha256": "1a6239c27a1b81c75b46b60f6af4d320ff8beeb88ec77039f2e1ea6034e82029"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN006/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN006/portrait.webp",
+      "sha256": "779e11b35946f10ad46b04482a643c62d79d77b208bc209205c7f4c1e98ea944"
+    },
+    {
+      "path": "game/characters/Cambion/CAM018/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM018/portrait.webp",
+      "sha256": "95803e930acf443df0d8ab86c7ee3deeecf81a930fee19705e3e39bd7d202f9a"
+    },
+    {
+      "path": "game/characters/Magi/MAG014/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/MAG014/portrait.webp",
+      "sha256": "9839577899226b60721cf1803c82c2e3dc781547a0a8bc2bc6801d820bc11650"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB004/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB004/portrait.webp",
+      "sha256": "84ab5be48df37cedd1a4e599ef608cb19a028af68ce675a62ba18881dba6c668"
+    },
+    {
+      "path": "game/characters/Magi/MAG003/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/MAG003/portrait.webp",
+      "sha256": "daf1d9a6dc23f23bb11b07380f5a25c3b47850a90ec3a96384de1d882d438522"
+    },
+    {
+      "path": "game/characters/Cambion/CAM017/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM017/portrait.webp",
+      "sha256": "a7c9576e769a345d1390b8bc3a955c7fc0218d7847a3df9adf474fc6e1b79c9d"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS002/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS002/portrait.webp",
+      "sha256": "447759c59e15cf4faeedb766915d3115172e3f30dce266b053372ca17e3c7640"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC009/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC009/portrait.webp",
+      "sha256": "1fb9d9af7be63eaf63593582ad9395751b35390608a6a39aa29ded4787a8f189"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS030/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS030/portrait.webp",
+      "sha256": "11e0088501c7269fca509abea97fd4993877ab7c6663acaf0573b9ae87add86b"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN024/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN024/portrait.webp",
+      "sha256": "36dc33c527db36192ab6623a8c7e4d5d2686ecd5c129d80958d4c245c947f208"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD016/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD016/portrait.webp",
+      "sha256": "960f351c3b4816fc542811de935ef9ce5ec0e9c636b64424400d18d2aae5d296"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS036/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS036/portrait.webp",
+      "sha256": "fe1b7fa0c11fa89696c6f556bb116f5a4abd3b7a2f9f91a2ffd9a9f74bc59ad4"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS026/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS026/portrait.webp",
+      "sha256": "2c66416e502c64587243936e3e6c56e31730736f3f2bbafda0f66c42a6623308"
+    },
+    {
+      "path": "game/characters/Beastbloods/BST008/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Beastbloods/BST008/portrait.webp",
+      "sha256": "b60d7d440b77a7b94a4e808025674d236b0bc3ea28aa70aaa071cb6a2453b22d"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD038/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD038/portrait.webp",
+      "sha256": "a22fb3f7dbe8c7a9b7ae37675f9cbb6b88a65874c5f55a4948d7bcc4bcda8332"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB020/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB020/portrait.webp",
+      "sha256": "d11e13612366effbeb21e40390f518a3581e73a118990aaa0e9ba3eea52a2fd7"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC024/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC024/portrait.webp",
+      "sha256": "a72905fb6c6529d058bc99c7b9c7cc6e97fa315d26f38f1ac40538a5b426aa67"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN015/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN015/portrait.webp",
+      "sha256": "7c320072adf31e6c19a1b81c7a7a4239a22557b1d5521faaec93ec10c1f9074b"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN005/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN005/portrait.webp",
+      "sha256": "3871bed037b7bf972f38459e23c5404e5c935d1f4aef836df416ddc6622d2acf"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC026/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC026/portrait.webp",
+      "sha256": "faf69ee8479c73186c13e9540e2d9c1613b5f3ea1d4e6605572d76d91fd640c8"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB030/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB030/portrait.webp",
+      "sha256": "bc396c7d37885b0cb66e281642f849c782cf668cb62081434a61027bc38e27e4"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN014/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN014/portrait.webp",
+      "sha256": "68a7799f63dbe5b101c87ae3860171c6f09b1d07ea2151427f1304481fff99e3"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC003/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC003/portrait.webp",
+      "sha256": "7144c50c731d1c5b89f9e193cc28ce06ae6644b3f98cc9c20d74b1f48af8cf04"
+    },
+    {
+      "path": "game/characters/Cambion/CAM013/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM013/portrait.webp",
+      "sha256": "139826201a231df5c2b770f01875159ee77b81839f786b614c54bb519d64fdfc"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN007/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN007/portrait.webp",
+      "sha256": "f2b2f12a24c1a12eeeea046ee6936e5e383b3317f79374b9e18d5b131696c7b1"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC005/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC005/portrait.webp",
+      "sha256": "13998d106d85eadc923966eafcc7e28a5577a74bce8a66e92c5a12c6a26bc06f"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD029/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD029/portrait.webp",
+      "sha256": "e13c88b6985461554987570fcaf402a4f19e0bb9b99e220e93d6511f6842d167"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN020/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN020/portrait.webp",
+      "sha256": "97c5f7f272a09b57fe56de36ea58895a71145cbd9108e17c1d03e5e12d6d424a"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB028/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB028/portrait.webp",
+      "sha256": "e5610977101b89b8ad7f232f9f0247a73e3da1da022b2e748512700f7658f146"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB024/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB024/portrait.webp",
+      "sha256": "2d778520cf6fa6c79fc266dc5f85f669a36cbebba9baafc4999ecbc361e7ddd8"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC012/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC012/portrait.webp",
+      "sha256": "a16f17810a470f02948f0a08e21de7340e90ad59f8be455a8b1269c1f2487af3"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC011/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC011/portrait.webp",
+      "sha256": "64a793aea65d199de0f6fffa4e198da3e81e41507a86ea9ecf4dda6e1d1ac624"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC021/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC021/portrait.webp",
+      "sha256": "bf12aa2545ce2ec8ec6bde540ee5510f56adb5d4c4c1d87104a5d84de66121cb"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB017/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB017/portrait.webp",
+      "sha256": "19c780b88916f220fc219f00a8c48ba56513d92e492c89a33138cc58b0f5f536"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC031/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC031/portrait.webp",
+      "sha256": "7d64c0bd4ccf71c19ff6cf851b5522a5cf9a8964f43859fa2f6c5787d75382dd"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC037/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC037/portrait.webp",
+      "sha256": "771394bab2da1e0c905ecf13ffb5c59dbb99f46c4a0911ecbda886598f0eadc2"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC029/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC029/portrait.webp",
+      "sha256": "d3b7c3d16e8aec8153801ed32cb63c20f455a803af9e06e129f466c98e3f21ec"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD028/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD028/portrait.webp",
+      "sha256": "7282057c08ffb37f18bad7349ae52198b6567af20cfdd5e68cea715860ae07f2"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN010/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN010/portrait.webp",
+      "sha256": "937d93357eb97b748c51d83efb79c12406f67d2576f99da1e5bddfdec9dc1e7a"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN017/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN017/portrait.webp",
+      "sha256": "eaa9bab3e674965693f9bd89e3460b15d35923559d267f71fe06ae763279e70b"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN036/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN036/portrait.webp",
+      "sha256": "af46d7b99edc0f0020e8b782aab49719979328abc867bf7516a25a6430678851"
+    },
+    {
+      "path": "game/characters/Beastbloods/BST001/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Beastbloods/BST001/portrait.webp",
+      "sha256": "bc5e4d8f74f8d5f79b471bea6872241401178433cc6cf6005779c56a20a63902"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD013/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD013/portrait.webp",
+      "sha256": "0e79354a34df6a56b435dd0aa302b80b83df4c816c19fab658ba676b4182df9a"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN023/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN023/portrait.webp",
+      "sha256": "5e9519ed3cb3e597505886d6211cd03953838c9d1842c87c5e2ec4181f56f5e8"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD003/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD003/portrait.webp",
+      "sha256": "b287b59b2a7e69eeeec519812a1e8a8a86307651de6c19c42da93a2a3913cc0d"
+    },
+    {
+      "path": "game/characters/Cambion/CAM027/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM027/portrait.webp",
+      "sha256": "6f087132a5a65927c208c8f739c5851f1f567dc7273027e7dceba7da9cd16e34"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD002/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD002/portrait.webp",
+      "sha256": "329254f835c2034a023b16951cfbd18d1af795f4911cd9e0103b380f47776272"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC034/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC034/portrait.webp",
+      "sha256": "19562899c07878178a5a842475996a26364731898a132bca222260021f684fc1"
+    },
+    {
+      "path": "game/characters/Magi/MAG011/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/MAG011/portrait.webp",
+      "sha256": "775e6e5ba05c26666cd34f5d51177b5e0331c2c338760cade86e432d4fecfa9f"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN028/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN028/portrait.webp",
+      "sha256": "f57b927ee73a87d1c25fb6d1949ddb5e376e75986d3dc3ee364cdfd2daa8ff39"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS035/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS035/portrait.webp",
+      "sha256": "c844e60d36ebcb4f3a38432da9230b53af477e32152a75b59534e9a313aee668"
+    },
+    {
+      "path": "game/characters/Magi/MAG006/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/MAG006/portrait.webp",
+      "sha256": "c43f320ae2f181b5bd857d8fc9a23b67728cfd9a4c0d69de08722cbd4d6989fd"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD011/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD011/portrait.webp",
+      "sha256": "da3056589469134734aeccfe6eacef29cf0fc2a23bf3e641f31ed0d60a44a7de"
+    },
+    {
+      "path": "game/characters/Cambion/CAM024/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM024/portrait.webp",
+      "sha256": "233458ffc2727e35a4cbf4cdf029c84b36696b38f9ad18d7cb3451ac7e4b52e6"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC023/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC023/portrait.webp",
+      "sha256": "3ba866a1b1a321a2a651db5af76fe803960b62f4ef904e49b7092ea34eb737fc"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC013/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC013/portrait.webp",
+      "sha256": "6023c6f00f87691a9b3c02a994e2662d7a6ec8375e518aa6a536af808ce284e0"
+    },
+    {
+      "path": "game/characters/Cambion/CAM028/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM028/portrait.webp",
+      "sha256": "a9bdee1d3766cfa44b481772289a5e5f18f7f37c74f206603e28242e461d9bc4"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB016/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB016/portrait.webp",
+      "sha256": "021c7425f06af024589e5c021da9f8f96bd004de9988290acdf3b4ac95bb10f5"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN021/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN021/portrait.webp",
+      "sha256": "9d60f2e209f5db2d920c696fab9beff603c9c83276c51971ac340e0c31542148"
+    },
+    {
+      "path": "game/characters/Beastbloods/BST015/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Beastbloods/BST015/portrait.webp",
+      "sha256": "5ee9d2915459e49e8a70f31831783ae60cefaab36d26f05c4a90ab45db81f0d2"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS028/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS028/portrait.webp",
+      "sha256": "e7da3920f48ee10c6dcbf7bef5d54014a4708a5b61e22175b1e0b791ee371f6d"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD026/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD026/portrait.webp",
+      "sha256": "2a83c4181f92d52bcdc0cae312568df99133a4741fe53978465644f70a3208dc"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN003/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN003/portrait.webp",
+      "sha256": "d60462135c3c802860c4fe8b37f39fc881e79954b7aaa6b145427bb5cee6a387"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN015/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN015/portrait.webp",
+      "sha256": "b2e17e11db296d79733880159cf3d17a5014020328bedcef6eef645312a6655c"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC042/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC042/portrait.webp",
+      "sha256": "393dca018da6d15b2d7532200111abe011a304bbd3ff4ad654a682ed0cf6c5b3"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN001/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN001/portrait.webp",
+      "sha256": "a97d71450b026b98eb01122d3d3186f221c960347bb59495c0070f409c3af4d9"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC019/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC019/portrait.webp",
+      "sha256": "b4b4fae9f88b030c5e00ee0694e7aff35a0de418a848a20b36cf914a4a30e12c"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN012/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN012/portrait.webp",
+      "sha256": "8295200da2cf55d414cd212b6b60e91d9d6f5bf1c6aecc178ad4e83ea3edba37"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN016/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN016/portrait.webp",
+      "sha256": "6b8613c8c80128555ebc27acbeee6cc57435c41edb67659ab68162b17ebdf4d8"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS032/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS032/portrait.webp",
+      "sha256": "83a141511d93f744d341787ab01c639f7047b89faee296034a9aa6d006c2be2b"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS010/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS010/portrait.webp",
+      "sha256": "86ac5be35731ce3fb84b9b85ce8cdbc90f6c668dcd6af866ccb2934b3ce2e6e3"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB021/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB021/portrait.webp",
+      "sha256": "6fba8198e7d16e9f89133deb25e43f4472f4279d28c1bf0233df54b1738cd6d5"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC008/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC008/portrait.webp",
+      "sha256": "3cfb874b71eaf0815c5c113ac60d02de4c9d6d2cd9ece33ded8ee667c5c04bc6"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB005/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB005/portrait.webp",
+      "sha256": "228c79b7b6e39bb48d2c0c9a0a16ee8d9fb6435bdfd6c4814a6dc3ab1d7cd5f0"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS007/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS007/portrait.webp",
+      "sha256": "879cebb3c66cce744cc7ce24e13bf867a3b390f249cdcce58be08bc238ee586e"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB014/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB014/portrait.webp",
+      "sha256": "817a0e3190b6558ecf52ca4a711e057df0db58b70122c4981f921658493f2502"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB006/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB006/portrait.webp",
+      "sha256": "836adf752d446cda19b42138a936728bba6dca3fe23ab465e2f206ee6879ad1d"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD004/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD004/portrait.webp",
+      "sha256": "b36ed8afc8a5c3dea96218200447b01bde39809324cd4f31df7ce499a5c5d656"
+    },
+    {
+      "path": "game/characters/Magi/MAG020/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/MAG020/portrait.webp",
+      "sha256": "11dc566e87d51a33f51509b05d2249c5cd44a3485aeee7570212d25904f08409"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN032/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN032/portrait.webp",
+      "sha256": "420018e45ff4256bf9040a06d715369090796e6f7a1d137501ce0f794d8c1c77"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS004/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS004/portrait.webp",
+      "sha256": "34ab3d3909f45eb885e1f4184ddaeda61b87e20ab078448685a76ea06d9bc8e2"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN023/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN023/portrait.webp",
+      "sha256": "9e42b0e4b0a87011ec3ac4c0132acc471b0e14588da201814420553e91c9fe47"
+    },
+    {
+      "path": "game/characters/Cambion/CAM014/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM014/portrait.webp",
+      "sha256": "77581abee643bd0002c4d43cd219e9014444ea6957db7be9e9b877adc0182533"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC016/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC016/portrait.webp",
+      "sha256": "8380dbff8ea13750e34d09babafd0cf1e17db01c21d37c6f4c5f3e40c0b34929"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC020/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC020/portrait.webp",
+      "sha256": "c9e8616f642b5bc256fe2ba452b0d47974a62053bfb1f7d2a4a59c7bc0eb5f74"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN003/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN003/portrait.webp",
+      "sha256": "14ef81aff44e166847c1eb5d4abe54a0041d229d55f7f3efcc8e126abe3d609b"
+    },
+    {
+      "path": "game/characters/Beastbloods/BST013/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Beastbloods/BST013/portrait.webp",
+      "sha256": "4e4ee8c2d2dd3b5a0a6f0ae1900565297d53a688b5ae1b532aba20af7b89f2d9"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC032/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC032/portrait.webp",
+      "sha256": "c27b1b84fa0722b1a74b9d8f2d7ce0c143929c382489a999412221773de05522"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC035/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC035/portrait.webp",
+      "sha256": "addb71804bb3757c484b2a6816d326311bdc9eac203ce9243b3a50d50270e07c"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS034/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS034/portrait.webp",
+      "sha256": "5a7c33437a9cf2d4b2057af95c50df14d7b3565b89f49a222f31ff7a0b956977"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD010/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD010/portrait.webp",
+      "sha256": "77e925acb8eeaba9b37a5d7d68f9a446fc9e4b948cf00bc591dc5c82cd3468b2"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN013/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN013/portrait.webp",
+      "sha256": "f21a8b53a2dddf48f2dca43b80c0ab2ba0bae48e2003cabc43b9b643df5d52d2"
+    },
+    {
+      "path": "game/characters/Magi/MAG016/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/MAG016/portrait.webp",
+      "sha256": "75b2fd88cb8c29460ebfb4b3d5690f6e878015185c60b3fd04c55e7b618e3eea"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS039/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS039/portrait.webp",
+      "sha256": "9da1feb8adf4e0740240688b945e1a42c4c70f5af99459a6ae83724a0e8992fa"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN005/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN005/portrait.webp",
+      "sha256": "b33793760968c0880ee2ea5a43e98dbe21c84232f5788500db344001ecee19f0"
+    },
+    {
+      "path": "game/characters/Magi/MAG018/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/MAG018/portrait.webp",
+      "sha256": "e4ce3ae0ac7cbffbd4a65f87cd54c8eb0cdaffee881cc47ceea539f3214baa5d"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS013/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS013/portrait.webp",
+      "sha256": "c12bad774fda40a732bb02bd29fb31512ae2d510a0acaaacfc6a17abded6c7ca"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB026/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB026/portrait.webp",
+      "sha256": "414d022235f7049755c065697093609a4fcb712dac4fb2f5a667ee106a495e1d"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS006/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS006/portrait.webp",
+      "sha256": "a3918117ad427b86eac3b45891e60dba1cf8d20e97c00531f0c603ac69227909"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD036/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD036/portrait.webp",
+      "sha256": "829254ca12bf42ce27761f3f0f1c3a70c4c4d579250300d16cf4048023cc29ca"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB015/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB015/portrait.webp",
+      "sha256": "126e058ba399564c79402910f6e12c83b73e9dc48b635365572fce036ed60fa5"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC022/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC022/portrait.webp",
+      "sha256": "3ea1bf462d7f7d455e107ca8755f82afb99638912b74fa7f55ce8734e637afab"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS029/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS029/portrait.webp",
+      "sha256": "dd92cf465eec1afafab626486e1562ae008fe02fa28c02ff9a74d0ab11046b16"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD024/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD024/portrait.webp",
+      "sha256": "98c305cf2a711ed5c7ce88b7431fadbef123cef87cc1b09d09eae7b258e584aa"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS018/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS018/portrait.webp",
+      "sha256": "eb5f1069429f686a2148a94cfba64c0a5f711925dd2c933b69a8a035bb1ba167"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB022/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB022/portrait.webp",
+      "sha256": "cfcffca992839ae6a4ecec96ca88f5d114d268d08aa6a05623ad9c1d9f0398a3"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN035/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN035/portrait.webp",
+      "sha256": "b0988d0d8e5c6b9821b53bfb5272c952f8b69595330bd9e8d34f08620930051a"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD032/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD032/portrait.webp",
+      "sha256": "5f7197e85ec24d31acd37c31dc82e907e281a48cfbc3938a1c779b7684cc77c2"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC028/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC028/portrait.webp",
+      "sha256": "4060308389188dfaabff8f5d32d7e85ecc3768609df9aec7ed929d67d1077517"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD015/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD015/portrait.webp",
+      "sha256": "0d4a9654d200bcd922524e45b7753ec66a1fc295ef84e93e24e83fda3a62368f"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC040/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC040/portrait.webp",
+      "sha256": "6d3beb051025a2c69bce8be5ad9e8184af512d170506d562182ec2e44f1c1568"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC002/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC002/portrait.webp",
+      "sha256": "b70eebd940aef11e68061806f7683b8b25525a6a7afdbc7d0758568bed362eac"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC041/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC041/portrait.webp",
+      "sha256": "6449ac3457683bb8393c67583006fabf72c1bb1f0f13395d8873be7846722bcb"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN010/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN010/portrait.webp",
+      "sha256": "e52c66754e445722d23b910c99762f380beca9cbaeb09bd827ce868bd06d287d"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS003/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS003/portrait.webp",
+      "sha256": "1a57824cdc8847b24adf1a0d4a2b7a478fef9a234e64ade68d77c409d73dbf0f"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD009/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD009/portrait.webp",
+      "sha256": "f64489dd017d12a63d27d42bdcd1d4024778a1cae0c7585d28f5fa866d610b7a"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS001/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS001/portrait.webp",
+      "sha256": "d13dda517f45fa720a1ae4f5399cc542a637db5764d2b5f65943cc051c998c32"
+    },
+    {
+      "path": "game/characters/Nocturna/NOC027/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/NOC027/portrait.webp",
+      "sha256": "cd66dd9fc3d0ebee891ad98e1c17118911e7a9c62417f82e18629a93dcc17184"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN008/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN008/portrait.webp",
+      "sha256": "f86d2a7f56c7a632a779707b380d09a4d0bd47ebbde32c7323b722a56ce9f0f9"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN002/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN002/portrait.webp",
+      "sha256": "5185c9727595f7a602175a3d93fedf7ec990fea05437305ba0bbb3563873c5ad"
+    },
+    {
+      "path": "game/characters/Eldrin/ELD005/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ELD005/portrait.webp",
+      "sha256": "43cadf733b875669aeb072d9aacb27d78ef8e7731001b93cf3859571e9b8d804"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN019/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN019/portrait.webp",
+      "sha256": "1b801898ede468c6e0fb7fa026a0f4f7d72d3838f3064001d96636ac808e428d"
+    },
+    {
+      "path": "game/characters/Magi/MAG009/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/MAG009/portrait.webp",
+      "sha256": "4a4c2774cb33cd29aafd1a519ec1bdd173f7e16c38a3ce2c7c0c8bef16a7ba9f"
+    },
+    {
+      "path": "game/characters/Stonehearts/STN027/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/STN027/portrait.webp",
+      "sha256": "e7fc019e424ea1bcd8344c5f61996e10d17d718af4b952dcd398c916b29b09a7"
+    },
+    {
+      "path": "game/characters/Cambion/CAM005/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/CAM005/portrait.webp",
+      "sha256": "9ecb8a9e0eda2f0ff77c112b4d29383a3b86906454623c075f540b9cb05ae291"
+    },
+    {
+      "path": "game/characters/Freeborn/FRB008/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/FRB008/portrait.webp",
+      "sha256": "6a8161d11e0ac575dd5507879b1b1977f046ac3b774538362f1e63d86874c7b5"
+    },
+    {
+      "path": "game/characters/Ironbands/IRN022/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/IRN022/portrait.webp",
+      "sha256": "b729e17dc2ac78ecdfbf6ed2f4b6f9b1d3ee24c4104acbc9ad5f6986dfc327a7"
+    },
+    {
+      "path": "game/characters/Magi/MAG005/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/MAG005/portrait.webp",
+      "sha256": "7e186809b4776d6f0f2fbadcb0a4994d8d1e8ffb9a808f3ec5c9ac79511a586c"
+    },
+    {
+      "path": "game/characters/Lightseekers/LTS031/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/LTS031/portrait.webp",
+      "sha256": "89a0419f782ae3354cf8e2756d7ccdc6cb677bdd139c86897896b5fdaa093daf"
+    },
+    {
+      "path": "game/characters/Nocturna/ANIMNOC004/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/ANIMNOC004/portrait.webp",
+      "sha256": "de92ffc3ae2b12e72bd0dafbdbb86229fcf7116394f4c735df46218203e09bb5"
+    },
+    {
+      "path": "game/anima_roles/damage.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/anima_roles/damage.webp",
+      "sha256": "6f748fcbff223989754579ceb273d0c4de6a82f72cb536592f472bf8d85b79a6"
+    },
+    {
+      "path": "game/characters/Nocturna/ANIMNOC005/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/ANIMNOC005/portrait.webp",
+      "sha256": "5af69727d1de4aeca89e10221f3d06b965c1d1ed2ff0692963d416f7e7897933"
+    },
+    {
+      "path": "game/characters/Ironbands/ANIMIRN002/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/ANIMIRN002/portrait.webp",
+      "sha256": "fa0479f1f70c6123fdb6a4eff3eb4be9139f8101a662e3aa50914c4111ddc29f"
+    },
+    {
+      "path": "game/characters/Eldrin/ANIMELD002/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ANIMELD002/portrait.webp",
+      "sha256": "0b66d9d1f51d60be7461fec47be4c6fa951fcc91aafb320dd6fd5ead4693d710"
+    },
+    {
+      "path": "game/anima_roles/tank.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/anima_roles/tank.webp",
+      "sha256": "9488c6b0f589ab59ba2b771d22e26ba8d4e7b6d93d7b388ebcd21359067b04a1"
+    },
+    {
+      "path": "game/characters/Beastbloods/ANIMBST001/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Beastbloods/ANIMBST001/portrait.webp",
+      "sha256": "14b8c8658de3e680ba1b40303bb334ac32d733423a6e93ab388f45c2527608f2"
+    },
+    {
+      "path": "game/characters/Stonehearts/ANIMSTN001/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/ANIMSTN001/portrait.webp",
+      "sha256": "dd7b70ccaa6d3dd033c6f21c632e7541159103b72bff1b0f9dcb52784ad3f479"
+    },
+    {
+      "path": "game/characters/Eldrin/ANIMELD004/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ANIMELD004/portrait.webp",
+      "sha256": "ff72fd68350eff23e452db1406da1fe2e5bbbda465d0e9bfc43cc3c35ef024f0"
+    },
+    {
+      "path": "game/characters/Freeborn/ANIMFRB004/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/ANIMFRB004/portrait.webp",
+      "sha256": "df09783781fbb713b254a4a5a4eb73a540b4ce9045a70e3429de9a24675bc920"
+    },
+    {
+      "path": "game/characters/Ironbands/ANIMIRN006/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/ANIMIRN006/portrait.webp",
+      "sha256": "f987b36feffe84633065eca8f68085831c5ee6b5646d1f404994e9294971deb3"
+    },
+    {
+      "path": "game/characters/Ironbands/ANIMIRN004/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/ANIMIRN004/portrait.webp",
+      "sha256": "02f6b7bb07e13319a975b9a393a1aa7bab55e5863012eb04482ae45b3152942a"
+    },
+    {
+      "path": "game/characters/Eldrin/ANIMELD003/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ANIMELD003/portrait.webp",
+      "sha256": "fe3d5fd3c4444fb1340fe13f840e942898e7cbe25da25e7f128f8f0d883d54fb"
+    },
+    {
+      "path": "game/characters/Stonehearts/ANIMSTN002/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/ANIMSTN002/portrait.webp",
+      "sha256": "612471e5d6a16c7e83cb813ec332bc7ba97db4af9e2860c5f71c99b61ffc83c7"
+    },
+    {
+      "path": "game/characters/Nocturna/ANIMNOC002/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/ANIMNOC002/portrait.webp",
+      "sha256": "3c390301e77eac5461efa05098c1314b839d588d32da6d65cadadba6fd237f3d"
+    },
+    {
+      "path": "game/characters/Stonehearts/ANIMSTN004/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/ANIMSTN004/portrait.webp",
+      "sha256": "8d642d65c752e28000436b286f427145ac9cfdf3392684f4157f19cd5932b9be"
+    },
+    {
+      "path": "game/characters/Ironbands/ANIMIRN001/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/ANIMIRN001/portrait.webp",
+      "sha256": "f7a8ccae309ea01d40defcb77908523d2be7c06b951ef93d6bd679d9155528ca"
+    },
+    {
+      "path": "game/characters/Eldrin/ANIMELD007/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ANIMELD007/portrait.webp",
+      "sha256": "35ac333d2aab03d25d100b08166791d8e08e0ee93ff15a25f52938191cf46809"
+    },
+    {
+      "path": "game/characters/Cambion/ANIMCAM001/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/ANIMCAM001/portrait.webp",
+      "sha256": "1a9bab6df47651fd9e6740471a114e54852a9d2555f8f6700abceb6e989d68f9"
+    },
+    {
+      "path": "game/characters/Cambion/ANIMCAM003/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/ANIMCAM003/portrait.webp",
+      "sha256": "ab80b38969e7c2e247128530e465d69ca31898fd9a919afa6b47f3cf4411d3e4"
+    },
+    {
+      "path": "game/characters/Eldrin/ANIMELD005/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ANIMELD005/portrait.webp",
+      "sha256": "09fa4f9b0be33b9e0d94ecf7ab3d3e50a9f80b68bb0134b6e9dd74268501a220"
+    },
+    {
+      "path": "game/characters/Ironbands/ANIMIRN003/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/ANIMIRN003/portrait.webp",
+      "sha256": "653178361c1cc0b990e8c33f7b2c2c1f1092a2e8921523b2f53c9518bfdaf75a"
+    },
+    {
+      "path": "game/characters/Magi/ANIMMAG001/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/ANIMMAG001/portrait.webp",
+      "sha256": "1315be566d35c1ee41061f76a3158f720365fce5f9e13869946211f41afa3e04"
+    },
+    {
+      "path": "game/characters/Cambion/ANIMCAM004/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/ANIMCAM004/portrait.webp",
+      "sha256": "e39e94a03dd2eaa7cf069675ba178a4fe0faba46e0d12f7be35f36c8048b9c70"
+    },
+    {
+      "path": "game/characters/Dragons/ANIMUNI001/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Dragons/ANIMUNI001/portrait.webp",
+      "sha256": "16ef43abee57ff716dcf8007f1f4d7318a7962ace9261277a77050d40ea9b6c3"
+    },
+    {
+      "path": "game/factions/DRAGON/small.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/factions/DRAGON/small.webp",
+      "sha256": "0eff4294228251571f4bf50d273921e49600d421897f19a71ac2eaf7fc15c930"
+    },
+    {
+      "path": "game/characters/Beastbloods/ANIMBST003/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Beastbloods/ANIMBST003/portrait.webp",
+      "sha256": "371942f5b3f55592e28365062646058c81142530158de59dcbcec2e70083b306"
+    },
+    {
+      "path": "game/characters/Cambion/ANIMCAM002/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Cambion/ANIMCAM002/portrait.webp",
+      "sha256": "1a2f2896848186999847a816ca6efba10843b31e11ed405e76c7d344f9d22843"
+    },
+    {
+      "path": "game/characters/Stonehearts/ANIMSTN003/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/ANIMSTN003/portrait.webp",
+      "sha256": "60f00aec9c2708411683979a5c7cd85d80c7986a740cee6b3df0610763fb2cc0"
+    },
+    {
+      "path": "game/characters/Freeborn/ANIMFRB001/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/ANIMFRB001/portrait.webp",
+      "sha256": "1696895111bc037fb72e11762e4e76d7ee95394280f6ac81a1e487660b0b3ff2"
+    },
+    {
+      "path": "game/characters/Magi/ANIMMAG003/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/ANIMMAG003/portrait.webp",
+      "sha256": "47f68554abea000fab7fbd48845d00e396e369dc1de4436e5d37b5d553f0fa72"
+    },
+    {
+      "path": "game/characters/Freeborn/ANIMFRB003/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Freeborn/ANIMFRB003/portrait.webp",
+      "sha256": "702af7b37ef2846acdd42355e8786f061f4c38fff8348926ab09d14f9d2843d6"
+    },
+    {
+      "path": "game/characters/Nocturna/ANIMNOC001/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/ANIMNOC001/portrait.webp",
+      "sha256": "1b376a200b395816108806e336d146cc9322c98548adcfa0751660a6e3501278"
+    },
+    {
+      "path": "game/characters/Lightseekers/ANIMLTS004/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/ANIMLTS004/portrait.webp",
+      "sha256": "458bf0a32f38d83f1fa83733d2f63f047e0469845625da0ae215b496d5755567"
+    },
+    {
+      "path": "game/characters/Eldrin/ANIMELD001/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ANIMELD001/portrait.webp",
+      "sha256": "e32c0f3c9e8fe9d5b65613ebf87c01d6d1c08816d30067fd0239fef3062e999c"
+    },
+    {
+      "path": "game/characters/Stonehearts/ANIMSTN005/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Stonehearts/ANIMSTN005/portrait.webp",
+      "sha256": "2af927dd0bff98c393e007a5c6aeeb955a5f4cc596199ffb1b15863cbe51520c"
+    },
+    {
+      "path": "game/characters/Lightseekers/ANIMLTS002/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/ANIMLTS002/portrait.webp",
+      "sha256": "593e54fb049e5383b1a2e99703dae878026e1a9214f93455f937d74663ca5ea9"
+    },
+    {
+      "path": "game/characters/Lightseekers/ANIMLTS001/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Lightseekers/ANIMLTS001/portrait.webp",
+      "sha256": "376d68c7e51eb03a26c876eda2985e2191035605dd93357be97dd90ea8b55a5d"
+    },
+    {
+      "path": "game/characters/Magi/ANIMMAG002/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Magi/ANIMMAG002/portrait.webp",
+      "sha256": "4740a4be31902662f3d469b379b0f0f8196f65ba854136e5c9083d5244d91a07"
+    },
+    {
+      "path": "game/characters/Ironbands/ANIMIRN005/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Ironbands/ANIMIRN005/portrait.webp",
+      "sha256": "09769f0f319805709db824797defeaf3276df10c3e96595a55a27760f6c697e3"
+    },
+    {
+      "path": "game/characters/Nocturna/ANIMNOC003/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Nocturna/ANIMNOC003/portrait.webp",
+      "sha256": "bdd9d3e4a627b5bb8237b7d3876a39ccd8c539ab66dc36eabe29bd75203140d5"
+    },
+    {
+      "path": "game/characters/Eldrin/ANIMELD006/portrait.webp",
+      "source": "https://www.invokers.com/portraits/characters/Eldrin/ANIMELD006/portrait.webp",
+      "sha256": "89e6c244582c81dc588af5ba227ae9a8c5fdbd1d25c09e8e7b993ce3cc565e76"
+    },
+    {
+      "path": "game/assets/gear/accessories/BST/Amulet.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/BST/Amulet.webp",
+      "sha256": "fbc385c4dbdc968ce6d557bab6f7eb5cb7cdb9df8660b51e56eb4924cfd0f85f"
+    },
+    {
+      "path": "game/assets/gear/accessories/BST/Banner.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/BST/Banner.webp",
+      "sha256": "d64be4fa3c57dd7fb4aad320ffb555730297f245c3982f41b5a879be04783574"
+    },
+    {
+      "path": "game/assets/gear/accessories/BST/Earrings.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/BST/Earrings.webp",
+      "sha256": "f722f26e7c04fd6637ebcf92aaeaea72c20282b37129ac5715886da71f907ff4"
+    },
+    {
+      "path": "game/assets/gear/accessories/BST/Flasks.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/BST/Flasks.webp",
+      "sha256": "b6cd345f86a310eacaaa92d40938319092ced178fb94ebb945ce8f8f07011343"
+    },
+    {
+      "path": "game/assets/gear/accessories/BST/Talisman.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/BST/Talisman.webp",
+      "sha256": "5a2cde8fa8a4ce1cf682f84e4277f809753410df7e295de157231d67bcc1d825"
+    },
+    {
+      "path": "game/assets/gear/accessories/CAM/Amulet.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/CAM/Amulet.webp",
+      "sha256": "7dec90af527209b1f6c95cc2b8670c8974861e89e812f314c4da67bddfd11192"
+    },
+    {
+      "path": "game/assets/gear/accessories/CAM/Banner.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/CAM/Banner.webp",
+      "sha256": "6b66ccaf8e6faafa330f5bba155a8d3a159734e4fd8db2166854742be23def6e"
+    },
+    {
+      "path": "game/assets/gear/accessories/CAM/Earrings.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/CAM/Earrings.webp",
+      "sha256": "e8fb1a1570e3d6f33698d606ef9fda84ab7c9d91deb6f6dea60943e4402b51fa"
+    },
+    {
+      "path": "game/assets/gear/accessories/CAM/Flasks.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/CAM/Flasks.webp",
+      "sha256": "0d4547ab422dfbeba871c5394e947ca8c02bbf941884b5b0a9699f2ea02d15ac"
+    },
+    {
+      "path": "game/assets/gear/accessories/CAM/Talisman.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/CAM/Talisman.webp",
+      "sha256": "9ba09eaca62fe94b73ef9d35a07a2cd8a23ec067e3923ef4ecfd9fcd5c18c2cb"
+    },
+    {
+      "path": "game/assets/gear/accessories/ELD/Amulet.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/ELD/Amulet.webp",
+      "sha256": "3549f234021ce3d9874df81837ea31f7d59667a72b96b62864eaf315994e88bb"
+    },
+    {
+      "path": "game/assets/gear/accessories/ELD/Banner.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/ELD/Banner.webp",
+      "sha256": "c817a7d2d722532c275434c53249ded46c7b4bd2a5c8737a9ef5d0acc39dccf3"
+    },
+    {
+      "path": "game/assets/gear/accessories/ELD/Earrings.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/ELD/Earrings.webp",
+      "sha256": "bbf1a954fd003f0b60e66d7d785f57bbac6076f1d7dcc6ed5ea3e8852f151d2a"
+    },
+    {
+      "path": "game/assets/gear/accessories/ELD/Flasks.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/ELD/Flasks.webp",
+      "sha256": "e80791bd68fd68295578ad14083befba5803159592862056a8642a3f14ee8f12"
+    },
+    {
+      "path": "game/assets/gear/accessories/ELD/Talisman.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/ELD/Talisman.webp",
+      "sha256": "43799eb63428987e8d55d56a4c44067ae68f0ff0bbe5b0914a813ff9f855a270"
+    },
+    {
+      "path": "game/assets/gear/accessories/FRB/Amulet.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/FRB/Amulet.webp",
+      "sha256": "b6d5fea9a87ea459c49a5deec568b251e2d4a685ecfb6402739e2b3b56ca0a4c"
+    },
+    {
+      "path": "game/assets/gear/accessories/FRB/Banner.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/FRB/Banner.webp",
+      "sha256": "3008b09185345710b91778b4f0500c916164a92a0318ef418dd75a9f54a857bd"
+    },
+    {
+      "path": "game/assets/gear/accessories/FRB/Earrings.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/FRB/Earrings.webp",
+      "sha256": "19ca7f5b08e544fe01087cf8d98965fefd8beed90b50f888613bacb20fa3fc17"
+    },
+    {
+      "path": "game/assets/gear/accessories/FRB/Flasks.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/FRB/Flasks.webp",
+      "sha256": "9779d0675be1fc5cd5e28041caceea1d9c602befad1048caa8893feccd4480e9"
+    },
+    {
+      "path": "game/assets/gear/accessories/FRB/Talisman.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/FRB/Talisman.webp",
+      "sha256": "a1dfc0c8316e332d7a3302e2ca129135d4106f490fcace8da218699fa6ca3fed"
+    },
+    {
+      "path": "game/assets/gear/accessories/IRN/Amulet.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/IRN/Amulet.webp",
+      "sha256": "def280dd0ee0ffebabb3e81d6906b6cdfaa8aa850afe294bd4706a677894a4fd"
+    },
+    {
+      "path": "game/assets/gear/accessories/IRN/Banner.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/IRN/Banner.webp",
+      "sha256": "13448a82778c30d7198105b2f7228e460d18447713af06476f6e0730549518f6"
+    },
+    {
+      "path": "game/assets/gear/accessories/IRN/Earrings.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/IRN/Earrings.webp",
+      "sha256": "d84627da1ec495fa24213eb05cc6404f92a4fe967b565aec5ffe8f80e35259b8"
+    },
+    {
+      "path": "game/assets/gear/accessories/IRN/Flasks.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/IRN/Flasks.webp",
+      "sha256": "08b8d0d42500253885fc59c0399b9f6dad6564953e6c21674d8568038094db09"
+    },
+    {
+      "path": "game/assets/gear/accessories/IRN/Talisman.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/IRN/Talisman.webp",
+      "sha256": "d69f65109e7c79a3c15c0ac1ccfd60a6167fec3410ebeae1ee38e9cdd656d975"
+    },
+    {
+      "path": "game/assets/gear/accessories/LTS/Amulet.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/LTS/Amulet.webp",
+      "sha256": "412fd38f52e8cc5e28fe26125d95e41f9d72d6ee70b185c610c704ef14f56358"
+    },
+    {
+      "path": "game/assets/gear/accessories/LTS/Banner.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/LTS/Banner.webp",
+      "sha256": "c85cae237c9fa254df3785c656c12fddd86360d8e228d9ad57c8dab9ba248f41"
+    },
+    {
+      "path": "game/assets/gear/accessories/LTS/Earrings.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/LTS/Earrings.webp",
+      "sha256": "04f31a55d7f4de695a4069109a92e56167183460bc09aa328aeafd5f65e66af0"
+    },
+    {
+      "path": "game/assets/gear/accessories/LTS/Flasks.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/LTS/Flasks.webp",
+      "sha256": "897e41ff2571dd5b87b0d8841c02b85f037745e3232dacf7c6fb1a923bc40e7d"
+    },
+    {
+      "path": "game/assets/gear/accessories/LTS/Talisman.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/LTS/Talisman.webp",
+      "sha256": "60b58ff6b0fb3c401d81726756d39f2a500d4d7223d1657cf23a80ee6ce525a7"
+    },
+    {
+      "path": "game/assets/gear/accessories/MAG/Amulet.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/MAG/Amulet.webp",
+      "sha256": "092d023092ca6966d16d695ed8a285eccb6430fb209501b6dc97a2a6f5efc3c9"
+    },
+    {
+      "path": "game/assets/gear/accessories/MAG/Banner.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/MAG/Banner.webp",
+      "sha256": "d7a0b9ca56ba116579ec93c52101e86aadf87e74fac410e4af9de07e313add9f"
+    },
+    {
+      "path": "game/assets/gear/accessories/MAG/Earrings.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/MAG/Earrings.webp",
+      "sha256": "4e927b3a16fc7ab55624c64ee6cc7611d4d679ea0377cf9d5eb6dc58ef7fa6d0"
+    },
+    {
+      "path": "game/assets/gear/accessories/MAG/Flasks.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/MAG/Flasks.webp",
+      "sha256": "8fee53aeb6b1c4d82d9a1084910b9fac3e5827fdc9c7d19f54a6c128a63dd9d0"
+    },
+    {
+      "path": "game/assets/gear/accessories/MAG/Talisman.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/MAG/Talisman.webp",
+      "sha256": "991bce53dd1a300f40019af2905bd0a4bdca4d54a44e03d7a3656b361cdc2a85"
+    },
+    {
+      "path": "game/assets/gear/accessories/NOC/Amulet.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/NOC/Amulet.webp",
+      "sha256": "f0ca37c12d623393d9913da0a159059d15e04b842681cb8c4e737c444a117c3e"
+    },
+    {
+      "path": "game/assets/gear/accessories/NOC/Banner.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/NOC/Banner.webp",
+      "sha256": "a04879b97d01466f99f81ad3d482798c91db0168a3c32063b0bf7827072b225d"
+    },
+    {
+      "path": "game/assets/gear/accessories/NOC/Earrings.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/NOC/Earrings.webp",
+      "sha256": "23a24bd57ef4c19bdf1fdeea0ebf4700e907e88feddfb8dda75940d7076a7ade"
+    },
+    {
+      "path": "game/assets/gear/accessories/NOC/Flasks.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/NOC/Flasks.webp",
+      "sha256": "cd5757a128b35db1287398e1ef88f2351c0c3710a0549914e9b26a069c97865e"
+    },
+    {
+      "path": "game/assets/gear/accessories/NOC/Talisman.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/NOC/Talisman.webp",
+      "sha256": "ed7416b79395223290ead0a240da84055c259f5a3300f6eb196c4692fc03abc8"
+    },
+    {
+      "path": "game/assets/gear/accessories/STO/Amulet.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/STO/Amulet.webp",
+      "sha256": "81c93b2ccd87a1b2d2b254c30b44e35335bb93e7294efd04f9cf29586c79d014"
+    },
+    {
+      "path": "game/assets/gear/accessories/STO/Banner.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/STO/Banner.webp",
+      "sha256": "c84b998b0a4726cff03f50d16a2e88cfc5f45744d9e2ed43c39a537a13061020"
+    },
+    {
+      "path": "game/assets/gear/accessories/STO/Earrings.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/STO/Earrings.webp",
+      "sha256": "012c88fbdc03b53109da8160f9ab57330c23ec2bc0a07b65c7b08165104693fe"
+    },
+    {
+      "path": "game/assets/gear/accessories/STO/Flasks.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/STO/Flasks.webp",
+      "sha256": "54fa4a7d4746456ff80f726652cd8bb8daed3f36f3f2302d293de469818db357"
+    },
+    {
+      "path": "game/assets/gear/accessories/STO/Talisman.webp",
+      "source": "https://www.invokers.com/assets/gear/accessories/STO/Talisman.webp",
+      "sha256": "258f5c8a59e047dc1e9857539c9fddfe963dadfb3828b472346f1eba464434d3"
+    },
+    {
+      "path": "game/assets/gear/factions/BST.webp",
+      "source": "https://www.invokers.com/assets/gear/factions/BST.webp",
+      "sha256": "ef9e4856a0c5b41666c9248b2d1dc7a7849d08c8c8e83da1f964a0cc6535ba54"
+    },
+    {
+      "path": "game/assets/gear/factions/CAM.webp",
+      "source": "https://www.invokers.com/assets/gear/factions/CAM.webp",
+      "sha256": "b331c5cc5ae43548b47dc14b0f4e462546cfc54a11df959baf0eeab2ee147534"
+    },
+    {
+      "path": "game/assets/gear/factions/ELD.webp",
+      "source": "https://www.invokers.com/assets/gear/factions/ELD.webp",
+      "sha256": "0a8edfb7c4c2368dfaf6cea77ee2a7c47b75c9caa4f42abb50cd112c6b307936"
+    },
+    {
+      "path": "game/assets/gear/factions/FRB.webp",
+      "source": "https://www.invokers.com/assets/gear/factions/FRB.webp",
+      "sha256": "15e78d9612391e0a654bc7bc24c2ffac6033bfc7f25ff04c15126ca22f9e767c"
+    },
+    {
+      "path": "game/assets/gear/factions/IRN.webp",
+      "source": "https://www.invokers.com/assets/gear/factions/IRN.webp",
+      "sha256": "15d8c980385623bb99e69d67f9170d86be3e713aae5411cece53d15dc2d26458"
+    },
+    {
+      "path": "game/assets/gear/factions/LTS.webp",
+      "source": "https://www.invokers.com/assets/gear/factions/LTS.webp",
+      "sha256": "a59036d343164a74fae4b2f8a9a8713a85c77ccc1f39ea3b33891891e52c14c0"
+    },
+    {
+      "path": "game/assets/gear/factions/MAG.webp",
+      "source": "https://www.invokers.com/assets/gear/factions/MAG.webp",
+      "sha256": "56907c9c487cc75061aae2ba309027888c0455d6b39674cdb4734bc2d02da3a9"
+    },
+    {
+      "path": "game/assets/gear/factions/NOC.webp",
+      "source": "https://www.invokers.com/assets/gear/factions/NOC.webp",
+      "sha256": "9fa7283550d184bcb416deb868fb69215c2ce8f9ec1cc0a885189d8243bcb0ef"
+    },
+    {
+      "path": "game/assets/gear/factions/STO.webp",
+      "source": "https://www.invokers.com/assets/gear/factions/STO.webp",
+      "sha256": "bb7064a42695e1cd7de361bb2269aca710514d9333cfb541602f6d23aeb422c4"
+    },
+    {
+      "path": "game/assets/gear/sets/Accuracy.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/Accuracy.webp",
+      "sha256": "ec70010bbed73057d5391273f22fde4d31e61eb3f62e6c1ac33d806295c46a62"
+    },
+    {
+      "path": "game/assets/gear/sets/AtrophyTolerance.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/AtrophyTolerance.webp",
+      "sha256": "35f29c41178816ee931e6af5e99bbd45106bbfd10ee9e68444c111da67a4186e"
+    },
+    {
+      "path": "game/assets/gear/sets/Attack.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/Attack.webp",
+      "sha256": "cc74a8d407844f7772912615a49fa84454ab648fc756e3dd978c5b01de691924"
+    },
+    {
+      "path": "game/assets/gear/sets/BlightTolerance.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/BlightTolerance.webp",
+      "sha256": "550853c2adafcfbc1948c02fe1083817b11fab8f0f22c00745647066f295ac36"
+    },
+    {
+      "path": "game/assets/gear/sets/BloodRotTolerance.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/BloodRotTolerance.webp",
+      "sha256": "7d479a9343a72e4b2d24e6afec615a48e2a56b3a81694555d6230346955672d1"
+    },
+    {
+      "path": "game/assets/gear/sets/ClanBossSet1.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/ClanBossSet1.webp",
+      "sha256": "d72c3be6b458d5f7a8759536ebe027115559701309a22ce8d5be6748ab80b080"
+    },
+    {
+      "path": "game/assets/gear/sets/ClanBossSet2.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/ClanBossSet2.webp",
+      "sha256": "d6170725df174d11c15faca0f117737a69252acec6757d50fb9ed685db13eeb0"
+    },
+    {
+      "path": "game/assets/gear/sets/CriticalDamage.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/CriticalDamage.webp",
+      "sha256": "949bc20b7903f234e301c01424868f80babafede2d8dcc63975483b40504f3e1"
+    },
+    {
+      "path": "game/assets/gear/sets/CriticalRate.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/CriticalRate.webp",
+      "sha256": "e95f9c56bc7249df69b58d3c6c015313108d90125389aed7473ed025f1cb4a8b"
+    },
+    {
+      "path": "game/assets/gear/sets/CrushTolerance.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/CrushTolerance.webp",
+      "sha256": "062cd953cbcaa84683243c799b7d77750f915f655e2d7d91c95b0c6992b3f96a"
+    },
+    {
+      "path": "game/assets/gear/sets/DazeTolerance.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/DazeTolerance.webp",
+      "sha256": "4df3e06cfbe401ecd11074121dd453985f05a7628efd2ecbd5bb10a8449a202b"
+    },
+    {
+      "path": "game/assets/gear/sets/Defense.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/Defense.webp",
+      "sha256": "859ade10df11078342afefe6618378335f7afd3b1c067068e61cc62f9c4a35de"
+    },
+    {
+      "path": "game/assets/gear/sets/EventSet1.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/EventSet1.webp",
+      "sha256": "a33f5b40f146bb5554d24c0d1621eeedf966b948c6e03acecc31f27b16a11cab"
+    },
+    {
+      "path": "game/assets/gear/sets/EventSet2.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/EventSet2.webp",
+      "sha256": "216f319dd50d231ab2e0d6dd33a4b15fd1597fc83de665594f42ec9a3261c3b7"
+    },
+    {
+      "path": "game/assets/gear/sets/FatigueTolerance.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/FatigueTolerance.webp",
+      "sha256": "fbb89347c24d689271ad341883c552a997268fbe4fa97943dcaff8c0f19353b7"
+    },
+    {
+      "path": "game/assets/gear/sets/FrostTolerance.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/FrostTolerance.webp",
+      "sha256": "9c6b3b1982c449eb2de48e2f1cae6be4edd73621f9bc3d783fcf16a0a69fda00"
+    },
+    {
+      "path": "game/assets/gear/sets/Health.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/Health.webp",
+      "sha256": "a243f523794f25b753aa392862391e3b9b10b44ecfdea85dc4512093289a57d1"
+    },
+    {
+      "path": "game/assets/gear/sets/IgnoreDefense.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/IgnoreDefense.webp",
+      "sha256": "e85fc5aa94261cb63f4f9bc36a19e5c07924b87946c01c8a5c4563f6ac6b5530"
+    },
+    {
+      "path": "game/assets/gear/sets/Instinct.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/Instinct.webp",
+      "sha256": "ba3c418146b8ba791ad9f4b8f921c103145fecbdb1c9bf8a6ccd5a3dec80d1bf"
+    },
+    {
+      "path": "game/assets/gear/sets/LifeSteal.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/LifeSteal.webp",
+      "sha256": "aab0117ae88bb07c9ddedd31c4394fd9e07b1d32e2b4148d2f59ee234f2c1166"
+    },
+    {
+      "path": "game/assets/gear/sets/ManaBurnTolerance.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/ManaBurnTolerance.webp",
+      "sha256": "c51f0f11d3ad91fb1cb28851c77a438e2c95b95101da716d07b6b748d7bbff2d"
+    },
+    {
+      "path": "game/assets/gear/sets/ManaGeneration.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/ManaGeneration.webp",
+      "sha256": "9a6fbaa0b9b7a3b15062373e54afb85f68db3b4a91a748370b1cfe0794abbdf5"
+    },
+    {
+      "path": "game/assets/gear/sets/ManaShockTolerance.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/ManaShockTolerance.webp",
+      "sha256": "34e2c360887f8ad55a42fbcef707ed5ef6296023ac1b2b8ddab28f309b158dce"
+    },
+    {
+      "path": "game/assets/gear/sets/MindFogTolerance.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/MindFogTolerance.webp",
+      "sha256": "b354efc20e2d7eace522c5a0a50105705ef07f5ddf996b42b1db6da8bcecf192"
+    },
+    {
+      "path": "game/assets/gear/sets/NightmareTolerance.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/NightmareTolerance.webp",
+      "sha256": "d9b340ffa5677276eeb908e58bc3c848ba963403bda0067247bdaa8d8764f609"
+    },
+    {
+      "path": "game/assets/gear/sets/ParalysisTolerance.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/ParalysisTolerance.webp",
+      "sha256": "fd9386fbca90dffb617a444d9dcd6469ad55d423bcdd5010db99e70569c40fb9"
+    },
+    {
+      "path": "game/assets/gear/sets/ReduceBuffDuration.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/ReduceBuffDuration.webp",
+      "sha256": "605a7032cf2f374881c5897b8b0a7718c1cd40a4e3434fb76cf97e21a6cade8a"
+    },
+    {
+      "path": "game/assets/gear/sets/Resistance.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/Resistance.webp",
+      "sha256": "bce04700e1738cb4ac1700a24cca7935ebfb042da7367d941108ed52a469fdb5"
+    },
+    {
+      "path": "game/assets/gear/sets/SkillRecovery.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/SkillRecovery.webp",
+      "sha256": "8fe946b79e6d9d7b9d72fdebb756b7ff1929ccbf08a08d12242fabd09a54db15"
+    },
+    {
+      "path": "game/assets/gear/sets/SkillSpeed.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/SkillSpeed.webp",
+      "sha256": "8518740a0e6b66c994e7eb50404ad02b305f6f698f7c8a7a3c1b4ed5616e5a8d"
+    },
+    {
+      "path": "game/assets/gear/sets/Support.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/Support.webp",
+      "sha256": "727eae293070a4c16516647419be64a283325211040a51993371673e67754b5b"
+    },
+    {
+      "path": "game/assets/gear/sets/Unknown.webp",
+      "source": "https://www.invokers.com/assets/gear/sets/Unknown.webp",
+      "sha256": "1979fee4001c66341b6fc23375d684a2527699102014ac3943c77b4abcadc022"
+    },
+    {
+      "path": "game/assets/gear/slots/Amulet.webp",
+      "source": "https://www.invokers.com/assets/gear/slots/Amulet.webp",
+      "sha256": "b4e9c65a8c904325dfcbc40d6d926d479d817bc43ca9648d81f4d910f0de469a"
+    },
+    {
+      "path": "game/assets/gear/slots/Banner.webp",
+      "source": "https://www.invokers.com/assets/gear/slots/Banner.webp",
+      "sha256": "2b91c604efdd818484c8e7b3cf919b8e376be2363a6a926a747c81517eea8d53"
+    },
+    {
+      "path": "game/assets/gear/slots/Belt.webp",
+      "source": "https://www.invokers.com/assets/gear/slots/Belt.webp",
+      "sha256": "37a33b6822eea720a14bddb167901c9ce4ef06cf11f216eebd03c4934c39b8e0"
+    },
+    {
+      "path": "game/assets/gear/slots/Boots.webp",
+      "source": "https://www.invokers.com/assets/gear/slots/Boots.webp",
+      "sha256": "4709fe0a59c016565b82a4eda896f0dd3877ad9b5c2b1edd31a0e93089f1fe09"
+    },
+    {
+      "path": "game/assets/gear/slots/Chestplate.webp",
+      "source": "https://www.invokers.com/assets/gear/slots/Chestplate.webp",
+      "sha256": "045ba590b18e7706e58ee7c9ca3f02e7a372957156501c82f4d913c28e68851d"
+    },
+    {
+      "path": "game/assets/gear/slots/Earrings.webp",
+      "source": "https://www.invokers.com/assets/gear/slots/Earrings.webp",
+      "sha256": "ee51b5a33e8b053175bf4a73c8726812be7d445ac1f11042de42a22aaac1318f"
+    },
+    {
+      "path": "game/assets/gear/slots/Flasks.webp",
+      "source": "https://www.invokers.com/assets/gear/slots/Flasks.webp",
+      "sha256": "88675bfe9a5afa38e20a0a7ff72af8fee450ea537dc68545947357e3053a72b5"
+    },
+    {
+      "path": "game/assets/gear/slots/Gauntlets.webp",
+      "source": "https://www.invokers.com/assets/gear/slots/Gauntlets.webp",
+      "sha256": "4115dac7599211266b3619ef74d78208bd879e3f8d59876d88a216ed5d88e084"
+    },
+    {
+      "path": "game/assets/gear/slots/Helmet.webp",
+      "source": "https://www.invokers.com/assets/gear/slots/Helmet.webp",
+      "sha256": "ba90e560ba6d436f903f526f83188a8401256d10eb3efbc8474433b848ba875d"
+    },
+    {
+      "path": "game/assets/gear/slots/Pauldrons.webp",
+      "source": "https://www.invokers.com/assets/gear/slots/Pauldrons.webp",
+      "sha256": "17f43f3b12d141d958457805cf2b0470970257649a098708951c67e61b2161cf"
+    },
+    {
+      "path": "game/assets/gear/slots/Shield.webp",
+      "source": "https://www.invokers.com/assets/gear/slots/Shield.webp",
+      "sha256": "1067c08b2b6b7dd5c796bceca0b020b15d734503d89a39042d5170f5e803fa0d"
+    },
+    {
+      "path": "game/assets/gear/slots/Talisman.webp",
+      "source": "https://www.invokers.com/assets/gear/slots/Talisman.webp",
+      "sha256": "973b1b5f72c354033f959d98ce14947657da4612b5a831b58235fd0a205b0de2"
+    },
+    {
+      "path": "game/assets/gear/slots/Weapon.webp",
+      "source": "https://www.invokers.com/assets/gear/slots/Weapon.webp",
+      "sha256": "5ce8dcbc5f54e209a21a877ea9faca183fb482baa1c5cd63bf07abf9d3ef3349"
+    },
+    {
+      "path": "game/assets/gear/stats/accuracy.webp",
+      "source": "https://www.invokers.com/assets/gear/stats/accuracy.webp",
+      "sha256": "22d8e260383172410ef8388cdfdeed00495e2721bc0fd6885c3102670e12794f"
+    },
+    {
+      "path": "game/assets/gear/stats/attack.webp",
+      "source": "https://www.invokers.com/assets/gear/stats/attack.webp",
+      "sha256": "a8ef3ee63d3fc31587392c869c83f1a7f317300eb3f86cc30214dda0f8c08e47"
+    },
+    {
+      "path": "game/assets/gear/stats/comboSpeed.webp",
+      "source": "https://www.invokers.com/assets/gear/stats/comboSpeed.webp",
+      "sha256": "1d00ce258defa9448ccbc2357cf9f17bdb61ede2e8f0004b654a47fae9a7352c"
+    },
+    {
+      "path": "game/assets/gear/stats/criticalDamage.webp",
+      "source": "https://www.invokers.com/assets/gear/stats/criticalDamage.webp",
+      "sha256": "ec7757f5bd6a6d42b8cb25bd12e12875bc0c798ef346c8cba78bf6a6a9b06a46"
+    },
+    {
+      "path": "game/assets/gear/stats/criticalRate.webp",
+      "source": "https://www.invokers.com/assets/gear/stats/criticalRate.webp",
+      "sha256": "b431c0aa2980f25faf4b1a5af50fcdb57d3598bccda8b343f5a17a7c5c4823ac"
+    },
+    {
+      "path": "game/assets/gear/stats/defense.webp",
+      "source": "https://www.invokers.com/assets/gear/stats/defense.webp",
+      "sha256": "7a194e99c19d84efc7375cf12bfdd8a0073bb04e1213c79394a570078a4be500"
+    },
+    {
+      "path": "game/assets/gear/stats/health.webp",
+      "source": "https://www.invokers.com/assets/gear/stats/health.webp",
+      "sha256": "f4e6a1d6213ee2e625550bd9cbf3c76782c0ced5ee5efd3493ee1b45bfd8cac8"
+    },
+    {
+      "path": "game/assets/gear/stats/instinct.webp",
+      "source": "https://www.invokers.com/assets/gear/stats/instinct.webp",
+      "sha256": "48b139082810283895bf9a1551684c4b5f1c6a600c6d05eda54371a0eff7794b"
+    },
+    {
+      "path": "game/assets/gear/stats/manaGeneration.webp",
+      "source": "https://www.invokers.com/assets/gear/stats/manaGeneration.webp",
+      "sha256": "623c0c96f485e49a133dc2da5d5931fc1d412552bb75feddd622c88a7ff20792"
+    },
+    {
+      "path": "game/assets/gear/stats/resistance.webp",
+      "source": "https://www.invokers.com/assets/gear/stats/resistance.webp",
+      "sha256": "82163a26be00abc4b4c1e37f3dfb1c17af4858ac545fa272fa13158e51103850"
+    },
+    {
+      "path": "game/assets/gear/stats/runSpeed.webp",
+      "source": "https://www.invokers.com/assets/gear/stats/runSpeed.webp",
+      "sha256": "0362bde00a77e64d53a501dc33f1473b91973d21174e141f6f2071b00cbd6719"
+    },
+    {
+      "path": "game/assets/gear/stats/skillRecovery.webp",
+      "source": "https://www.invokers.com/assets/gear/stats/skillRecovery.webp",
+      "sha256": "0139568139af93edff7a23a98dff41017261ac0b5875ebfb9a116a3ff8271818"
+    },
+    {
+      "path": "game/assets/gear/stats/skillSpeed.webp",
+      "source": "https://www.invokers.com/assets/gear/stats/skillSpeed.webp",
+      "sha256": "c314d06855e6e7bb94f22569ca3803e1361361b735d75bb421610a502677a3fc"
+    },
+    {
+      "path": "game/shop/relics/Accuracy/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Accuracy/Belt.webp",
+      "sha256": "341012fa21cd61568ab3bffda4a17e6041c66bd463afed3377ae05b3b8a0a96e"
+    },
+    {
+      "path": "game/shop/relics/Accuracy/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Accuracy/Chestplate.webp",
+      "sha256": "b96ce45612824ba01161bc9922aef8af79d05fdfa1fe02ad3724c77723c0c789"
+    },
+    {
+      "path": "game/shop/relics/Accuracy/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Accuracy/Helmet.webp",
+      "sha256": "df98339acdb4e9e24f00f62f5dd355d983ed74745d24a80cc690d6b16459ba27"
+    },
+    {
+      "path": "game/shop/relics/Accuracy/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Accuracy/Weapon.webp",
+      "sha256": "23eafa3fa0f50687c5566c2c1a98bb634e8062ba0336e24b276f7f38e3cb5eed"
+    },
+    {
+      "path": "game/shop/relics/AtrophyTolerance/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/AtrophyTolerance/Belt.webp",
+      "sha256": "6e68c4318ddc5c49709531b1dbfb66667e5e2137b81de512b649617b9fc3a553"
+    },
+    {
+      "path": "game/shop/relics/AtrophyTolerance/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/AtrophyTolerance/Boots.webp",
+      "sha256": "066db6e198a4ec2e57e343bf0bfb87b88e1e8907dd0da4bb34dde09cfb47314a"
+    },
+    {
+      "path": "game/shop/relics/AtrophyTolerance/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/AtrophyTolerance/Chestplate.webp",
+      "sha256": "cb8ba249be60f5aa7dac89510cdf118c06481b907d9a020788ec107cc5b78c71"
+    },
+    {
+      "path": "game/shop/relics/AtrophyTolerance/Gauntlets.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/AtrophyTolerance/Gauntlets.webp",
+      "sha256": "13442525b90f09be1ebbad15d0add6b305b1ba40d543327e905d892bcdffdb7e"
+    },
+    {
+      "path": "game/shop/relics/AtrophyTolerance/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/AtrophyTolerance/Helmet.webp",
+      "sha256": "17e328fc7d2311a2f1469c04c8369fc5385b662b6e393d7767064d1e53378af0"
+    },
+    {
+      "path": "game/shop/relics/AtrophyTolerance/Pauldrons.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/AtrophyTolerance/Pauldrons.webp",
+      "sha256": "73001a783229e1356413c1209f1b9bc051e9124718de098456aee3abf80534f1"
+    },
+    {
+      "path": "game/shop/relics/AtrophyTolerance/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/AtrophyTolerance/Shield.webp",
+      "sha256": "e4619de72c6d4f88bff91226a8910e048a687b6cef2e83e6f5eb60cfaafac44a"
+    },
+    {
+      "path": "game/shop/relics/AtrophyTolerance/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/AtrophyTolerance/Weapon.webp",
+      "sha256": "6d7c301343514c27e38ec1fd858d032209d18a705ac86b33117ca5667261007c"
+    },
+    {
+      "path": "game/shop/relics/Attack/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Attack/Belt.webp",
+      "sha256": "556d079c63ad4b0d6e6ef45c2522e9ba569f58ff1c1d79078c329d8f67b91c79"
+    },
+    {
+      "path": "game/shop/relics/Attack/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Attack/Boots.webp",
+      "sha256": "289d2c615f199a74f003490dc3e05ea304e0180cf00baa714cf1dceaa40f47d1"
+    },
+    {
+      "path": "game/shop/relics/Attack/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Attack/Chestplate.webp",
+      "sha256": "f2eaed021f7406a95d4bdbf52d56a8777a5fa93bd35f7b2e9558351efc4e9c1f"
+    },
+    {
+      "path": "game/shop/relics/Attack/Gauntlets.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Attack/Gauntlets.webp",
+      "sha256": "2b01e00c8f101296cafa440f1e21bdb77331d595ca8d0e4a4ca06d24fd356826"
+    },
+    {
+      "path": "game/shop/relics/Attack/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Attack/Helmet.webp",
+      "sha256": "3b84e8b64a20ff18aac2fcf3364587fc98be623f25ca39211d03b538550fb31b"
+    },
+    {
+      "path": "game/shop/relics/Attack/Pauldrons.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Attack/Pauldrons.webp",
+      "sha256": "813802b51404bdb5e7bafb50e5cbd0007c21b2bae1bc26c60ef6686ca9557825"
+    },
+    {
+      "path": "game/shop/relics/Attack/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Attack/Shield.webp",
+      "sha256": "def44f94bcab2d3a1e2451c5a840da3c6e1120e1014d0d97f65adf65feb32bee"
+    },
+    {
+      "path": "game/shop/relics/Attack/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Attack/Weapon.webp",
+      "sha256": "f3b48dc067fa5fb06a2ab52f4d961fbd913b6ff40d0dd4f99e8ec7e01f8688a3"
+    },
+    {
+      "path": "game/shop/relics/BlightTolerance/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/BlightTolerance/Belt.webp",
+      "sha256": "b0c42afa94612d1a674d39c5c1eb5f5a7df09319b850d8165cf35c36e43c4c40"
+    },
+    {
+      "path": "game/shop/relics/BlightTolerance/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/BlightTolerance/Boots.webp",
+      "sha256": "e31a4b1632db9bb9e63883f48b95417c6d74601738c4e13db246414bbc3c7e8f"
+    },
+    {
+      "path": "game/shop/relics/BlightTolerance/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/BlightTolerance/Chestplate.webp",
+      "sha256": "9a1d1e77eb926fca08061895188e7e491b6c3c36d91670f2d6259401406eaee2"
+    },
+    {
+      "path": "game/shop/relics/BlightTolerance/Gauntlets.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/BlightTolerance/Gauntlets.webp",
+      "sha256": "283a330ae08f090d28faef1394469e4010e0ac507e64de376dd88cb30146c697"
+    },
+    {
+      "path": "game/shop/relics/BlightTolerance/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/BlightTolerance/Helmet.webp",
+      "sha256": "0b2b7da9ab690891d1a166b5733f8c960df6988cd89a7e52672bd486d8f55487"
+    },
+    {
+      "path": "game/shop/relics/BlightTolerance/Pauldrons.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/BlightTolerance/Pauldrons.webp",
+      "sha256": "948f2f10cae90827d226d5360ba2be93535dd0dd62d950e3644f3abf7f0fb5fa"
+    },
+    {
+      "path": "game/shop/relics/BlightTolerance/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/BlightTolerance/Shield.webp",
+      "sha256": "89e8b12eda9f2bafd0b5af6b9ae1eb21247624abdb9ecb1028b108dc208b90c1"
+    },
+    {
+      "path": "game/shop/relics/BlightTolerance/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/BlightTolerance/Weapon.webp",
+      "sha256": "4cb391c7bbf538f0cb4dde11d4ab7723b0682902f9e700c61b6038db53d6f3f8"
+    },
+    {
+      "path": "game/shop/relics/BloodRotTolerance/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/BloodRotTolerance/Boots.webp",
+      "sha256": "a1cf4d85716f01b2f3a0308a62c20f9c6c7b2a24787c2fe6b14fae336bc5da32"
+    },
+    {
+      "path": "game/shop/relics/BloodRotTolerance/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/BloodRotTolerance/Shield.webp",
+      "sha256": "e48248613faa918d3dac66901415296a5f662fce8b81b6287fe3d9ed97f27b13"
+    },
+    {
+      "path": "game/shop/relics/ClanBossSet1/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ClanBossSet1/Weapon.webp",
+      "sha256": "677d1b7d97086e38266766a573af12786eb19f3f7ef6ebf4ea736cd0c5d3e0e7"
+    },
+    {
+      "path": "game/shop/relics/CriticalDamage/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/CriticalDamage/Belt.webp",
+      "sha256": "482c32330af8b27a50a30d75b62e4c6ed303c454bb1fc183e5d86d5e5f922b46"
+    },
+    {
+      "path": "game/shop/relics/CriticalDamage/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/CriticalDamage/Helmet.webp",
+      "sha256": "d147accc2f3069d47218edb28e7d5c39a3f8a9757b53211dc30e758f3f08fc7e"
+    },
+    {
+      "path": "game/shop/relics/CriticalDamage/Pauldrons.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/CriticalDamage/Pauldrons.webp",
+      "sha256": "fa1bce3f9ae1816cb9c3257ef8818f333ef0de1e11d86894a1d9602e3af5ea11"
+    },
+    {
+      "path": "game/shop/relics/CriticalDamage/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/CriticalDamage/Weapon.webp",
+      "sha256": "ebc7acbef206e5612c1d4357a9a640694d328072a49f5b6afe9060eab6d3f8b7"
+    },
+    {
+      "path": "game/shop/relics/CriticalRate/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/CriticalRate/Belt.webp",
+      "sha256": "12f30d92b6c2e542f1517e475efcf2f004c5eaa07642b47c6d6cc1fdee357ad1"
+    },
+    {
+      "path": "game/shop/relics/CriticalRate/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/CriticalRate/Boots.webp",
+      "sha256": "b321b533533c6d5162d543c3dc62a07779d5035e880007a1e3270206ad21f77a"
+    },
+    {
+      "path": "game/shop/relics/CriticalRate/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/CriticalRate/Chestplate.webp",
+      "sha256": "b966b4382c337857bcaaa16b097ce41821b556b0842ac671f5fa3b3d77ed45e9"
+    },
+    {
+      "path": "game/shop/relics/CriticalRate/Gauntlets.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/CriticalRate/Gauntlets.webp",
+      "sha256": "168366badff42323b6143388ba26fc8805c0c677e0626d40898f9e424dcead1b"
+    },
+    {
+      "path": "game/shop/relics/CriticalRate/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/CriticalRate/Helmet.webp",
+      "sha256": "e76687b03844a8e22e5b7b07e29dec93697d7f6a210e59c3371cfaf4ba7a4dc4"
+    },
+    {
+      "path": "game/shop/relics/CriticalRate/Pauldrons.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/CriticalRate/Pauldrons.webp",
+      "sha256": "9a33ec5cb88a03487e6b90ba742244de06f5edba17551330c8d5418a0401c711"
+    },
+    {
+      "path": "game/shop/relics/CriticalRate/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/CriticalRate/Shield.webp",
+      "sha256": "b916a9dc731de44e196960aa60686a485de122d735c304f208f13ae8f4273f99"
+    },
+    {
+      "path": "game/shop/relics/CriticalRate/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/CriticalRate/Weapon.webp",
+      "sha256": "c97c0b7e032bde05a47c4ac5eaf9a8f2eeef5c1454b9c8a134f2a13c9f3ef973"
+    },
+    {
+      "path": "game/shop/relics/CrushTolerance/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/CrushTolerance/Belt.webp",
+      "sha256": "1bd5a116e2844736ab7804da878d2ffd15d5528461f76d790581624580b377a0"
+    },
+    {
+      "path": "game/shop/relics/CrushTolerance/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/CrushTolerance/Boots.webp",
+      "sha256": "829561f6d2e6c1a586da016dfcb60d572891f0e69f06f77b1950c2dd1c619cf9"
+    },
+    {
+      "path": "game/shop/relics/CrushTolerance/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/CrushTolerance/Chestplate.webp",
+      "sha256": "632bd897b6f6dc0119b8b16327e54e13a98a065cbce854caba1bbf8352ec4130"
+    },
+    {
+      "path": "game/shop/relics/CrushTolerance/Gauntlets.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/CrushTolerance/Gauntlets.webp",
+      "sha256": "794c5ad4d9e79ffa0c9ad6a5cab205b59b92f72ed901d8b64fcc7eec36b4c776"
+    },
+    {
+      "path": "game/shop/relics/CrushTolerance/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/CrushTolerance/Helmet.webp",
+      "sha256": "228702b618a7b01b54aa1c69bce574b52b6636fd393e138950591182e5cdbeaf"
+    },
+    {
+      "path": "game/shop/relics/CrushTolerance/Pauldrons.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/CrushTolerance/Pauldrons.webp",
+      "sha256": "eb0221404a2b29f3937b7f94eb0f60d55d0cd9356e1c108c0ce464521ee78ca2"
+    },
+    {
+      "path": "game/shop/relics/CrushTolerance/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/CrushTolerance/Shield.webp",
+      "sha256": "633ca2675017f2995bf168671259d8f193d972c524594dc8006c4e0b03cfebc7"
+    },
+    {
+      "path": "game/shop/relics/CrushTolerance/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/CrushTolerance/Weapon.webp",
+      "sha256": "02d5658c2d1e9b818b964dfea50148a8c74cd98b45d212fedc6555424f217b59"
+    },
+    {
+      "path": "game/shop/relics/DazeTolerance/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/DazeTolerance/Belt.webp",
+      "sha256": "572de128bc23fde832e7604bb0010782b63fc846f61271c34c07f712aa69ffa9"
+    },
+    {
+      "path": "game/shop/relics/DazeTolerance/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/DazeTolerance/Boots.webp",
+      "sha256": "d533f6a2db6980ef2362d99321f5103dfd267f9216c57b06e880a9179af0829a"
+    },
+    {
+      "path": "game/shop/relics/DazeTolerance/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/DazeTolerance/Chestplate.webp",
+      "sha256": "4c5e6d90dd8483aca8c154a8883a0e9a961079dc39170a7a2fb785141566979a"
+    },
+    {
+      "path": "game/shop/relics/DazeTolerance/Gauntlets.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/DazeTolerance/Gauntlets.webp",
+      "sha256": "a3b80a774f601b52b64f2733c7692947bc26ce84f81253fe59b3e58219474cb4"
+    },
+    {
+      "path": "game/shop/relics/DazeTolerance/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/DazeTolerance/Helmet.webp",
+      "sha256": "43b8c4780f3e4ef27af3a67990ddf5941c14f0a963b49e4986ad917f14c48e72"
+    },
+    {
+      "path": "game/shop/relics/DazeTolerance/Pauldrons.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/DazeTolerance/Pauldrons.webp",
+      "sha256": "e2dbe10e87c3a90c8cfece67fce62243e3787dc5353caf1d24b06a2abc7bf276"
+    },
+    {
+      "path": "game/shop/relics/DazeTolerance/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/DazeTolerance/Shield.webp",
+      "sha256": "60dd89c5e0ad7bb883bc4c0d8846bca56accc1b06510286d6d538a2b6653eb60"
+    },
+    {
+      "path": "game/shop/relics/DazeTolerance/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/DazeTolerance/Weapon.webp",
+      "sha256": "d278526b0b070ade20ccba921ec311ed9f4821f21837803ae9804cbfd1ba6c67"
+    },
+    {
+      "path": "game/shop/relics/Defense/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Defense/Belt.webp",
+      "sha256": "9d76b49ed26f112a9053781290d91d47711f0ab859eaceb30c277956355ff6d4"
+    },
+    {
+      "path": "game/shop/relics/Defense/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Defense/Boots.webp",
+      "sha256": "7278c82f2428e433cb876d885fc39d30bc82b4b8b20f0a515597c8a2746ac38d"
+    },
+    {
+      "path": "game/shop/relics/Defense/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Defense/Chestplate.webp",
+      "sha256": "a96263e035f8691dbec4a53ed02e08bb035a0c770f7750b15a6df4507bcfe66e"
+    },
+    {
+      "path": "game/shop/relics/Defense/Gauntlets.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Defense/Gauntlets.webp",
+      "sha256": "d131c0e4a6c2d167ff9377a30fb36b80a0f0d47c4f06bc35812a27605a923b76"
+    },
+    {
+      "path": "game/shop/relics/Defense/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Defense/Helmet.webp",
+      "sha256": "0129da681e391bc1ff5285acff378a5c2265c989c38f5194214524d2212d4529"
+    },
+    {
+      "path": "game/shop/relics/Defense/Pauldrons.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Defense/Pauldrons.webp",
+      "sha256": "7e293f8aa4971db522f16e7ac1050175f8b81268322e6e1cfbf48f556e37c94d"
+    },
+    {
+      "path": "game/shop/relics/Defense/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Defense/Shield.webp",
+      "sha256": "1d3c08d5a1f1213caf591cf35ae6ae42b5dff8ee0aee8d3248b26d1588d0f23c"
+    },
+    {
+      "path": "game/shop/relics/Defense/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Defense/Weapon.webp",
+      "sha256": "75db0c7eb8da19cd0f686a3179778518d15311950b691e6e6f040f2496e6543b"
+    },
+    {
+      "path": "game/shop/relics/EventSet2/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/EventSet2/Chestplate.webp",
+      "sha256": "3c27e296e01d36e58509c7f626322b9dd2fd57c46d502e5ddffffa99c9c3d9a6"
+    },
+    {
+      "path": "game/shop/relics/FatigueTolerance/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/FatigueTolerance/Belt.webp",
+      "sha256": "a4d9345bb96cc3c92e1e49cf4762b1f62ee44523c72ba25258058f869f95a87a"
+    },
+    {
+      "path": "game/shop/relics/FatigueTolerance/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/FatigueTolerance/Boots.webp",
+      "sha256": "264434f029a011986a513d377063e6fc40ad09ddbe6e90ed9175877fcd5d04b8"
+    },
+    {
+      "path": "game/shop/relics/FatigueTolerance/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/FatigueTolerance/Chestplate.webp",
+      "sha256": "6ab38ce1043966a198079a0db007dd31e4404d7ee7b780da99a25d2776ba11f1"
+    },
+    {
+      "path": "game/shop/relics/FatigueTolerance/Gauntlets.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/FatigueTolerance/Gauntlets.webp",
+      "sha256": "d06205b585264a7484536eec31271331e68f57527f6e62c5762f7dfae4acb853"
+    },
+    {
+      "path": "game/shop/relics/FatigueTolerance/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/FatigueTolerance/Helmet.webp",
+      "sha256": "a1fe2b9b44a41de7d289e87927dd8e7028e9095d73ecd309db16f52b266b4d31"
+    },
+    {
+      "path": "game/shop/relics/FatigueTolerance/Pauldrons.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/FatigueTolerance/Pauldrons.webp",
+      "sha256": "5df043a86dd69ec67a71f8b934b882047ecca0df4fed02e03f5c69d78e7823fd"
+    },
+    {
+      "path": "game/shop/relics/FatigueTolerance/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/FatigueTolerance/Shield.webp",
+      "sha256": "32220174bbbb348a43e24ed24aefcb58584347461c530e7e30804b4ced925adf"
+    },
+    {
+      "path": "game/shop/relics/FatigueTolerance/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/FatigueTolerance/Weapon.webp",
+      "sha256": "2366c1996997dcf3cd6fd8a19f3afe1e0822264622f8f31de566b35e6848e7a9"
+    },
+    {
+      "path": "game/shop/relics/FrostTolerance/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/FrostTolerance/Chestplate.webp",
+      "sha256": "0b6ee68ac933144904743fad76d5021c8191e2ca4ce6d1a9351e6e9ec1059691"
+    },
+    {
+      "path": "game/shop/relics/FrostTolerance/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/FrostTolerance/Shield.webp",
+      "sha256": "4d639fff8f32bd7e70f8205011a52eb67995df5bca1a45b7c950f2cd3cdf412d"
+    },
+    {
+      "path": "game/shop/relics/Health/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Health/Belt.webp",
+      "sha256": "d651a02d4caca72df8c5093877a0ce30a369bb338fc44039a2ed49e3c53fe307"
+    },
+    {
+      "path": "game/shop/relics/Health/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Health/Boots.webp",
+      "sha256": "5e26065f09c3f36019cd04a131dcecbd287194fbfae69302c83e2b57e766b4f5"
+    },
+    {
+      "path": "game/shop/relics/Health/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Health/Chestplate.webp",
+      "sha256": "90e6a9f36da4810b66c063a2ca0f6481118aa64cd4c77efd6e0b3ded718f8407"
+    },
+    {
+      "path": "game/shop/relics/Health/Gauntlets.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Health/Gauntlets.webp",
+      "sha256": "594e7256d545540ebf550b60a90cfe05efd046a88862e10cafb21261d9632554"
+    },
+    {
+      "path": "game/shop/relics/Health/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Health/Helmet.webp",
+      "sha256": "0a70743dba2a93411a758b41852742900cfc06a4fa7d2ba0bff2f361423b2466"
+    },
+    {
+      "path": "game/shop/relics/Health/Pauldrons.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Health/Pauldrons.webp",
+      "sha256": "899710f0895b49a03b1a9f5907e3dd88442175952f8a3d8455823a26091bdb77"
+    },
+    {
+      "path": "game/shop/relics/Health/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Health/Shield.webp",
+      "sha256": "5337bd2dfd69636f216e48852748ef30dc4731925ca6f2b71d12d5e393fb6ca5"
+    },
+    {
+      "path": "game/shop/relics/Health/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Health/Weapon.webp",
+      "sha256": "9b62c354f76eee374dc5df8552207b69271a32d2f665a4152f15dea1bc7bee36"
+    },
+    {
+      "path": "game/shop/relics/IgnoreDefense/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/IgnoreDefense/Belt.webp",
+      "sha256": "41a7e8297171ed6bd67ca91a88ab7de7e3a8d5f3fb687f9e84ef53797fbcc523"
+    },
+    {
+      "path": "game/shop/relics/IgnoreDefense/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/IgnoreDefense/Boots.webp",
+      "sha256": "26e61f318cc6a37898e264d170377fa18c625a28d5e7632dd5ca55ab7c087bc4"
+    },
+    {
+      "path": "game/shop/relics/IgnoreDefense/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/IgnoreDefense/Chestplate.webp",
+      "sha256": "1f56c04eccd0c26555662db30fadc83499d199a9cbf99001d1fa26b40048721b"
+    },
+    {
+      "path": "game/shop/relics/IgnoreDefense/Gauntlets.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/IgnoreDefense/Gauntlets.webp",
+      "sha256": "db2f48c57e00d25cadcd8990d8f3656e466b181b7f83fc1f2b72b8be8a85def6"
+    },
+    {
+      "path": "game/shop/relics/IgnoreDefense/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/IgnoreDefense/Helmet.webp",
+      "sha256": "87f09f920f22f0132ee98f20c2fbbeb98a3282be3e8e8b14c9a3b68cac9a45bc"
+    },
+    {
+      "path": "game/shop/relics/IgnoreDefense/Pauldrons.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/IgnoreDefense/Pauldrons.webp",
+      "sha256": "f70023cc41dc80c4a3a53c0f46d19e67a816e501a3fb524c3540fbd42522b8c4"
+    },
+    {
+      "path": "game/shop/relics/IgnoreDefense/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/IgnoreDefense/Shield.webp",
+      "sha256": "b9e7e103f2d116eb81f1e2cfcfc3839b5c69e7ad8d51f6165a02425d119edc61"
+    },
+    {
+      "path": "game/shop/relics/IgnoreDefense/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/IgnoreDefense/Weapon.webp",
+      "sha256": "5fc919b66eaacc62373375fc86a321f884c13443eea07966e23b4d2a420b98e8"
+    },
+    {
+      "path": "game/shop/relics/Instinct/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Instinct/Belt.webp",
+      "sha256": "533c93a7a1e719250a95c2fcd9f3f52b78aa710c3d7b88a7742038d676ec14dc"
+    },
+    {
+      "path": "game/shop/relics/Instinct/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Instinct/Boots.webp",
+      "sha256": "5d4d10f9b6379cbc56a1c316b10e9d80f8650fa8da012658ced9bc8d1a9c7c70"
+    },
+    {
+      "path": "game/shop/relics/Instinct/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Instinct/Chestplate.webp",
+      "sha256": "31090db3275d8823b295ad7347f3f4c65ae0c4681410673c5426640db92ddfc0"
+    },
+    {
+      "path": "game/shop/relics/Instinct/Gauntlets.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Instinct/Gauntlets.webp",
+      "sha256": "e112919c8896933086fd624c7e11723c23d61e94edcd53c7439d70651a403643"
+    },
+    {
+      "path": "game/shop/relics/Instinct/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Instinct/Helmet.webp",
+      "sha256": "85aedf5727b22021933de60797e9d9808406ddcd43109e8536efaddc5bb8cda9"
+    },
+    {
+      "path": "game/shop/relics/Instinct/Pauldrons.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Instinct/Pauldrons.webp",
+      "sha256": "35f34fbf77293c612684caba5e1bb1e792a34ecde777e39ab68f3240723ff8a9"
+    },
+    {
+      "path": "game/shop/relics/Instinct/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Instinct/Shield.webp",
+      "sha256": "3c434b6c1129f7dfb86d7646202127ad4a88f0390997671c56c06f742abb04c5"
+    },
+    {
+      "path": "game/shop/relics/Instinct/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Instinct/Weapon.webp",
+      "sha256": "71be663e3cae5d6da2fac5ffc29125ce34e4ecc62a5192c10b2b52cde7c430d5"
+    },
+    {
+      "path": "game/shop/relics/LifeSteal/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/LifeSteal/Belt.webp",
+      "sha256": "e888e40c59bd8b6fb6228b27cdc675067f32cbd129bcea5dba308445fa8612d9"
+    },
+    {
+      "path": "game/shop/relics/LifeSteal/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/LifeSteal/Boots.webp",
+      "sha256": "f67d3fcb5ea220527e6c946c85a8e301c24cd76b4555081ce8a7e325c39731d0"
+    },
+    {
+      "path": "game/shop/relics/LifeSteal/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/LifeSteal/Chestplate.webp",
+      "sha256": "f340c0f83dbca1199033fa7dbd61e6b8b45b4ae0de73cd9c236c57c7037ca5e1"
+    },
+    {
+      "path": "game/shop/relics/LifeSteal/Gauntlets.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/LifeSteal/Gauntlets.webp",
+      "sha256": "a232a7c1f322fcef427244586e3677028cc333cd1f3443f64683e9aeba671a1c"
+    },
+    {
+      "path": "game/shop/relics/LifeSteal/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/LifeSteal/Helmet.webp",
+      "sha256": "ceaa542034297c2dea23225813239d98fce3dccedfa23cb06ee43f13fd350167"
+    },
+    {
+      "path": "game/shop/relics/LifeSteal/Pauldrons.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/LifeSteal/Pauldrons.webp",
+      "sha256": "06f4f9bde6f3b2669cf377e9485e48b8d3b43db555fc58a8191163cd540aa193"
+    },
+    {
+      "path": "game/shop/relics/LifeSteal/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/LifeSteal/Shield.webp",
+      "sha256": "0489f5eed831ed2b154323a8d99c90f8880d89594a7331a6e05acd865fb1e66f"
+    },
+    {
+      "path": "game/shop/relics/LifeSteal/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/LifeSteal/Weapon.webp",
+      "sha256": "42a3784cd754728e62125d5f5da2179e5f71a3e1d98a18ca119b94d4ac0d8d96"
+    },
+    {
+      "path": "game/shop/relics/ManaBurnTolerance/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ManaBurnTolerance/Belt.webp",
+      "sha256": "11ebbe81b6890bcfe22bb7287e3181a35dde922d3211aedbf6aa752020e67ecd"
+    },
+    {
+      "path": "game/shop/relics/ManaBurnTolerance/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ManaBurnTolerance/Boots.webp",
+      "sha256": "01ccf821d13b6b44eaee4206921d66e2b4531acd059258fa567e54b0accea7a3"
+    },
+    {
+      "path": "game/shop/relics/ManaBurnTolerance/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ManaBurnTolerance/Chestplate.webp",
+      "sha256": "12f7dfe750673e9deb16ce244ce5e78f75aed34d7dbe2d85388a5cfb83db0542"
+    },
+    {
+      "path": "game/shop/relics/ManaBurnTolerance/Gauntlets.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ManaBurnTolerance/Gauntlets.webp",
+      "sha256": "6bdd0b2c44c558139f974b85c622c1342923e0f0fce6b8d881b4b8c4312537eb"
+    },
+    {
+      "path": "game/shop/relics/ManaBurnTolerance/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ManaBurnTolerance/Helmet.webp",
+      "sha256": "19c806d46a2670d7ac5614fc4efb54ded783b69f4e74fc528ad13d732b4a39a3"
+    },
+    {
+      "path": "game/shop/relics/ManaBurnTolerance/Pauldrons.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ManaBurnTolerance/Pauldrons.webp",
+      "sha256": "8940e02551b7c6f0c30c2729a952dface688bca50d1bbc8e813863ef52ab0c3a"
+    },
+    {
+      "path": "game/shop/relics/ManaBurnTolerance/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ManaBurnTolerance/Shield.webp",
+      "sha256": "8541054a4415fc80a7ae7fe872f49cd5a1977f8de8fec43cc3f307e77e11de3d"
+    },
+    {
+      "path": "game/shop/relics/ManaBurnTolerance/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ManaBurnTolerance/Weapon.webp",
+      "sha256": "7b03f03d704c1cbdae734a8adfa97299aa66a5b1373f86c7e6f04b536b6168fa"
+    },
+    {
+      "path": "game/shop/relics/ManaGeneration/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ManaGeneration/Belt.webp",
+      "sha256": "3b58068efc368495fd32f303365783773c2bfe579cd49a96c506e93a5fbffaf4"
+    },
+    {
+      "path": "game/shop/relics/ManaGeneration/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ManaGeneration/Boots.webp",
+      "sha256": "d723e84a54877e995c2a7858fc45bfdeef5c8a9f4b1b7d84e05b5954af6fce26"
+    },
+    {
+      "path": "game/shop/relics/ManaGeneration/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ManaGeneration/Chestplate.webp",
+      "sha256": "58d385baf7256215653bf2cfb9934e3721a4903189d1eea71be3723f67448717"
+    },
+    {
+      "path": "game/shop/relics/ManaGeneration/Gauntlets.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ManaGeneration/Gauntlets.webp",
+      "sha256": "08dbcbe1938fdce30db593f2a1c0f465a0d36b72c8461c13817a8a92656b3253"
+    },
+    {
+      "path": "game/shop/relics/ManaGeneration/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ManaGeneration/Helmet.webp",
+      "sha256": "7847a492d2c81bc52676c7123f2b2291bfca5ae4c529f473db54a381f4e49899"
+    },
+    {
+      "path": "game/shop/relics/ManaGeneration/Pauldrons.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ManaGeneration/Pauldrons.webp",
+      "sha256": "92064898730144cd675a8905f484096ca6b7614e989476643bea6ca027fc90d3"
+    },
+    {
+      "path": "game/shop/relics/ManaGeneration/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ManaGeneration/Shield.webp",
+      "sha256": "57f554b837423582047a38437da638daa7ee8ba265cc8c4f5d5f8de16a2474f1"
+    },
+    {
+      "path": "game/shop/relics/ManaGeneration/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ManaGeneration/Weapon.webp",
+      "sha256": "fa788956d2e4ac900714d5899837dcdfd1b9f70c176ef389a0e0c3915c9fdabb"
+    },
+    {
+      "path": "game/shop/relics/ManaShockTolerance/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ManaShockTolerance/Weapon.webp",
+      "sha256": "c89677790da72c47e78c22c400d9bdcbd5b4698f07ea02657c8f186c8c6b1edd"
+    },
+    {
+      "path": "game/shop/relics/MindFogTolerance/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/MindFogTolerance/Boots.webp",
+      "sha256": "65a155a3f9d9d50880bbe51cf8c1aaf89c4515f7f50eefad89e675a65b3ada6f"
+    },
+    {
+      "path": "game/shop/relics/NightmareTolerance/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/NightmareTolerance/Belt.webp",
+      "sha256": "07f834bfc079d555356fed97dfc8fe7ab3ebc790569f56582425f971011bded5"
+    },
+    {
+      "path": "game/shop/relics/NightmareTolerance/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/NightmareTolerance/Boots.webp",
+      "sha256": "19df528e8c2dfd8836bf526d46aa48767682d370ee15f34563fc61cb704e0a40"
+    },
+    {
+      "path": "game/shop/relics/NightmareTolerance/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/NightmareTolerance/Chestplate.webp",
+      "sha256": "d5c0bbc45dbad241922d83ab58ffbd50a84b85fb8b1701d73ed7304071c3595d"
+    },
+    {
+      "path": "game/shop/relics/NightmareTolerance/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/NightmareTolerance/Helmet.webp",
+      "sha256": "6f3e79440732d3178ec3a7a45b37361ac1d9cc1ce00e54fae7215f54aac7c6a6"
+    },
+    {
+      "path": "game/shop/relics/NightmareTolerance/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/NightmareTolerance/Shield.webp",
+      "sha256": "201278f05fefa988df95dc2de5203f62d044180ea3ac34ab7197d70774c48d4e"
+    },
+    {
+      "path": "game/shop/relics/NightmareTolerance/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/NightmareTolerance/Weapon.webp",
+      "sha256": "3f908ac1a0139a7929ddc8f1cd32a73e031213daf78e1a44de8f13c113da8c54"
+    },
+    {
+      "path": "game/shop/relics/ParalysisTolerance/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ParalysisTolerance/Belt.webp",
+      "sha256": "43f706e460c61422bb6ce9d6269d8e809f66d068b3e6c98e7e9e259c0c33fcb6"
+    },
+    {
+      "path": "game/shop/relics/ParalysisTolerance/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ParalysisTolerance/Boots.webp",
+      "sha256": "8bd0c217d5fc20ae992969a0b125743c33fa030fc1ded7ddbdc53bdd9be2bec8"
+    },
+    {
+      "path": "game/shop/relics/ParalysisTolerance/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ParalysisTolerance/Chestplate.webp",
+      "sha256": "801874819295d8b7c22ec16f774593fe7af45fc77154b9cd348986bae5f283d0"
+    },
+    {
+      "path": "game/shop/relics/ParalysisTolerance/Gauntlets.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ParalysisTolerance/Gauntlets.webp",
+      "sha256": "c7888ab4dcbe490e0c2848c76787f03e5026b6a42988964626a889dca50f2ce9"
+    },
+    {
+      "path": "game/shop/relics/ParalysisTolerance/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ParalysisTolerance/Helmet.webp",
+      "sha256": "312d4b76ef7d0c4aded4ec17585f6ad59913e7e2a3d5a764ce07fcdf315b5cb0"
+    },
+    {
+      "path": "game/shop/relics/ParalysisTolerance/Pauldrons.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ParalysisTolerance/Pauldrons.webp",
+      "sha256": "861302f19b8add3fb87ec37515017bf5c44ef5c4048f912f6ba0c0b2b6ed8fe3"
+    },
+    {
+      "path": "game/shop/relics/ParalysisTolerance/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ParalysisTolerance/Shield.webp",
+      "sha256": "95cc389c5ee9ac95a98e5dfbf2dfcb24e9e6e47b077473c364689642e03b417a"
+    },
+    {
+      "path": "game/shop/relics/ParalysisTolerance/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ParalysisTolerance/Weapon.webp",
+      "sha256": "4f87cbf962a633ba3cd2c3b6e16a6aee24d79c3504921844112093aa5a3e3289"
+    },
+    {
+      "path": "game/shop/relics/ReduceBuffDuration/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ReduceBuffDuration/Belt.webp",
+      "sha256": "65ff0d1e56e8b92d6a33b42a9d5905fabd9fc2c6c616e2039ffa5c3febdf7841"
+    },
+    {
+      "path": "game/shop/relics/ReduceBuffDuration/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ReduceBuffDuration/Boots.webp",
+      "sha256": "16a5c2579d56e6c33a5b4d5394a3c0c23c13976af32b8dcb368a5d97401235a8"
+    },
+    {
+      "path": "game/shop/relics/ReduceBuffDuration/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ReduceBuffDuration/Chestplate.webp",
+      "sha256": "cc99a0bd14ddc1d058ed4e931de741ca122476dc7215fcc39cc46b635f1a2878"
+    },
+    {
+      "path": "game/shop/relics/ReduceBuffDuration/Gauntlets.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ReduceBuffDuration/Gauntlets.webp",
+      "sha256": "ecc675226c0a005c10a28797bc68e3df7d25d9e9089e9917f63a336cd92296b3"
+    },
+    {
+      "path": "game/shop/relics/ReduceBuffDuration/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ReduceBuffDuration/Helmet.webp",
+      "sha256": "d8a1cf5addcb5a893bccc91aa644408d55c851ead2a2ada1b57ec87ae8b1eab2"
+    },
+    {
+      "path": "game/shop/relics/ReduceBuffDuration/Pauldrons.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ReduceBuffDuration/Pauldrons.webp",
+      "sha256": "a7cd5223c6babdc240a5772dc72657424fde5bf77b61f3f288f681738e1e9471"
+    },
+    {
+      "path": "game/shop/relics/ReduceBuffDuration/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ReduceBuffDuration/Shield.webp",
+      "sha256": "950752177400d0a646c9c3abe61e6b7ea01c093d4c4d02552e7b67e353d460de"
+    },
+    {
+      "path": "game/shop/relics/ReduceBuffDuration/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/ReduceBuffDuration/Weapon.webp",
+      "sha256": "a4c0e4c83e28ac18f227255d0bf579bb44188d2dbb599ff70365e6537ebc7703"
+    },
+    {
+      "path": "game/shop/relics/Resistance/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Resistance/Belt.webp",
+      "sha256": "308df3a018e5963cbe4973c50e1d9617533a3518cd505df78aec2dddb2ab87ae"
+    },
+    {
+      "path": "game/shop/relics/Resistance/Gauntlets.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Resistance/Gauntlets.webp",
+      "sha256": "57dfb1397035484b57021640bcce07d939101d3033d437441e093d984c8d7b1d"
+    },
+    {
+      "path": "game/shop/relics/Resistance/Pauldrons.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Resistance/Pauldrons.webp",
+      "sha256": "aa6b7568b7e31a587201bfb4464da412d70a0f0c5700577d2ac9d8de5ba97d4b"
+    },
+    {
+      "path": "game/shop/relics/Resistance/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Resistance/Weapon.webp",
+      "sha256": "2319e8be54fecce424da7a5e7e5ce2da288839b60d3b9c02c6ce40367baf5ea1"
+    },
+    {
+      "path": "game/shop/relics/SkillRecovery/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/SkillRecovery/Belt.webp",
+      "sha256": "1c0921ea6057c3892566bfdbea3a0eae682eacab9fe3dff95fcc36c9ed629b13"
+    },
+    {
+      "path": "game/shop/relics/SkillRecovery/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/SkillRecovery/Boots.webp",
+      "sha256": "5e20525881670a9583e09e8f8477e9d6d76a19ef604d190db4ffa1afdac41e53"
+    },
+    {
+      "path": "game/shop/relics/SkillRecovery/Gauntlets.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/SkillRecovery/Gauntlets.webp",
+      "sha256": "5e26d3b6910afdb1b38607ebbf01dab2ac10a4ae0995985b88b1a8ff85da597e"
+    },
+    {
+      "path": "game/shop/relics/SkillRecovery/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/SkillRecovery/Helmet.webp",
+      "sha256": "20a42f4f5de9514fd7fcdc7c7a1c6e6889f16bc05eae11766bfe2dd17161ef9d"
+    },
+    {
+      "path": "game/shop/relics/SkillRecovery/Pauldrons.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/SkillRecovery/Pauldrons.webp",
+      "sha256": "ff1a97b4f130b5e16c4cb97c88ef210ffd79125dfb672d3e73cae32a8fe8c87e"
+    },
+    {
+      "path": "game/shop/relics/SkillRecovery/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/SkillRecovery/Shield.webp",
+      "sha256": "ebeef56d90b3d1facf3cc5c707e1066d12f164014b07ae8265c0e2e44e6e2c68"
+    },
+    {
+      "path": "game/shop/relics/SkillRecovery/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/SkillRecovery/Weapon.webp",
+      "sha256": "40a12c968c9d64f70b2336f85e23b443c032293a4b4e473df38e8d3d5688f970"
+    },
+    {
+      "path": "game/shop/relics/SkillSpeed/Gauntlets.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/SkillSpeed/Gauntlets.webp",
+      "sha256": "8cd282b8a65f83678e69494f8b0900dc8db132e3be58bd2c72c3c904c2385f99"
+    },
+    {
+      "path": "game/shop/relics/SkillSpeed/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/SkillSpeed/Helmet.webp",
+      "sha256": "83fdc46b3c4b05c228de907b19717cee5143c9c17a3c55a04896c026807968e0"
+    },
+    {
+      "path": "game/shop/relics/Support/Belt.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Support/Belt.webp",
+      "sha256": "3c2c47e999e17690b4aa1d1ca247a6d06f88b1696be0d5bd28560bd1f8fbec39"
+    },
+    {
+      "path": "game/shop/relics/Support/Boots.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Support/Boots.webp",
+      "sha256": "78bd646515e7b85cd2657a52fb7f84e01bf279db4d1a28e17231459e0b9ef43d"
+    },
+    {
+      "path": "game/shop/relics/Support/Chestplate.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Support/Chestplate.webp",
+      "sha256": "bf8dd9944b23987392b40c8795971aad9ff0a4ac106ae41699943b9439a09fab"
+    },
+    {
+      "path": "game/shop/relics/Support/Gauntlets.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Support/Gauntlets.webp",
+      "sha256": "685c4dab7fe72a6c54a574ea57e99cb3f5cd65733dff659fe2c0dcafe30d9346"
+    },
+    {
+      "path": "game/shop/relics/Support/Helmet.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Support/Helmet.webp",
+      "sha256": "44bf9b179e5d037a7ed72a2d37d0b44b5d3ba270914c25d35829713a21bae952"
+    },
+    {
+      "path": "game/shop/relics/Support/Pauldrons.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Support/Pauldrons.webp",
+      "sha256": "29a08135488acdae7a58a5cf935dcd3bbeb466752ed5ff9f1fc244412e12bbad"
+    },
+    {
+      "path": "game/shop/relics/Support/Shield.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Support/Shield.webp",
+      "sha256": "6ac551d67c8c3fcb958683f2a931f3d14487c63925ecb8d778891c89f11fc369"
+    },
+    {
+      "path": "game/shop/relics/Support/Weapon.webp",
+      "source": "https://www.invokers.com/game-assets/0.62.1655/shop/relics/Support/Weapon.webp",
+      "sha256": "f63c71381dd122d586cf5132f109659835c1292477fd25df999862ba13f1c748"
+    }
+  ]
+}

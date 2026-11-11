@@ -2,12 +2,13 @@
  * Cada acceso comprueba límites; un esquema nuevo falla de forma explícita. */
 
 export type Invoker = {
-  inventoryId: number; configId: string; rank: number; level: number;
+  inventoryId: number; catalogCode?: string; configId: string; rank: number; level: number;
+  reportedStats?: Record<string, number>; reportedPower?: number;
   locked: boolean; inStorage: boolean; awakeLevel: number;
   relicIds: Record<number, number>; accessoryIds: Record<number, number>;
 }
 export type Titan = {
-  inventoryId: number; configId: string; rank: number; level: number;
+  inventoryId: number; catalogCode?: string; configId: string; rank: number; level: number;
   empowermentLevel: number; locked: boolean;
 }
 export type Bonus = { id: number; stat: number; value: number; level: number; rolls: number }
