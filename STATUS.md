@@ -7,7 +7,7 @@
 - Fórmula de estadísticas verificada: 0 discrepancias con el aporte publicado en la caja real de prueba.
 - Optimizador exacto (DP por pares de conjuntos + arranques múltiples + búsqueda local), objetivo de daño efectivo, mínimos, conjunto obligatorio y protección de equipos.
 - Asesor: revisión de builds, cola de mejoras, candidatas a venta con motivos y tolerancias por corrupción.
-- Importación: marcador mágico (probado de extremo a extremo con una página simulada de invokers.com), pegar JSON, archivos, puente Android y proxy opcional.
+- Importación al estilo de GG: «Desde el juego» (PC/Mac, ruta para copiar, carpeta recordada, arrastrar y soltar, actualizar con un clic) y «Con tu enlace» (móvil: proxy opcional, copiar y pegar o marcador mágico). Se retiró el puente Android.
 - Se mantienen el lector `.dat` MemoryPack, el receptor Web Share Target y la carpeta recordada.
 
 ## Evidencia
@@ -22,4 +22,5 @@
 - Probar el marcador mágico en Chrome Android real con el enlace del usuario.
 - Simulación de daño con habilidades y defensa enemiga; optimización de equipos completos (repartir piezas entre varios Invokers).
 - Datos de habilidades y descripciones del catálogo público.
-- Validación del puente Android → PWA en el teléfono del usuario.
+- Probar la importación desde la carpeta del juego en Windows y Mac con archivos reales.
+- Desplegar un proxy público para que el enlace se importe con un toque en móvil.

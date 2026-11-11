@@ -32,13 +32,22 @@ El optimizador usa programación dinámica exacta sobre pares de conjuntos (8 ra
 
 ## Importar tu cuenta
 
+**En PC o Mac (recomendado): desde la carpeta del juego**
+
+1. Abre tu caja en el juego y espera unos segundos: el juego guarda sus archivos.
+2. En Nexo → **Importar** → «Desde el juego», copia la ruta:
+   - Windows: `%USERPROFILE%\AppData\LocalLow\Hit_Zone\Invokers`
+   - Mac: `~/Library/Application Support/Hit_Zone/Invokers` (en el selector, ⌘⇧G para pegarla)
+3. Pulsa **Importar mi caja**, pega la ruta en el selector y elige la carpeta **Invokers**. También se puede arrastrar la carpeta.
+
+Nexo busca los snapshots en `aggregate_snapshots`, los lee con su lector MemoryPack y recuerda la carpeta: después basta con **Actualizar** (y, opcionalmente, se actualiza sola al abrir Nexo en navegadores con File System Access).
+
+**En móvil o tableta: con tu enlace**
+
 1. En [tu caja del portal](https://invokers.com/hub/box/invokers/) activa «compartir» y pulsa «Refresh link».
-2. Elige un método en **Importar**:
-   - **Marcador mágico** (recomendado): un marcador que, abierto sobre tu enlace de invokers.com, lee la caja en esa misma página y la envía a Nexo con `postMessage`. Nexo solo acepta mensajes de `invokers.com` y valida la estructura.
-   - **Copiar y pegar** el JSON de «Abrir datos de mi caja».
-   - **Archivo** JSON o snapshots `.dat` (lector MemoryPack propio; con menos datos y sin optimizador exacto).
-   - **Invokers Bridge** (Android, APK de desarrollo) con el menú Compartir.
-   - **Proxy propio** opcional (`proxy/cloudflare-worker.js`) para importar con un clic: el portal no envía cabeceras CORS, así que la lectura directa desde GitHub Pages no es posible sin él.
+2. Pega el enlace en «Con tu enlace». El portal no envía cabeceras CORS, así que la lectura directa solo funciona con un proxy (`proxy/cloudflare-worker.js`, configurable en «Avanzado» o fijo en `DEFAULT_PROXY`). Sin él, Nexo ofrece **copiar y pegar** los datos o el **marcador mágico**, que lee la caja en invokers.com y la envía a Nexo con `postMessage` (solo se aceptan mensajes de `invokers.com`).
+
+La caja del enlace incluye además las estadísticas base y los registros de combate, que habilitan el **optimizador exacto**.
 
 Los datos se guardan solo en tu navegador (IndexedDB, hasta cinco importaciones). Nexo no tiene servidor.
 
@@ -58,7 +67,7 @@ BOX_JSON=/ruta/caja.json npm test # verifica la fórmula y el optimizador contra
 
 Ninguna caja real se guarda en el repositorio. Las pruebas usan una caja sintética (`scripts/sample-box.mjs`).
 
-Estructura: `src/box/` (modelo, estadísticas, optimizador, asesor, textos), `src/ui/` (páginas), `src/memorypack.ts` (snapshots `.dat`), `bridge/` (app Android), `proxy/` (Worker opcional).
+Estructura: `src/box/` (modelo, estadísticas, optimizador, asesor, textos), `src/ui/` (páginas), `src/memorypack.ts` (snapshots `.dat`), `src/folderSync.ts` (carpeta del juego), `proxy/` (Worker opcional).
 
 ## Límites
 

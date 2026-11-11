@@ -10,7 +10,7 @@ Los retratos e iconos son materiales publicados por HITZONE en el portal oficial
 - Materiales de equipo publicados por el portal: https://www.invokers.com/hub/box/invokers/
 - Política de contenido de fans: https://www.invokers.com/en/terms/fan-content-policy/
 
-Consulta: 10 de noviembre de 2026. El catálogo público corresponde al conjunto de datos 0.62.1655. La política permite materiales del juego publicados, incorporados a contenido de fans con aportación propia, sin presentarse como producto oficial. La identidad visual principal de la web es **Nexo**. Se conserva el nombre técnico de la PWA instalada para mantener compatibilidad con el selector y el recuerdo de destino del puente Android existente. El proyecto no vende recursos ni cobra por acceder a ellos.
+Consulta: 10 de noviembre de 2026. El catálogo público corresponde al conjunto de datos 0.62.1655. La política permite materiales del juego publicados, incorporados a contenido de fans con aportación propia, sin presentarse como producto oficial. La identidad visual principal de la web es **Nexo**. El proyecto no vende recursos ni cobra por acceder a ellos.
 
 `game-assets-manifest.json` registra URL de origen y SHA-256 de las 586 imágenes. `scripts/check-game-assets.mjs` comprueba formato, origen e integridad. Cada ficha incluye enlace al personaje en el portal oficial; no se copian sus textos de habilidades ni biografías.
 

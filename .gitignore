@@ -4,8 +4,3 @@ dist/
 *.dat
 *.zip
 *.tsbuildinfo
-bridge/.gradle/
-bridge/.kotlin/
-bridge/**/build/
-bridge/local.properties
-bridge/*.iml
