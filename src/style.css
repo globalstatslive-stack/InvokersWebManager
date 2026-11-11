@@ -501,3 +501,6 @@ kbd { display: inline-block; min-width: 22px; padding: 1px 6px; border-radius: 6
 @media (max-width: 480px) { .method-tabs { grid-template-columns: 1fr; } }
 .fine.wide { display: block; }
 .path-row code { white-space: normal; word-break: break-all; }
+
+.other-ways > summary { cursor: pointer; color: var(--text-2); font-weight: 600; padding: 4px 2px; }
+.other-ways[open] > summary { margin-bottom: 12px; }

@@ -13,8 +13,8 @@ const store = {
   set: (k: string, v: string) => { try { localStorage.setItem(k, v) } catch { /* sin almacenamiento */ } },
 }
 export const LINK_KEY = 'nexo.link', PROXY_KEY = 'nexo.proxy'
-/** Proxy público por defecto (vacío hasta desplegar proxy/cloudflare-worker.js). Con él, el enlace se importa con un toque. */
-export const DEFAULT_PROXY = ''
+/** Proxy de Nexo (proxy/cloudflare-worker.js en Cloudflare Workers): con él, el enlace se importa con un toque. */
+export const DEFAULT_PROXY = 'https://nexo-proxy.globalstatslive.workers.dev'
 export const proxyUrl = () => store.get(PROXY_KEY).trim() || DEFAULT_PROXY
 export const slugOf = (link: string) => sharedBoxUrl(link).searchParams.get('b')!
 export const apiUrl = (slug: string) => `https://invokers.com/api/lamb/${encodeURIComponent(slug)}`
@@ -164,7 +164,9 @@ export function ImportPage({ receiving }: { receiving?: boolean }) {
         </ol>
         {account?.box.expiresAt && <small className="muted">Tu enlace actual caduca el {new Date(account.box.expiresAt).toLocaleDateString('es-ES')}.</small>}
       </section>
-      {(needsHelp || !proxyUrl()) && <div className={`import-methods ${needsHelp ? 'highlight' : ''}`}>
+      <details className="other-ways" open={needsHelp || !proxyUrl()}>
+      <summary>¿No funciona el enlace? Otras formas de importar</summary>
+      <div className={`import-methods ${needsHelp ? 'highlight' : ''}`}>
         <section className="panel method">
           <h3><ClipboardPaste size={18} /> Copiar y pegar</h3>
           <ol className="mini">
@@ -187,11 +189,12 @@ export function ImportPage({ receiving }: { receiving?: boolean }) {
             <li>Abre tu enlace de invokers.com, escribe <b>nexo</b> en la barra de direcciones y toca el marcador.</li>
           </ol></details>
         </section>
-      </div>}
+      </div>
+      </details>
       <p className="fine wide">¿Tienes el JSON de la caja guardado? <button className="link" onClick={() => jsonInput.current?.click()}>Impórtalo desde un archivo</button>.</p>
       <details className="panel advanced">
-        <summary><Server size={16} /> Avanzado: importar el enlace con un toque (proxy propio)</summary>
-        <p>Despliega gratis <code>proxy/cloudflare-worker.js</code> en Cloudflare Workers y guarda aquí su dirección. Solo reenvía cajas públicas de invokers.com y no guarda nada.</p>
+        <summary><Server size={16} /> Avanzado: usar otro proxy</summary>
+        <p>Nexo usa su propio proxy (<code>proxy/cloudflare-worker.js</code>), que solo reenvía cajas públicas de invokers.com y no guarda nada. Si despliegas el tuyo, guarda aquí su dirección; vacío usa el de Nexo.</p>
         <div className="link-row">
           <input value={proxy} onChange={e => setProxy(e.target.value)} placeholder="https://nexo-proxy.tu-cuenta.workers.dev" spellCheck={false} aria-label="URL del proxy" />
           <button className="btn" onClick={() => { store.set(PROXY_KEY, proxy.trim()); setStatus(proxy.trim() ? 'Proxy guardado en este navegador.' : 'Proxy desactivado.') }}>Guardar</button>
