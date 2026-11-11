@@ -1,7 +1,7 @@
 {
-  "name": "Invokers Web Manager",
+  "name": "Nexo · Invokers",
   "short_name": "Invokers",
-  "description": "Inventario local de Invokers: Titan Legacy",
+  "description": "Nexo: optimizador, asesor y colección de Invokers: Titan Legacy",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

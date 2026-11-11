@@ -1,4 +1,4 @@
-import { decodeOfficialBox } from './officialImport'
+import { parseOfficialBox } from './box/model'
 import { decodeCollection, type Collection } from './memorypack'
 
 export const REQUIRED_NAMES = [
@@ -25,6 +25,7 @@ export type ImportRecord = {
   collection?: Collection
   interpretationError?: string
   source?: 'official-link' | 'files'
+  summary?: { name: string; heroes: number; titans: number; gear: number; power: number; snapshotAt: string | null }
   decoderVersion?: number
 }
 export type FileChange = { name: string; kind: 'nuevo' | 'cambiado' | 'eliminado' | 'igual' }
@@ -80,9 +81,9 @@ export async function prepareFiles(files: File[]): Promise<ImportRecord> {
   if (files.length === 1 && files[0].name.toLowerCase().endsWith('.json')) {
     const file=files[0]
     if(file.size>20*1024*1024) throw Error('La caja JSON supera 20 MiB.')
-    const buffer=await file.arrayBuffer(), collection=decodeOfficialBox(JSON.parse(new TextDecoder().decode(buffer)))
+    const buffer=await file.arrayBuffer(), box=parseOfficialBox(JSON.parse(new TextDecoder().decode(buffer)))
     const hash=await crypto.subtle.digest('SHA-256',buffer)
-    return {id:crypto.randomUUID(),importedAt:new Date().toISOString(),source:'official-link',decoderVersion:1,collection,missing:[],files:[{name:file.name,size:file.size,digest:Array.from(new Uint8Array(hash),b=>b.toString(16).padStart(2,'0')).join(''),sample:'',formatHint:'Caja compartida oficial · JSON',blob:file}]}
+    return {id:crypto.randomUUID(),importedAt:new Date().toISOString(),source:'official-link',decoderVersion:1,missing:[],summary:{name:box.profile.name,heroes:box.heroes.length,titans:box.titans.length,gear:box.relics.length+box.accessories.length,power:box.profile.totalPower,snapshotAt:box.snapshotAt},files:[{name:file.name,size:file.size,digest:Array.from(new Uint8Array(hash),b=>b.toString(16).padStart(2,'0')).join(''),sample:'',formatHint:'Caja compartida oficial · JSON',blob:file}]}
   }
   const dat = files.filter(file => file.name.toLowerCase().endsWith('.dat'))
   if (dat.length !== files.length) throw new Error('La selección contiene archivos que no terminan en .dat. Selecciona solo los snapshots de Invokers.')

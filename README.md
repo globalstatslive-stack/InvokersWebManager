@@ -1,72 +1,68 @@
-# Invokers Web Manager
+# Nexo · Invokers: Titan Legacy
 
-**Web publicada para probar en Android:** https://globalstatslive-stack.github.io/InvokersWebManager/
+**Web publicada:** https://globalstatslive-stack.github.io/InvokersWebManager/ (instalable como PWA en Android)
 
-Desde Chrome en el móvil, abre esa dirección y usa «Añadir a pantalla de inicio» o «Instalar aplicación». En la guía de la propia web puedes descargar Invokers Bridge. En la prueba del usuario, el puente ya leyó 12 archivos desde Android 16; falta verificar que lleguen a la PWA.
+Herramienta de fans independiente para gestionar tu cuenta de **Invokers: Titan Legacy** con los retratos, Titanes y objetos reales del juego. Su objetivo es superar a [GGNoLuck](https://www.ggnoluck.com/es/) con más herramientas y cálculos exactos. El código y el diseño son propios. No incorpora código ni recursos de GGNoLuck. Las ilustraciones se publican conforme a la política oficial de contenido de fans.
 
-Web móvil e instalable para organizar snapshots de **Invokers: Titan Legacy**. Proyecto independiente. No incorpora código ni recursos propietarios de GGNoLuck. Incluye ilustraciones del juego conforme a su política de contenido de fans.
+## Versión 0.5: qué incluye
 
-## Estado real de la versión 0.4
+| Sección | Qué hace |
+|---|---|
+| **Inicio** | Perfil, poder total, Invokers más fuertes, rareza, facciones por poder y tareas pendientes (qué optimizar, subir o vender). |
+| **Invokers** | 378+ Invokers con retratos reales. Filtros por facción, elemento, clase y rareza, mejor copia por personaje y orden por poder o por **cualquier estadística**. Vista en cuadrícula o en tabla. |
+| **Ficha** | Estadísticas base + equipo = total, porcentaje efectivo de las velocidades (curvas oficiales), tolerancias, habilidades, piezas equipadas, conjuntos activos, carencias y registros de combate en los que aparece. |
+| **Optimizador exacto** | Mejor combinación de 8 reliquias, conjuntos y accesorios con tu inventario. Objetivo **daño efectivo** ATQ × (1 + crítico × daño crítico) o pesos libres; perfiles por rol, mínimos de estadística, conjunto obligatorio, origen de las piezas (libres / no bloqueados / todas) y protección de Invokers de tus equipos. Muestra estadísticas antes/después, la lista de cambios a hacer en el juego y el oro estimado para desequipar. |
+| **Asesor** | Revisión de builds de tus equipos, cola de mejoras (piezas equipadas sin nivel máximo), candidatas a venta con motivos (notas A–D de cada subestadística) y buscador de **tolerancias** por corrupción de jefe. |
+| **Equipo** | Inventario de reliquias y accesorios con valoración 0–100, notas, filtros por ranura, conjunto, rareza, rango, principal y subestadística. |
+| **Titanes** | Efecto vinculado, bonificaciones, poder y uso en equipos. |
+| **Equipos** | Récords por modo (jefes, agujas, arena, jefe de clan): mejor tiempo, victorias, derrotas y formación con sus Titanes. |
+| **Códice** | Catálogo completo de Invokers y Titanes con lo que tienes, lo que te falta y el progreso por facción. |
+| **Historial** | Compara la importación actual con la anterior: poder ganado, subidas de nivel y rango, piezas nuevas. |
 
-La colección muestra **retratos oficiales y nombres reales** de 242 Invokers y 39 Titanes, con 122 correspondencias verificadas para los snapshots de prueba. Usa una estética propia bajo el nombre Nexo, filtros por nombre, rareza, facción, rol y elemento, duplicados agrupados y fichas con equipo de cada copia. Las ilustraciones se publican conforme a la política oficial de contenido de fans. Véase [catálogo y procedencia](docs/CATALOG.md).
+### Cálculo exacto
 
-La pantalla «Cómo sincronizar» incluye importación por carpeta y por enlace oficial. Un navegador que admite File System Access puede recordar una carpeta, actualizarla sin seleccionarla de nuevo y, con una opción explícita, leerla al volver a esa pantalla mientras conserve permiso. En Android sin esa API se mantiene el selector de archivos y el acceso con Shizuku.
+La caja compartida oficial (`https://invokers.com/api/lamb/<código>`) publica para cada Invoker sus estadísticas base (`basis`, coma fija 32.32), el aporte del equipo (`gearBonus`) y las reglas de los conjuntos. Nexo reproduce ese aporte **sin discrepancias** para todos los Invokers equipados de la caja de prueba:
 
-**Enlace de caja oficial:** pega `https://invokers.com/lamb/?b=…` y pulsa «Importar enlace con Bridge (Android)». Requiere actualizar el puente a 0.2.0. El puente descarga la instantánea pública por HTTPS y la comparte como JSON con la PWA instalada. Este modo no necesita Shizuku, contraseñas ni un servidor intermedio. La web también importa ese JSON desde el selector. El portal no permite leer el endpoint desde GitHub Pages mediante CORS; no se ofrece una lectura directa ficticia. La caja debe actualizarse con «Refresh link» en el portal antes de repetir la importación.
+```
+aporte = Σ bonificaciones fijas + Σ (% × base) para vida/ataque/defensa + bonos de conjunto (3/5/8 piezas)
+total propuesto = total publicado − aporte publicado + aporte de la build propuesta
+```
 
-El JSON oficial se ha probado con el enlace facilitado por el usuario: 378 Invokers, 50 Titanes, 881 reliquias y 87 accesorios. Conserva los propietarios y las estadísticas publicadas para cada Invoker; estas se identifican como valores de la instantánea y no se recalculan con el simulador. La entrega completa puente → PWA sigue requiriendo una prueba en el teléfono.
+El optimizador usa programación dinámica exacta sobre pares de conjuntos (8 ranuras admiten como mucho dos conjuntos de 3+ piezas), varios arranques y búsqueda local con la fórmula completa. En la caja de prueba encontró +44 % de daño efectivo para el Invoker más fuerte usando solo piezas libres.
 
-Funciona la recepción de archivos compartidos con una PWA instalada: los `.dat` se validan, interpretan y guardan automáticamente en IndexedDB. La selección manual de una carpeta o de archivos `.dat` individuales conserva la vista previa. La web reconoce el contenedor MemoryPack, calcula huellas SHA-256 y conserva hasta cinco lotes.
+## Importar tu cuenta
 
-El lector independiente extrae **Invokers, Titanes, reliquias y accesorios**, con identificadores de instancia, niveles, rangos, bonificaciones y propietarios de equipo. Comprueba tamaños, recuentos y referencias cruzadas antes de marcar la colección como interpretada. Las importaciones antiguas se interpretan al abrir la versión nueva; la sección «Historial» compara altas, mejoras y cambios de propietario entre lotes interpretados.
+1. En [tu caja del portal](https://invokers.com/hub/box/invokers/) activa «compartir» y pulsa «Refresh link».
+2. Elige un método en **Importar**:
+   - **Marcador mágico** (recomendado): un marcador que, abierto sobre tu enlace de invokers.com, lee la caja en esa misma página y la envía a Nexo con `postMessage`. Nexo solo acepta mensajes de `invokers.com` y valida la estructura.
+   - **Copiar y pegar** el JSON de «Abrir datos de mi caja».
+   - **Archivo** JSON o snapshots `.dat` (lector MemoryPack propio; con menos datos y sin optimizador exacto).
+   - **Invokers Bridge** (Android, APK de desarrollo) con el menú Compartir.
+   - **Proxy propio** opcional (`proxy/cloudflare-worker.js`) para importar con un clic: el portal no envía cabeceras CORS, así que la lectura directa desde GitHub Pages no es posible sin él.
 
-Los snapshots se vinculan a las identidades observadas y al catálogo oficial. Las identidades desconocidas conservan su ID y un aviso; no se asigna un retrato por semejanza numérica. «Herramientas» permite comparar una ranura con piezas libres y revisar candidatos a venta **sin ejecutar cambios en el juego**. No calcula todavía la build completa, los costes ni las composiciones de equipo. La entrega del puente a la PWA sigue pendiente de confirmación en el Android del usuario.
+Los datos se guardan solo en tu navegador (IndexedDB, hasta cinco importaciones). Nexo no tiene servidor.
 
-## Ejecutar y probar
+## Desarrollo
 
 Requiere Node.js 20.19+ o 22.12+.
 
 ```sh
-cd /workspace/InvokersWebManager
 npm ci
 npm run dev
-```
-
-Abre la URL local indicada por Vite para probar en este entorno. Para instalar en Android 16 como PWA se necesita desplegar `dist/` en un origen **HTTPS** accesible desde el teléfono. Una dirección `localhost` del entorno no será accesible desde el móvil. Compilar:
-
-```sh
+npm test             # unitarias + integridad de imágenes
 npm run build
-npm test
+node scripts/e2e.mjs # con `npm run dev` activo; NEXO_BOX_JSON=/ruta/caja.json para una caja real
+node scripts/share-e2e.mjs # con `npm run preview` activo
+BOX_JSON=/ruta/caja.json npm test # verifica la fórmula y el optimizador contra una caja real
 ```
 
-Prueba funcional de Chrome móvil (requiere Chromium instalado y el servidor de Vite activo en `127.0.0.1:5173`):
+Ninguna caja real se guarda en el repositorio. Las pruebas usan una caja sintética (`scripts/sample-box.mjs`).
 
-```sh
-node scripts/e2e.mjs
-node scripts/share-e2e.mjs
-```
+Estructura: `src/box/` (modelo, estadísticas, optimizador, asesor, textos), `src/ui/` (páginas), `src/memorypack.ts` (snapshots `.dat`), `bridge/` (app Android), `proxy/` (Worker opcional).
 
-Las pruebas automatizadas usan archivos sintéticos para comprobar selección y almacenamiento y un lote MemoryPack construido para verificar el parser. Los doce `.dat` reales aportados por el usuario se probaron en privado: 376 Invokers, 50 Titanes, 901 reliquias y 327 accesorios. Ninguno se incluye en el repositorio ni en `dist/`.
+## Límites
 
-## Acceso directo desde Android 16 (fase de prueba)
-
-La web publicada incluye [Invokers Bridge](bridge/), una app Android pequeña que usa el **UserService oficial de Shizuku** con identidad shell para leer únicamente los `.dat` de la ruta fija `aggregate_snapshots`. La app copia los archivos a su caché privado y los envía mediante el menú Compartir de Android. La PWA instalada declara un Web Share Target que recibe y guarda los archivos automáticamente en IndexedDB. Si el usuario elige la PWA la primera vez y Android informa del WebAPK elegido, el puente recuerda el destino y en la próxima lectura intenta abrirlo directamente. No abre contraseñas, no escribe en el juego y no transmite archivos al alojamiento web.
-
-Se probaron el puente y el receptor PWA por separado; el usuario confirmó en su Android 16 que Shizuku permitió leer doce archivos. **La entrega completa a la PWA sigue pendiente de prueba en ese teléfono.** Para probarla: instala la PWA desde Chrome, actualiza el APK del puente desde la sección «Cómo sincronizar», inicia Shizuku y autoriza el puente, abre Invokers Bridge, pulsa «Leer y compartir snapshots» y elige la PWA en Compartir si aparece el menú. La web debe abrir «Colección» con el lote interpretado. Si falla, registra el mensaje que muestre el puente o qué destino aparece en el menú Compartir. Shizuku puede requerir volver a iniciarse tras reiniciar el móvil.
-
-El APK del puente es una compilación de desarrollo; su primera instalación puede requerir autorizar «Instalar aplicaciones desconocidas» para el navegador que lo descargue. No ofrece venta ni equipamiento.
-
-## Importar desde Android
-
-1. Usa el procedimiento que ya comprobaste con Shizuku y X-plore para copiar `Android/data/hitzone.anima.spirit.guardians/files/aggregate_snapshots/` a `Download/Invokers/aggregate_snapshots/`.
-2. Pulsa «Seleccionar carpeta» y elige esa copia en Descargas. Si el selector de tu navegador no admite carpetas, pulsa «Elegir archivos» y selecciona los `.dat`.
-3. Revisa los nombres, tamaños y avisos. Pulsa «Guardar archivos locales». Los archivos originales no se modifican.
-4. Al copiar una exportación posterior, vuelve a importar y abre «Historial» para ver qué archivos se añadieron, cambiaron o desaparecieron.
-
-La selección de carpetas mediante `webkitdirectory` puede depender de la versión del navegador y el proveedor de archivos Android; por eso existe la selección múltiple de archivos. El historial guarda hasta cinco lotes en IndexedDB. Chrome puede eliminar datos de sitios con poco espacio o al limpiar los datos del navegador. La web no transmite el inventario a un servidor.
-
-## Referencia y límites
-
-Se estudiaron las páginas públicas de [GGNoLuck](https://www.ggnoluck.com/es/) sobre importación, optimizador, clasificación y calculadoras. El código y la interfaz de este proyecto son propios; no se incorporó el módulo WebAssembly, el catálogo completo, imágenes ni otros recursos de GGNoLuck. Las 122 correspondencias técnicas observadas en el informe local de referencia se documentan por separado en docs/CATALOG.md. El formato binario se implementó conforme a la [especificación pública de MemoryPack](https://github.com/Cysharp/MemoryPack#binary-wire-format-specification) y se contrastó con los archivos reales facilitados por el usuario.
-
-Quedan pendientes la cobertura de nuevas identidades de snapshots y el cálculo propio de estadísticas totales del personaje, las composiciones de equipo, las calculadoras que requieren fórmulas verificadas y la validación completa del puente en Android. Venta y equipamiento dentro del juego requieren un mecanismo de escritura legítimo y pruebas del resultado real. Ninguna operación de ese tipo está activa.
+- Nexo no modifica la cuenta: los cambios se hacen en el juego. El portal tiene funciones de aplicar equipamiento para la sesión del propietario; Nexo no las usa.
+- El daño efectivo no incluye defensa del enemigo, multiplicadores de habilidades ni elementos: compara builds para un mismo Invoker.
+- Las velocidades y otras estadísticas secundarias se valoran con pesos ajustables, no con una simulación de combate.
+- Los snapshots `.dat` no incluyen estadísticas base; para el optimizador hace falta la caja oficial.
