@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Nexo para Invokers",
+  "short_name": "Nexo",
+  "version": "1.0.0",
+  "description": "Guarda los planes de equipo de Nexo como presets en tu cuenta de invokers.com, listos para aplicar.",
+  "icons": { "16": "icon-16.png", "48": "icon-48.png", "128": "icon-128.png" },
+  "content_scripts": [
+    {
+      "matches": ["https://invokers.com/hub/*", "https://www.invokers.com/hub/*"],
+      "js": ["invokers.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://globalstatslive-stack.github.io/InvokersWebManager/*", "http://localhost:5173/*", "http://127.0.0.1:5173/*"],
+      "js": ["nexo.js"],
+      "run_at": "document_start"
+    }
+  ]
+}

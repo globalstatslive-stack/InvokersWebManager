@@ -15,6 +15,7 @@ const PROPOSAL_STATS = ['attack', 'criticalRate', 'criticalDamage', 'accuracy', 
 function PlanPanel({ plan, remove, clear, go }: { plan: PlanEntry[]; remove: (id: number) => void; clear: () => void; go: (p: string) => void }) {
   const [name, setName] = useState(() => `Nexo ${new Date().toLocaleDateString('es-ES')}`)
   const gold = plan.reduce((s, e) => s + e.gold, 0), changes = plan.reduce((s, e) => s + e.changes, 0)
+  const hasExtension = typeof document !== 'undefined' && !!document.documentElement.dataset.nexoExtension
   return <section className="panel plan">
     <div className="panel-title"><h2><ListChecks size={18} /> Tu plan</h2><small>{plan.length} Invokers · {changes} cambios · ~{fmtInt(gold)} oro</small></div>
     <ul className="plan-list">{plan.map(e => <li key={e.heroId}>
@@ -24,15 +25,17 @@ function PlanPanel({ plan, remove, clear, go }: { plan: PlanEntry[]; remove: (id
     </li>)}</ul>
     <div className="link-row">
       <input value={name} onChange={e => setName(e.target.value)} aria-label="Nombre del preset" maxLength={60} />
-      <a className="btn primary" href={portalUrl(plan, name)} target="_blank" rel="noreferrer"><Upload size={16} /> Enviar a invokers.com</a>
+      <a className="btn primary" href={portalUrl(plan, name)} target="_blank" rel="noopener" referrerPolicy="strict-origin"><Upload size={16} /> Enviar a invokers.com</a>
       <button className="btn" onClick={() => { if (confirm('¿Vaciar el plan?')) clear() }}>Vaciar</button>
     </div>
-    <ol className="steps-mini">
-      <li>Pulsa <b>Enviar a invokers.com</b>: se abre el optimizador oficial con tus Invokers (inicia sesión si te lo pide).</li>
-      <li>Toca el <b>marcador de Nexo</b> y confirma: el plan queda guardado en <b>Presets</b> y la página se recarga.</li>
-      <li>En <b>Presets</b>, pulsa <b>Apply</b> para revisar el oro y equipar.</li>
-    </ol>
-    <p className="fine">El marcador se configura una sola vez (Importar → Con tu enlace → Otras formas). Es necesario porque solo una página de invokers.com puede escribir en tu cuenta.</p>
+    {hasExtension ? <p className="fine ok-text">✓ Extensión de Nexo instalada: al enviar, el plan se guarda solo y se abre en <b>Presets</b> del optimizador oficial. Solo tienes que pulsar <b>Apply</b>.</p> : <>
+      <ol className="steps-mini">
+        <li>Pulsa <b>Enviar a invokers.com</b>: se abre el optimizador oficial con tus Invokers (inicia sesión si te lo pide).</li>
+        <li>Toca el <b>marcador de Nexo</b> y confirma: el plan queda guardado en <b>Presets</b>.</li>
+        <li>En <b>Presets</b>, pulsa <b>Apply</b> para revisar el oro y equipar.</li>
+      </ol>
+      <p className="fine">¿Sin marcador? Instala la <a href="./nexo-extension.zip" download>extensión de Nexo para Chrome/Edge</a> y el plan aparecerá directamente en Presets (descomprime el archivo, abre <code>chrome://extensions</code>, activa «Modo de desarrollador» y pulsa «Cargar descomprimida»).</p>
+    </>}
   </section>
 }
 

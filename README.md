@@ -68,6 +68,8 @@ BOX_JSON=/ruta/caja.json npm test # verifica la fórmula y el optimizador contra
 
 Ninguna caja real se guarda en el repositorio. Las pruebas usan una caja sintética (`scripts/sample-box.mjs`).
 
+**Extensión de Chrome/Edge** (`extension/`, se publica como `nexo-extension.zip`): guarda el plan como preset al abrir el optimizador oficial desde Nexo y abre la pestaña Presets, sin marcador. Solo actúa en `invokers.com/hub/*`, no equipa nada y pide confirmación si el enlace no viene de Nexo.
+
 Estructura: `src/box/` (modelo, estadísticas, optimizador, asesor, textos), `src/ui/` (páginas), `src/memorypack.ts` (snapshots `.dat`), `src/folderSync.ts` (carpeta del juego), `proxy/` (Worker opcional).
 
 ## Límites

@@ -518,3 +518,5 @@ table.data.proposals .set-chip .mini-icon { width: 16px; height: 16px; }
 .plan-list li { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 10px; background: var(--bg-2); }
 .plan-list li small { flex: 1; color: var(--muted); }
 .plan-portrait { width: 30px; height: 30px; border-radius: 8px; object-fit: cover; margin-right: 6px; }
+
+.ok-text { color: var(--up); }
