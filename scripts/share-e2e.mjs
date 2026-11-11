@@ -1,27 +1,24 @@
-import { chromium } from 'playwright'
+/** Receptor Web Share Target de la PWA. Requiere `npm run build && npm run preview` (INVOKERS_TEST_URL, por defecto :4173). */
 import assert from 'node:assert/strict'
+import { existsSync } from 'node:fs'
+import { chromium } from 'playwright'
+import { sampleBox } from './sample-box.mjs'
 const root = process.env.INVOKERS_TEST_URL || 'http://127.0.0.1:4173/'
-const browser = await chromium.launch({ executablePath: '/usr/bin/chromium', headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] })
-const context = await browser.newContext({ viewport: { width: 390, height: 844 } })
-const page = await context.newPage()
+const executablePath = [process.env.CHROMIUM_PATH ?? '', '/opt/pw-browsers/chromium', '/usr/bin/chromium'].find(p => p && existsSync(p))
+const browser = await chromium.launch({ ...(executablePath ? { executablePath } : {}), args: ['--no-sandbox', '--disable-dev-shm-usage'] })
+const page = await (await browser.newContext({ viewport: { width: 390, height: 844 } })).newPage()
 try {
   await page.goto(root)
-  await page.evaluate(async () => { await navigator.serviceWorker.ready; if (!navigator.serviceWorker.controller) await new Promise(resolve => navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true })) })
-  const result = await page.evaluate(async () => {
+  await page.evaluate(async () => { await navigator.serviceWorker.ready; if (!navigator.serviceWorker.controller) await new Promise(r => navigator.serviceWorker.addEventListener('controllerchange', r, { once: true })) })
+  const url = await page.evaluate(async json => {
     const body = new FormData()
-    for (const [index, name] of ['PlayerHeroesModel.dat', 'PlayerAnimasModel.dat', 'PlayerRelicsModel.dat', 'PlayerAccessoriesModel.dat'].entries()) {
-      body.append('snapshots', new File([new Uint8Array([index, 7])], name, { type: 'application/octet-stream' }))
-    }
-    const response = await fetch('./share', { method: 'POST', body })
-    return response.url
-  })
-  assert(result.includes('shared=1'), `El receptor no redirigió correctamente: ${result}`)
+    body.append('snapshots', new File([json], 'caja-invokers.json', { type: 'application/json' }))
+    return (await fetch('./share', { method: 'POST', body })).url
+  }, JSON.stringify(sampleBox()))
+  assert(url.includes('shared=1'), `El receptor no redirigió correctamente: ${url}`)
   await page.goto(root + '?shared=1')
-  await page.getByRole('status').getByText('4 archivos recibidos; revisa el estado de la interpretación', { exact: false }).waitFor()
-  assert.equal(await page.getByRole('dialog').count(), 0)
+  await page.locator('.profile-hero').waitFor()
   await page.reload()
-  await page.locator('.mobile-nav').getByRole('button', { name: 'Archivos' }).click()
-  await page.getByText('4 archivos guardados', { exact: false }).first().waitFor()
-  assert.equal(await page.getByRole('dialog').count(), 0)
-  console.log('PWA share target: cuatro archivos guardados automáticamente y conservados tras recargar')
+  await page.locator('.profile-hero').waitFor()
+  console.log('PWA share target: la caja compartida se importa automáticamente y persiste tras recargar.')
 } finally { await browser.close() }
