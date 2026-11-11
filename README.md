@@ -11,7 +11,8 @@ Herramienta de fans independiente para gestionar tu cuenta de **Invokers: Titan 
 | **Inicio** | Perfil, poder total, Invokers más fuertes, rareza, facciones por poder y tareas pendientes (qué optimizar, subir o vender). |
 | **Invokers** | 378+ Invokers con retratos reales. Filtros por facción, elemento, clase y rareza, mejor copia por personaje y orden por poder o por **cualquier estadística**. Vista en cuadrícula o en tabla. |
 | **Ficha** | Estadísticas base + equipo = total, porcentaje efectivo de las velocidades (curvas oficiales), tolerancias, habilidades, piezas equipadas, conjuntos activos, carencias y registros de combate en los que aparece. |
-| **Optimizador exacto** | Mejor combinación de 8 reliquias, conjuntos y accesorios con tu inventario. Objetivo **daño efectivo** ATQ × (1 + crítico × daño crítico) o pesos libres; perfiles por rol, mínimos de estadística, conjunto obligatorio, origen de las piezas (libres / no bloqueados / todas) y protección de Invokers de tus equipos. Muestra estadísticas antes/después, la lista de cambios a hacer en el juego y el oro estimado para desequipar. |
+| **Optimizador exacto** | Mejor combinación de 8 reliquias, conjuntos y accesorios con tu inventario. Objetivo **daño efectivo** ATQ × (1 + crítico × daño crítico) o pesos libres; perfiles por rol, mínimos de estadística, conjunto obligatorio, origen de las piezas (libres / no bloqueados / todas) y protección de Invokers de tus equipos. Muestra hasta 8 **propuestas** comparables (cada una con sus conjuntos activos), estadísticas antes/después, la opción de evaluar las principales **al nivel máximo**, la lista de cambios y el oro estimado para desequipar. |
+| **Plan y presets** | Añade varios Invokers a un plan (las piezas reservadas no se reutilizan) y envíalo a invokers.com: el marcador mágico, con tu sesión y tras confirmar, lo guarda como **preset** del portal (`POST /api/box/presets`). Lo revisas y aplicas con el botón oficial del portal. Nexo nunca aplica cambios por su cuenta. |
 | **Asesor** | Revisión de builds de tus equipos, cola de mejoras (piezas equipadas sin nivel máximo), candidatas a venta con motivos (notas A–D de cada subestadística) y buscador de **tolerancias** por corrupción de jefe. |
 | **Equipo** | Inventario de reliquias y accesorios con valoración 0–100, notas, filtros por ranura, conjunto, rareza, rango, principal y subestadística. |
 | **Titanes** | Efecto vinculado, bonificaciones, poder y uso en equipos. |
@@ -71,7 +72,7 @@ Estructura: `src/box/` (modelo, estadísticas, optimizador, asesor, textos), `sr
 
 ## Límites
 
-- Nexo no modifica la cuenta: los cambios se hacen en el juego. El portal tiene funciones de aplicar equipamiento para la sesión del propietario; Nexo no las usa.
+- Nexo no modifica la cuenta. Puede guardar un plan como preset en el portal oficial (con tu sesión y confirmación); aplicarlo se hace con el botón del portal. El portal no ofrece subir piezas de nivel, así que Nexo tampoco.
 - El daño efectivo no incluye defensa del enemigo, multiplicadores de habilidades ni elementos: compara builds para un mismo Invoker.
 - Las velocidades y otras estadísticas secundarias se valoran con pesos ajustables, no con una simulación de combate.
 - Los snapshots `.dat` no incluyen estadísticas base; para el optimizador hace falta la caja oficial.

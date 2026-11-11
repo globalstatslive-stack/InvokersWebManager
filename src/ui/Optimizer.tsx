@@ -1,13 +1,39 @@
-import { useDeferredValue, useMemo, useState } from 'react'
-import { ArrowRight, Coins, Info, Plus, Swords, X } from 'lucide-react'
+import { useDeferredValue, useEffect, useMemo, useState } from 'react'
+import { ArrowRight, Coins, Info, ListChecks, ListPlus, Plus, Swords, Upload, X } from 'lucide-react'
 import { useAccount } from './account'
 import { Chips, Empty, GearCard, NeedsAccount, PageHead, Select } from './common'
-import { EmptySlot, GearIcon, Portrait, SetIcon, StatIcon, Stars } from './Art'
-import { ACCESSORY_SLOTS, CORE_STATS, fmtInt, fmtStat, RELIC_SLOTS, SET_LABEL, SLOT_LABEL, STAT_LABEL, t, TOLERANCES } from '../box/i18n'
+import { EmptySlot, GameImg, GearIcon, Portrait, SetIcon, StatIcon, Stars } from './Art'
+import { entryFrom, portalUrl, reservedBy, usePlan, type PlanEntry } from './plan'
+import { ACCESSORY_SLOTS, CORE_STATS, fmtInt, fmtStat, RELIC_SLOTS, SET_LABEL, SLOT_LABEL, STAT_LABEL, STAT_SHORT, t, TOLERANCES } from '../box/i18n'
 import { optimize, PRESETS, presetFor, type Pool } from '../box/optimizer'
 import { activeSetBonuses, rating } from '../box/stats'
 import { teamHeroIds } from '../box/advisor'
 import type { Gear, Hero } from '../box/model'
+
+const PROPOSAL_STATS = ['attack', 'criticalRate', 'criticalDamage', 'accuracy', 'comboSpeed', 'skillSpeed', 'health']
+
+function PlanPanel({ plan, remove, clear, go }: { plan: PlanEntry[]; remove: (id: number) => void; clear: () => void; go: (p: string) => void }) {
+  const [name, setName] = useState(() => `Nexo ${new Date().toLocaleDateString('es-ES')}`)
+  const gold = plan.reduce((s, e) => s + e.gold, 0), changes = plan.reduce((s, e) => s + e.changes, 0)
+  return <section className="panel plan">
+    <div className="panel-title"><h2><ListChecks size={18} /> Tu plan</h2><small>{plan.length} Invokers · {changes} cambios · ~{fmtInt(gold)} oro</small></div>
+    <ul className="plan-list">{plan.map(e => <li key={e.heroId}>
+      <button className="link" onClick={() => go(`/optimizador/${e.heroId}`)}><GameImg path={e.portrait} alt="" className="plan-portrait" />{e.name}</button>
+      <small>{e.changes} cambios · {fmtInt(e.gold)} oro{e.damageGain ? ` · daño ${e.damageGain >= 0 ? '+' : ''}${(100 * e.damageGain).toFixed(1)} %` : ''}</small>
+      <button className="icon-btn" aria-label={`Quitar ${e.name} del plan`} onClick={() => remove(e.heroId)}><X size={15} /></button>
+    </li>)}</ul>
+    <div className="link-row">
+      <input value={name} onChange={e => setName(e.target.value)} aria-label="Nombre del preset" maxLength={60} />
+      <a className="btn primary" href={portalUrl(plan, name)} target="_blank" rel="noreferrer"><Upload size={16} /> Enviar a invokers.com</a>
+      <button className="btn" onClick={() => { if (confirm('¿Vaciar el plan?')) clear() }}>Vaciar</button>
+    </div>
+    <ol className="steps-mini">
+      <li>Pulsa <b>Enviar a invokers.com</b>: se abre tu caja del portal con el plan (inicia sesión si te lo pide).</li>
+      <li>En esa pestaña, usa el <b>marcador mágico de Nexo</b> (Importar → Con tu enlace → Otras formas). Te pedirá confirmación y guardará el plan como <b>preset</b>.</li>
+      <li>En el portal, abre <b>Presets</b>, revisa los cambios y el oro, y pulsa <b>Apply</b>. Los cambios se aplican en tu cuenta y los verás al entrar en el juego.</li>
+    </ol>
+  </section>
+}
 
 export function Optimizer({ heroId }: { heroId?: number }) {
   const { account, go } = useAccount()
@@ -38,15 +64,24 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
   const [minimums, setMinimums] = useState<Record<string, number>>({})
   const [newMin, setNewMin] = useState('accuracy')
   const [openGear, setOpenGear] = useState<Gear | null>(null)
+  const [maxLevel, setMaxLevel] = useState(false)
+  const [sel, setSel] = useState(0)
+  const { plan, upsert, remove, clear } = usePlan(box)
+  const reserved = useMemo(() => reservedBy(plan, hero.id), [plan, hero.id])
   const teamIds = useMemo(() => teamHeroIds(box), [box])
-  const opts = useDeferredValue({ objective, weights, pool, protectTeams, avoidMoves, reqSet, reqPieces, minimums })
-  const result = useMemo(() => {
+  const opts = useDeferredValue({ objective, weights, pool, protectTeams, avoidMoves, reqSet, reqPieces, minimums, maxLevel, reserved })
+  const full = useMemo(() => {
     const protectedHeroes = new Set(opts.protectTeams ? [...teamIds].filter(id => id !== hero.id) : [])
     return optimize(index, hero, {
       objective: opts.objective, weights: opts.weights, pool: opts.pool, protectedHeroes, moveAversion: opts.avoidMoves ? 0.35 : 0,
       requiredSet: opts.reqSet === 'none' ? null : { set: opts.reqSet, pieces: Number(opts.reqPieces) as 3 | 5 | 8 }, minimums: opts.minimums,
+      maxLevel: opts.maxLevel, reserved: opts.reserved, alternatives: 7,
     })
   }, [index, hero, opts, teamIds])
+  useEffect(() => setSel(0), [full])
+  const proposals = full.alternatives ?? [full]
+  const result = proposals[Math.min(sel, proposals.length - 1)]
+  const inPlan = plan.find(e => e.heroId === hero.id)
   const current = index.equipped(hero)
   const proposed = [...Object.values(result.relics), ...Object.values(result.accessories)].filter((x): x is Gear => !!x)
   const setsBefore = activeSetBonuses(current, index.rules), setsAfter = activeSetBonuses(proposed, index.rules)
@@ -76,6 +111,8 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
         <Chips label="Origen" value={pool} onChange={setPool} options={[{ id: 'free', label: 'Solo libres' }, { id: 'unlocked', label: '+ no bloqueados' }, { id: 'all', label: 'Todas' }]} />
         <label className="check"><input type="checkbox" checked={protectTeams} onChange={e => setProtectTeams(e.target.checked)} /> No tocar a Invokers de mis equipos ({teamIds.size})</label>
         <label className="check"><input type="checkbox" checked={avoidMoves} onChange={e => setAvoidMoves(e.target.checked)} /> Evitar mover piezas por mejoras mínimas</label>
+        <label className="check"><input type="checkbox" checked={maxLevel} onChange={e => setMaxLevel(e.target.checked)} /> Principales al nivel máximo (si subes las piezas)</label>
+        {reserved.size > 0 && <p className="hint">{reserved.size} piezas reservadas por tu plan para otros Invokers.</p>}
         <h3 className="sub">Restricciones</h3>
         <div className="row2">
           <Select label="Conjunto obligatorio" value={reqSet} onChange={setReqSet} options={[{ id: 'none', label: 'Ninguno' }, ...sets.map(s => ({ id: s, label: t(SET_LABEL, s) }))]} />
@@ -94,8 +131,28 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
         </div>
       </aside>
       <div className="opt-results">
+        {plan.length > 0 && <PlanPanel plan={plan} remove={remove} clear={clear} go={go} />}
+        {proposals.length > 1 && <section className="panel">
+          <div className="panel-title"><h2>Propuestas</h2><small>Toca una para verla{maxLevel ? ' · principales al nivel máximo' : ''}</small></div>
+          <div className="table-wrap"><table className="data proposals">
+            <thead><tr><th>#</th><th>Conjuntos</th><th>Daño</th><th>Puntos</th>{PROPOSAL_STATS.map(k => <th key={k}>{STAT_SHORT[k]}</th>)}<th>Cambios</th><th>Oro</th></tr></thead>
+            <tbody>
+              <tr className="current-row"><td>Actual</td><td>{activeSetBonuses(index.equipped(hero), index.rules).map(x => <span key={x.set} className="set-chip"><SetIcon set={x.set} />×{x.pieces}</span>)}</td><td>{fmtInt(full.damageBefore)}</td><td>0</td>{PROPOSAL_STATS.map(k => <td key={k}>{fmtStat(k, full.before[k] ?? 0)}</td>)}<td>—</td><td>—</td></tr>
+              {proposals.map((p, i) => { const ps = [...Object.values(p.relics), ...Object.values(p.accessories)].filter((x): x is Gear => !!x)
+                return <tr key={i} className={i === sel ? 'sel' : ''} onClick={() => setSel(i)}>
+                  <td>{i + 1}</td>
+                  <td>{activeSetBonuses(ps, index.rules).map(x => <span key={x.set} className="set-chip on"><SetIcon set={x.set} />×{x.pieces}</span>)}</td>
+                  <td><b>{fmtInt(p.damageAfter)}</b> <small className={p.damageAfter >= p.damageBefore ? 'up' : 'down'}>{p.damageBefore ? `${p.damageAfter >= p.damageBefore ? '+' : ''}${(100 * (p.damageAfter / p.damageBefore - 1)).toFixed(1)} %` : ''}</small></td>
+                  <td className={p.score - p.scoreBefore > 0.01 ? 'up' : ''}>{(p.score - p.scoreBefore).toFixed(1)}</td>
+                  {PROPOSAL_STATS.map(k => { const d = (p.after[k] ?? 0) - (p.before[k] ?? 0); return <td key={k}>{fmtStat(k, p.after[k] ?? 0)}{Math.abs(d) > (k.startsWith('critical') ? 0.0005 : 0.5) && <small className={d > 0 ? 'up' : 'down'}> {fmtStat(k, d, true)}</small>}</td> })}
+                  <td>{p.changes.length}</td><td>{fmtInt(p.goldCost)}</td>
+                </tr> })}
+            </tbody>
+          </table></div>
+          {proposals.some(p => !p.minimumsMet) && <p className="fine">Las propuestas que no cumplen los mínimos se muestran igualmente para comparar.</p>}
+        </section>}
         <section className="panel">
-          <div className="panel-title"><h2>Resultado</h2>
+          <div className="panel-title"><h2>{proposals.length > 1 ? `Propuesta ${Math.min(sel, proposals.length - 1) + 1}` : 'Resultado'}</h2>
             <span className={`score ${improvement > 0.01 ? 'up' : ''}`}>{improvement > 0.01 ? `+${improvement.toFixed(1)} puntos` : 'Ya es la mejor build con estas opciones'}</span>
           </div>
           <div className="dmg-strip">
@@ -135,9 +192,13 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
             <ol className="changes">{result.changes.map(c => <li key={c.slot}>
               <b>{t(SLOT_LABEL, c.slot)}</b>
               <span className="change-pair">{c.from ? <GearIcon g={c.from} size="sm" /> : <span className="muted">vacío</span>}<ArrowRight size={15} />{c.to ? <GearIcon g={c.to} size="sm" /> : <span className="muted">quitar</span>}</span>
-              <small>{c.to ? (c.takenFrom ? <>Quitar a <button className="link" onClick={() => go(`/invoker/${c.takenFrom!.id}`)}>{c.takenFrom.name}</button></> : 'Pieza libre') : ''}</small>
+              <small>{c.to ? (c.takenFrom ? <>Quitar a <button className="link" onClick={() => go(`/invoker/${c.takenFrom!.id}`)}>{c.takenFrom.name}</button></> : 'Pieza libre') : ''}{maxLevel && c.to?.mainAtMax && <span className="tag sev-2">Subir al máximo</span>}</small>
             </li>)}</ol>}
-          <p className="fine">Nexo no modifica tu cuenta: haz los cambios en el juego y vuelve a actualizar el enlace. El coste de oro es una estimación con los precios de desequipar publicados.</p>
+          <div className="row-actions">
+            <button className="btn primary" disabled={!result.changes.length} onClick={() => upsert(entryFrom(hero, result))}><ListPlus size={16} /> {inPlan ? 'Actualizar en el plan' : 'Añadir al plan'}</button>
+            {inPlan && <button className="btn" onClick={() => remove(hero.id)}>Quitar del plan</button>}
+          </div>
+          <p className="fine">Añade varios Invokers al plan: las piezas que reserves no se usarán para los demás. Después envía el plan a invokers.com como preset y aplícalo con el botón oficial del portal. El oro es una estimación con los precios de desequipar publicados.</p>
         </section>
       </div>
     </div>

@@ -40,9 +40,15 @@ try {
   await page.getByRole('button', { name: 'Optimizar equipo' }).click()
   await page.locator('.dmg-strip').waitFor()
   await page.locator('.stat-table.compare tr').first().waitFor()
-  // 4) Persistencia tras recargar.
+  // Propuestas alternativas y plan.
+  await page.getByRole('button', { name: /Añadir al plan/ }).click()
+  await page.locator('.plan-list li').first().waitFor()
+  const planHref = await page.getByRole('link', { name: /Enviar a invokers.com/ }).getAttribute('href')
+  assert.ok(planHref.startsWith('https://invokers.com/hub/box/invokers/#nexo-plan='))
+  // 4) Persistencia tras recargar (el plan también se conserva).
   await page.reload()
   await page.locator('.dmg-strip').waitFor()
+  await page.locator('.plan-list li').first().waitFor()
   // 5) Marcador mágico: una página simulada de invokers.com envía la caja a la web.
   await context.route('https://invokers.com/**', r => new URL(r.request().url()).pathname.startsWith('/api/lamb/')
     ? r.fulfill({ contentType: 'application/json', body: json }) : r.fulfill({ contentType: 'text/html', body: '<p>caja</p>' }))
@@ -57,6 +63,21 @@ try {
   await portal.evaluate(code)
   const received = await popup
   await received.locator('.profile-hero').waitFor({ timeout: 20000 })
+  // 5b) El marcador guarda el plan como preset en el portal (API simulada), tras confirmar.
+  let presetBody
+  await context.route('https://invokers.com/api/box/presets', r => { presetBody = JSON.parse(r.request().postData()); return r.fulfill({ status: 201, contentType: 'application/json', body: '{"id":"p1"}' }) })
+  const planPage = await context.newPage()
+  const dialogs = []
+  planPage.on('dialog', d => { dialogs.push(d.type()); d.accept() })
+  await planPage.goto(planHref)
+  await planPage.evaluate(code)
+  await planPage.waitForTimeout(500)
+  assert.ok(presetBody, 'el marcador no envió el preset')
+  assert.equal(presetBody.category, 'Nexo')
+  assert.ok(presetBody.loadouts.length === 1 && Number.isInteger(presetBody.loadouts[0].heroId))
+  assert.ok(Object.keys(presetBody.loadouts[0].relics).length > 0)
+  assert.deepEqual(dialogs, ['confirm', 'alert'])
+  assert.ok(!(await planPage.evaluate(() => location.hash)).includes('nexo-plan'))
   await received.evaluate(() => { location.hash = '#/datos' })
   assert.ok(await received.locator('.records li').count() >= 2, 'el marcador no guardó una segunda importación')
   // 6) Borrado.
@@ -64,5 +85,5 @@ try {
   await received.getByRole('button', { name: 'Borrar todos los datos' }).click()
   await received.getByRole('heading', { name: 'Importar tu caja' }).waitFor()
   assert.deepEqual(errors, [])
-  console.log('E2E móvil: pegar caja, secciones, ficha, optimizador, recarga, marcador mágico y borrado correctos.')
+  console.log('E2E móvil: pegar caja, secciones, ficha, optimizador, plan, recarga, marcador mágico (caja y preset) y borrado correctos.')
 } finally { await browser.close() }

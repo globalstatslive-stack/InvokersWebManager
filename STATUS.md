@@ -18,6 +18,12 @@
 - `node scripts/share-e2e.mjs`: la caja compartida con la PWA se importa sola y persiste.
 - Con la caja real: optimización del Invoker más fuerte en <0,5 s; +44 % de daño efectivo solo con piezas libres o no bloqueadas.
 
+## Versión 0.6
+
+- Optimizador con propuestas alternativas, principales al nivel máximo y plan de varios Invokers con piezas reservadas.
+- Envío del plan al portal como preset mediante el marcador mágico (probado de extremo a extremo con la API del portal simulada; pendiente de probar con la sesión real).
+- La carpeta del juego se combina con la última caja del enlace para el optimizador.
+
 ## Pendiente
 
 - Probar el marcador mágico en Chrome Android real con el enlace del usuario.

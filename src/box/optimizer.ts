@@ -23,6 +23,12 @@ export type OptimizeOptions = {
   moveAversion?: number
   /** 'damage' maximiza ATQ × (1 + crítico × daño crítico) además de los pesos del resto. */
   objective?: 'weights' | 'damage'
+  /** Evalúa cada pieza con su principal al nivel máximo (como si se subiera). */
+  maxLevel?: boolean
+  /** Piezas reservadas por el plan para otros Invokers (`relic12`, `accessory7`). */
+  reserved?: Set<string>
+  /** Número de propuestas alternativas a devolver además de la mejor. */
+  alternatives?: number
 }
 type Pick = { relics: Record<string, Gear | null>; accessories: Record<string, Gear | null> }
 const DAMAGE_STATS = new Set(['attack', 'criticalRate', 'criticalDamage', 'damage'])
@@ -38,7 +44,11 @@ export type BuildResult = {
   before: Stats; after: Stats; changes: Change[]; goldCost: number
   minimumsMet: boolean; unmet: string[]; score: number; scoreBefore: number
   damageBefore: number; damageAfter: number
+  /** Otras propuestas ordenadas por valor (la primera es esta misma build). */
+  alternatives?: BuildResult[]
 }
+export const gearKey = (g: Pick2) => `${g.kind}${g.id}`
+type Pick2 = { kind: string; id: number }
 
 /** Escala de cada estadística: una subestadística típica vale 1 punto. */
 export const STAT_SCALE: Record<string, number> = {
@@ -75,6 +85,7 @@ export function piecePoints(g: Gear, hero: Hero, w: Record<string, number>): num
 export function optimize(index: BoxIndex, hero: Hero, opts: OptimizeOptions): BuildResult {
   const owners = new Map<number, Hero>()
   const allowed = (g: Gear) => {
+    if (opts.reserved?.has(gearKey(g))) return false
     if (g.equippedHeroId === null || g.equippedHeroId === hero.id) return true
     if (opts.protectedHeroes?.has(g.equippedHeroId)) return false
     if (opts.pool === 'free') return false
@@ -82,9 +93,13 @@ export function optimize(index: BoxIndex, hero: Hero, opts: OptimizeOptions): Bu
     return opts.pool === 'all' || !owner?.locked
   }
   for (const h of index.box.heroes) owners.set(h.id, h)
-  const relics = index.box.relics.filter(allowed)
-  const accessories = index.box.accessories.filter(g => allowed(g) && g.faction === hero.faction && hero.awakeLevel >= (index.box.accessorySlotAwake[g.slot] ?? 0))
-  const current = index.equipped(hero)
+  // Con «nivel máximo», cada pieza se evalúa con la principal que tendría al subirla (dato del portal).
+  const up = (g: Gear): Gear => opts.maxLevel && g.mainAtMax ? { ...g, main: g.mainAtMax } : g
+  const pieces = new Map([...index.box.relics, ...index.box.accessories].map(g => [gearKey(g), up(g)]))
+  const piece = (kind: 'relic' | 'accessory', id: number | undefined) => id === undefined ? undefined : pieces.get(`${kind}${id}`)
+  const relics = index.box.relics.filter(allowed).map(g => pieces.get(gearKey(g))!)
+  const accessories = index.box.accessories.filter(g => allowed(g) && g.faction === hero.faction && hero.awakeLevel >= (index.box.accessorySlotAwake[g.slot] ?? 0)).map(g => pieces.get(gearKey(g))!)
+  const current = index.equipped(hero).map(g => pieces.get(gearKey(g))!)
   const minimums = Object.entries(opts.minimums ?? {}).filter(([, v]) => v > 0)
   const aversion = opts.moveAversion ?? 0.15
   const damage = opts.objective === 'damage'
@@ -122,13 +137,13 @@ export function optimize(index: BoxIndex, hero: Hero, opts: OptimizeOptions): Bu
   const seeds: Record<string, number>[] = [gradient(hero.stats)]
   if (damage) for (const mix of [0, 0.25, 0.5, 0.75, 1]) seeds.push({ ...gradient(hero.stats), attack: 10 * (1 - mix) + 2, criticalRate: 10 * mix + 1, criticalDamage: 8 * mix + 1 })
   for (const seed of seeds) {
-    const pick = solve(index, hero, relics, accessories, seed, aversion)
+    const { pick } = solve(index, hero, relics, accessories, seed, aversion)
     const e = evaluate(piecesOf(pick))
     if (!best || e.j > best.j) best = { pick, ...e }
   }
   let stats: Stats = best!.stats
   for (let round = 0; round < 10; round++) {
-    const pick = solve(index, hero, relics, accessories, gradient(stats), aversion)
+    const { pick } = solve(index, hero, relics, accessories, gradient(stats), aversion)
     const e = evaluate(piecesOf(pick))
     if (best && e.j <= best.j + 1e-9) {
       const blended: Stats = { ...stats }
@@ -160,25 +175,43 @@ export function optimize(index: BoxIndex, hero: Hero, opts: OptimizeOptions): Bu
     if (!improved) break
   }
   const final = best!
-  const unmet = minimums.filter(([k, v]) => (final.stats[k] ?? 0) < v).map(([k]) => k)
-  return { ...finalize(final.pick), after: final.stats, unmet, minimumsMet: unmet.length === 0, score: final.j, scoreBefore: evaluate(current).j, damageBefore: damageValue(hero.stats), damageAfter: damageValue(final.stats) }
+  const now = evaluate(current)
+  const build = (b: { pick: Pick; j: number; stats: Stats }): BuildResult => {
+    const unmet = minimums.filter(([k, v]) => (b.stats[k] ?? 0) < v).map(([k]) => k)
+    return { ...finalize(b.pick), before: now.stats, after: b.stats, unmet, minimumsMet: unmet.length === 0, score: b.j, scoreBefore: now.j, damageBefore: damageValue(now.stats), damageAfter: damageValue(b.stats) }
+  }
+  const result = build(final)
+  // 3) Propuestas alternativas: la mejor combinación de cada par de conjuntos, evaluada con la fórmula completa.
+  const count = opts.alternatives ?? 0
+  if (count > 0) {
+    const signature = (p: Pick) => RELIC_SLOTS.map(s => p.relics[s]?.id ?? '-').join(',')
+    const seen = new Set([signature(final.pick)])
+    const others = solve(index, hero, relics, accessories, gradient(final.stats), aversion).pairs
+      .map(relicPick => ({ relics: relicPick, accessories: final.pick.accessories }))
+      .filter(p => { const k = signature(p); if (seen.has(k)) return false; seen.add(k); return true })
+      .map(p => ({ pick: p, ...evaluate(piecesOf(p)) }))
+      .filter(b => !opts.requiredSet || (setCounts(piecesOf(b.pick)).get(opts.requiredSet.set) ?? 0) >= opts.requiredSet.pieces)
+      .sort((a, b) => b.j - a.j).slice(0, count)
+    result.alternatives = [result, ...others.map(build)]
+  }
+  return result
 
   function finalize(pick: Pick) {
     const changes: Change[] = []
     let goldCost = 0
     for (const [slot, to] of [...Object.entries(pick.relics), ...Object.entries(pick.accessories)]) {
       const fromId = (RELIC_SLOTS.includes(slot) ? hero.relics : hero.accessories)[slot]
-      const from = fromId === undefined ? null : (RELIC_SLOTS.includes(slot) ? index.relic(fromId) : index.accessory(fromId)) ?? null
+      const from = piece(RELIC_SLOTS.includes(slot) ? 'relic' : 'accessory', fromId) ?? null
       if ((from?.id ?? null) === (to?.id ?? null)) continue
       const takenFrom = to && to.equippedHeroId !== null && to.equippedHeroId !== hero.id ? owners.get(to.equippedHeroId) ?? null : null
       if (from) goldCost += from.unequipGold
       if (takenFrom && to) goldCost += to.unequipGold
       changes.push({ slot, from, to, takenFrom })
     }
-    return { relics: pick.relics, accessories: pick.accessories, before: hero.stats, changes, goldCost }
+    return { relics: pick.relics, accessories: pick.accessories, changes, goldCost }
   }
 
-  function solve(index: BoxIndex, hero: Hero, relics: Gear[], accessories: Gear[], w: Record<string, number>, aversion: number): Pick {
+  function solve(index: BoxIndex, hero: Hero, relics: Gear[], accessories: Gear[], w: Record<string, number>, aversion: number): { pick: Pick; pairs: Record<string, Gear | null>[] } {
     const points = new Map<Gear, number>()
     const value = (g: Gear) => {
       let p = points.get(g)
@@ -210,6 +243,7 @@ export function optimize(index: BoxIndex, hero: Hero, opts: OptimizeOptions): Bu
     const sets = [...index.rules.keys()].filter(s => setValue(s, 8) > 0 || opts.requiredSet?.set === s)
     const candidates: (string | null)[] = [null, ...sets]
     let best: { score: number; pick: Record<string, Gear | null> } = { score: -Infinity, pick: {} }
+    const pairs: { score: number; pick: Record<string, Gear | null> }[] = []
     for (let i = 0; i < candidates.length; i++) for (let j = i + 1; j <= candidates.length; j++) {
       const A = candidates[i], B = j < candidates.length ? candidates[j] : null
       if (A === null && B !== null) continue
@@ -234,12 +268,16 @@ export function optimize(index: BoxIndex, hero: Hero, opts: OptimizeOptions): Bu
         }
         dp = next
       }
+      let pairBest: { score: number; pick: Record<string, Gear | null> } | null = null
       for (const [key, state] of dp) {
         const [a, b] = key.split(',').map(Number)
         if (opts.requiredSet && ((A === opts.requiredSet.set ? a : b) < opts.requiredSet.pieces)) continue
         const total = state.score + (A ? setValue(A, a) : 0) + (B ? setValue(B, b) : 0)
         if (total > best.score) best = { score: total, pick: state.pick }
+        // Para las alternativas, cada par debe tener sus conjuntos activos (3+ piezas): propuestas distintas.
+        if ((!A || a >= 3) && (!B || b >= 3) && (!pairBest || total > pairBest.score)) pairBest = { score: total, pick: state.pick }
       }
+      if (pairBest) pairs.push(pairBest)
     }
     const relicPick: Record<string, Gear | null> = Object.fromEntries(RELIC_SLOTS.map(s => [s, best.pick[s] ?? null]))
     const accessoryPick: Record<string, Gear | null> = {}
@@ -249,8 +287,9 @@ export function optimize(index: BoxIndex, hero: Hero, opts: OptimizeOptions): Bu
       if (accessoryPick[slot] && value(accessoryPick[slot]!) <= 0 && accessoryPick[slot]!.equippedHeroId !== hero.id) accessoryPick[slot] = null
     }
     // Mantener piezas actuales en ranuras que el optimizador deja vacías por no aportar.
-    for (const slot of RELIC_SLOTS) if (!relicPick[slot] && hero.relics[slot]) relicPick[slot] = index.relic(hero.relics[slot]) ?? null
-    for (const slot of ACCESSORY_SLOTS) if (!accessoryPick[slot] && hero.accessories[slot]) accessoryPick[slot] = index.accessory(hero.accessories[slot]) ?? null
-    return { relics: relicPick, accessories: accessoryPick }
+    const keep = (kind: 'relic' | 'accessory', id: number | undefined) => { const g = piece(kind, id); return g && !opts.reserved?.has(gearKey(g)) ? g : null }
+    const fill = (p: Record<string, Gear | null>) => { const out = Object.fromEntries(RELIC_SLOTS.map(s => [s, p[s] ?? null])); for (const slot of RELIC_SLOTS) if (!out[slot]) out[slot] = keep('relic', hero.relics[slot]); return out }
+    for (const slot of ACCESSORY_SLOTS) if (!accessoryPick[slot]) accessoryPick[slot] = keep('accessory', hero.accessories[slot])
+    return { pick: { relics: fill(relicPick), accessories: accessoryPick }, pairs: pairs.sort((a, b) => b.score - a.score).slice(0, 40).map(p => fill(p.pick)) }
   }
 }
