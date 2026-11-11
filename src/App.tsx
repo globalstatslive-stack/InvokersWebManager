@@ -92,13 +92,18 @@ export default function App() {
   }, [importFiles])
 
   /** Actualiza desde la última fuente disponible: carpeta recordada o enlace con proxy. */
+  /** Actualiza desde todas las fuentes configuradas: primero el enlace (poder y estadísticas base) y después la carpeta del juego (equipo actual). */
   async function sync() {
     const link = stored(LINK_KEY), pref = await folderPreference().catch(() => undefined)
     const viaLink = !!link && !!proxyUrl()
-    const preferFolder = pref && (account?.record.source !== 'official-link' || !viaLink)
-    if (!preferFolder && !viaLink) { go('/importar'); return }
+    if (!pref && !viaLink) { go('/importar'); return }
     setSyncing(true)
-    try { await importFiles(preferFolder ? await readFolder(pref!, true) : [await fetchBox(link)]) }
+    try {
+      let failed: unknown
+      if (viaLink) await fetchBox(link).then(f => importFiles([f])).catch(e => { failed = e })
+      if (pref) await importFiles(await readFolder(pref, true))
+      else if (failed) throw failed
+    }
     catch (e) { setToast({ text: e instanceof Error ? e.message : String(e), bad: true }); go('/importar') }
     finally { setSyncing(false) }
   }

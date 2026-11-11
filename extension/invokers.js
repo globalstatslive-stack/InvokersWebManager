@@ -6,6 +6,7 @@
   const RELIC = ['Weapon', 'Shield', 'Helmet', 'Pauldrons', 'Gauntlets', 'Chestplate', 'Belt', 'Boots']
   const ACC = ['Amulet', 'Earrings', 'Banner', 'Talisman', 'Flasks']
   const OPEN_FLAG = 'nexo-open-presets'
+  const NEXO_APP = 'https://globalstatslive-stack.github.io/InvokersWebManager/'
 
   function toast(text, bad) {
     const el = document.createElement('div')
@@ -34,6 +35,30 @@
       else if (Date.now() - started > 15000) clearInterval(timer)
     }, 300)
   }
+
+  /** Botón flotante: envía tu caja en vivo (la misma que muestra «My Box») a la web de Nexo. */
+  function liveButton() {
+    if (document.getElementById('nexo-live')) return
+    const b = document.createElement('button')
+    b.id = 'nexo-live'; b.type = 'button'; b.textContent = '⚡ Enviar caja a Nexo'
+    Object.assign(b.style, { position: 'fixed', zIndex: 2147483646, right: '18px', bottom: '18px', padding: '10px 16px', borderRadius: '12px', border: '0', cursor: 'pointer', font: '700 14px system-ui, sans-serif', color: '#1b1406', background: 'linear-gradient(135deg,#f5d895,#e2bd6b)', boxShadow: '0 8px 24px #0009' })
+    b.addEventListener('click', async () => {
+      const app = NEXO_APP, origin = new URL(app).origin
+      const w = window.open(app + '#/recibir', 'nexo')
+      try {
+        const res = await fetch('/api/box', { credentials: 'same-origin' })
+        if (res.status === 401) { w && w.close(); toast('Nexo: inicia sesión en invokers.com para enviar tu caja.', true); return }
+        if (!res.ok) throw Error('HTTP ' + res.status)
+        const json = await res.text()
+        if (!w) { toast('Nexo: permite las ventanas emergentes de invokers.com y vuelve a pulsar.', true); return }
+        let n = 0
+        const timer = setInterval(() => { if (++n > 80) clearInterval(timer); w.postMessage({ type: 'nexo-box', json }, origin) }, 400)
+        addEventListener('message', e => { if (e.origin === origin && e.data === 'nexo-ack') clearInterval(timer) })
+      } catch (e) { toast('Nexo: no se pudo leer tu caja. ' + (e && e.message ? e.message : ''), true) }
+    })
+    document.body.appendChild(b)
+  }
+  liveButton()
 
   if (sessionStorage.getItem(OPEN_FLAG)) { sessionStorage.removeItem(OPEN_FLAG); openPresets(); return }
   const m = /[#&]nexo-plan=([A-Za-z0-9_-]+)/.exec(location.hash)
