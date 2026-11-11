@@ -2,56 +2,39 @@
 
 **Web publicada:** https://globalstatslive-stack.github.io/InvokersWebManager/ (instalable como PWA en Android)
 
-Herramienta de fans independiente para gestionar tu cuenta de **Invokers: Titan Legacy** con los retratos, Titanes y objetos reales del juego. Su objetivo es superar a [GGNoLuck](https://www.ggnoluck.com/es/) con más herramientas y cálculos exactos. El código y el diseño son propios. No incorpora código ni recursos de GGNoLuck. Las ilustraciones se publican conforme a la política oficial de contenido de fans.
+Herramienta de fans independiente para gestionar tu cuenta de **Invokers: Titan Legacy** con los retratos, Titanes y objetos reales del juego. La idea central: **elige qué quieres superar, descubre qué cambiar, cuánto cuesta y cómo afecta a tus otros equipos**. El código y el diseño son propios; no incorpora código ni recursos de GGNoLuck. Las ilustraciones se publican conforme a la política oficial de contenido de fans.
 
-## Versión 0.5: qué incluye
+## Versión 0.8: qué incluye
 
 | Sección | Qué hace |
 |---|---|
-| **Inicio** | Perfil, poder total, Invokers más fuertes, rareza, facciones por poder y tareas pendientes (qué optimizar, subir o vender). |
-| **Invokers** | 378+ Invokers con retratos reales. Filtros por facción, elemento, clase y rareza, mejor copia por personaje y orden por poder o por **cualquier estadística**. Vista en cuadrícula o en tabla. |
-| **Ficha** | Estadísticas base + equipo = total, porcentaje efectivo de las velocidades (curvas oficiales), tolerancias, habilidades, piezas equipadas, conjuntos activos, carencias y registros de combate en los que aparece. |
-| **Optimizador por campeón** | Simula el combate de cada Invoker con sus **fórmulas oficiales por habilidad y nivel** (% de ATQ/DEF/VIDA de cada golpe, enfriamientos, maná) y las reglas publicadas (crítico, recuperación, generación de maná, precisión contra la RES del jefe). Detecta de qué escala, si necesita precisión, si cura o da escudos, y optimiza un índice propio del campeón (daño, control, sustento, aguante). Muestra el daño por habilidad y qué estadística rinde más. |
-| **Optimizador exacto** | Mejor combinación de 8 reliquias, conjuntos y accesorios con tu inventario. Objetivo **daño efectivo** ATQ × (1 + crítico × daño crítico) o pesos libres; perfiles por rol, mínimos de estadística, conjunto obligatorio, origen de las piezas (libres / no bloqueados / todas) y protección de Invokers de tus equipos. Muestra hasta 8 **propuestas** comparables (cada una con sus conjuntos activos), estadísticas antes/después, la opción de evaluar las principales **al nivel máximo**, la lista de cambios y el oro estimado para desequipar. |
-| **Plan y presets** | Añade varios Invokers a un plan (las piezas reservadas no se reutilizan) y envíalo a invokers.com: el marcador mágico, con tu sesión y tras confirmar, lo guarda como **preset** del portal (`POST /api/box/presets`). Lo revisas y aplicas con el botón oficial del portal. Nexo nunca aplica cambios por su cuenta. |
-| **Asesor** | Revisión de builds de tus equipos, cola de mejoras (piezas equipadas sin nivel máximo), candidatas a venta con motivos (notas A–D de cada subestadística) y buscador de **tolerancias** por corrupción de jefe. |
-| **Equipo** | Inventario de reliquias y accesorios con valoración 0–100, notas, filtros por ranura, conjunto, rareza, rango, principal y subestadística. |
-| **Titanes** | Efecto vinculado, bonificaciones, poder y uso en equipos. |
-| **Equipos** | Récords por modo (jefes, agujas, arena, jefe de clan): mejor tiempo, victorias, derrotas y formación con sus Titanes. |
-| **Códice** | Catálogo completo de Invokers y Titanes con lo que tienes, lo que te falta y el progreso por facción. |
-| **Historial** | Compara la importación actual con la anterior: poder ganado, subidas de nivel y rango, piezas nuevas. |
+| **Inicio** | Cuenta, fecha de la instantánea y caducidad del enlace, objetivo actual, plan, equipos activos y accesos rápidos. |
+| **Objetivo** | Elige un jefe y una fase de las guías oficiales (PREC, RES, tolerancia y objetivos publicados, con enlace a la fuente). Diagnostica a tu equipo contra esos objetivos y calcula tres planes comparables (mínimo coste, equilibrio, máximo beneficio) con piezas, cambios, oro de desequipar, a quién se le quita cada pieza y qué mínimos son inalcanzables con tus piezas. Compara asignación conjunta y secuencial. |
+| **Colección** | Invokers y piezas con búsqueda siempre visible, filtros plegables con contador, tarjetas a dos columnas o lista compacta, personajes o ejemplares (copias ×N), estado equipado/libre/bloqueado y ficha de cada pieza con «¿a quién le sirve?». |
+| **Plan** | Cambios guardados por Invoker, sin piezas repetidas entre Invokers. Al reimportar marca qué se aplicó y separa lo **estimado** de lo **observado**. Se puede enviar como preset al portal (extensión opcional). |
+| **Optimizador** | Un Invoker: simulación de combate con sus habilidades, daño efectivo o pesos; esfuerzo (mínimo coste / equilibrio / máximo), mínimos, conjunto obligatorio y protección de equipos activos. Se calcula en un Web Worker con progreso y cancelación; si no hay solución válida lo dice. |
+| **Asesor** | Revisión de builds, qué subir y candidatas a venta que excluyen las reservadas en el plan, las útiles para tus Invokers y las escasas de su conjunto. Nunca vende nada. |
+| **Titanes, Récords, Códice, Historial** | Titanes, récords por modo, catálogo con lo que te falta y comparación entre importaciones. |
 
-### Cálculo exacto
+### Qué es dato oficial, cálculo o supuesto
 
-La caja compartida oficial (`https://invokers.com/api/lamb/<código>`) publica para cada Invoker sus estadísticas base (`basis`, coma fija 32.32), el aporte del equipo (`gearBonus`) y las reglas de los conjuntos. Nexo reproduce ese aporte **sin discrepancias** para todos los Invokers equipados de la caja de prueba:
-
-```
-aporte = Σ bonificaciones fijas + Σ (% × base) para vida/ataque/defensa + bonos de conjunto (3/5/8 piezas)
-total propuesto = total publicado − aporte publicado + aporte de la build propuesta
-```
-
-El optimizador usa programación dinámica exacta sobre pares de conjuntos (8 ranuras admiten como mucho dos conjuntos de 3+ piezas), varios arranques y búsqueda local con la fórmula completa. En la caja de prueba encontró +44 % de daño efectivo para el Invoker más fuerte usando solo piezas libres.
+- **Dato oficial**: la caja (`/api/lamb/<código>`), estadísticas de los jefes y objetivos de las guías oficiales (`src/catalog/bosses.json`, generado con `scripts/fetch-bosses.mjs`), fichas de habilidades.
+- **Cálculo determinista**: estadísticas de una build. `total = total publicado − aporte publicado + aporte propuesto`, con 0 discrepancias frente al aporte publicado en la caja de prueba.
+- **Heurística**: la búsqueda de builds (programación dinámica por pares de conjuntos, varios arranques y búsqueda local) y la asignación conjunta del equipo. Encuentran buenas soluciones, pero no se garantiza el óptimo global.
+- **Supuesto**: la simulación de combate usa supuestos para lo que el juego no publica (animaciones, maná por golpe; `ASSUMPTIONS` en `src/box/combat.ts`). Nexo no estima probabilidades de victoria ni requisitos de jefe que no estén publicados, y un récord de mejor tiempo no indica la tasa de éxito reciente.
 
 ## Importar tu cuenta
 
-**En PC o Mac (recomendado): desde la carpeta del juego**
+**Con tu enlace (recomendado, también en móvil)**
 
-1. Abre tu caja en el juego y espera unos segundos: el juego guarda sus archivos.
-2. En Nexo → **Importar** → «Desde el juego», copia la ruta:
-   - Windows: `%USERPROFILE%\AppData\LocalLow\Hit_Zone\Invokers`
-   - Mac: `~/Library/Application Support/Hit_Zone/Invokers` (en el selector, ⌘⇧G para pegarla)
-3. Pulsa **Importar mi caja**, pega la ruta en el selector y elige la carpeta **Invokers**. También se puede arrastrar la carpeta.
+1. En [tu caja del portal](https://invokers.com/hub/box/invokers/) activa «compartir» y copia el enlace.
+2. Pégalo en Nexo → **Importar** → «Con tu enlace». Sin contraseñas, sin APK, sin extensiones.
 
-Nexo busca los snapshots en `aggregate_snapshots`, los lee con su lector MemoryPack y recuerda la carpeta: después basta con **Actualizar** (y, opcionalmente, se actualiza sola al abrir Nexo en navegadores con File System Access).
+El enlace es una **instantánea**: Nexo guarda la caja tal como estaba al importarla y no se sincroniza sola. Para actualizar, pulsa «Refresh link» en el portal (renueva la instantánea y el plazo) y vuelve a importar. El enlace caduca a la semana; Inicio muestra cuántos días quedan. Si una actualización falla o la caja no es válida, se conserva la última caja válida.
 
-**En móvil o tableta: con tu enlace**
+**Privacidad.** El portal no envía cabeceras CORS, así que la caja pasa por el proxy de Nexo en Cloudflare Workers (`proxy/cloudflare-worker.js`, `https://nexo-proxy.globalstatslive.workers.dev`): procesa la caja en tránsito, solo reenvía `/api/lamb/<código>`, solo responde a la web de Nexo y no la guarda, aunque Cloudflare puede registrar metadatos técnicos de la petición. La caja se guarda solo en tu navegador (IndexedDB, hasta cinco importaciones). Nexo no escribe nada en el juego.
 
-1. En [tu caja del portal](https://invokers.com/hub/box/invokers/) activa «compartir» y pulsa «Refresh link».
-2. Pega el enlace en «Con tu enlace» y pulsa **Importar**. El portal no envía cabeceras CORS, así que Nexo lee la caja a través de su proxy en Cloudflare Workers (`proxy/cloudflare-worker.js`, desplegado en `https://nexo-proxy.globalstatslive.workers.dev`, fijado en `DEFAULT_PROXY`). Solo reenvía `/api/lamb/<código>`, solo responde a la web de Nexo y no guarda nada. Como alternativa quedan **copiar y pegar** los datos y el **marcador mágico** (lee la caja en invokers.com y la envía con `postMessage`; solo se aceptan mensajes de `invokers.com`).
-
-La caja del enlace incluye además las estadísticas base y los registros de combate, que habilitan el **optimizador exacto**.
-
-Los datos se guardan solo en tu navegador (IndexedDB, hasta cinco importaciones). Nexo no tiene servidor.
+**Alternativas**: carpeta del juego en PC/Mac (`%USERPROFILE%\AppData\LocalLow\Hit_Zone\Invokers` o `~/Library/Application Support/Hit_Zone/Invokers`, leída localmente) o pegar los datos.
 
 ## Desarrollo
 
@@ -75,6 +58,8 @@ Ninguna caja real se guarda en el repositorio. Las pruebas usan una caja sintét
 Estructura: `src/box/` (modelo, estadísticas, optimizador, asesor, textos), `src/ui/` (páginas), `src/memorypack.ts` (snapshots `.dat`), `src/folderSync.ts` (carpeta del juego), `proxy/` (Worker opcional).
 
 ## Límites
+- Nexo no estima probabilidades de victoria: compara tus estadísticas con los objetivos publicados de cada fase.
+- Las subestadísticas futuras al subir una pieza son desconocidas; solo se evalúa la principal al nivel máximo. El oro de desequipar no es el precio de venta.
 
 - Nexo no modifica la cuenta. Puede guardar un plan como preset en el portal oficial (con tu sesión y confirmación); aplicarlo se hace con el botón del portal. El portal no ofrece subir piezas de nivel, así que Nexo tampoco.
 - La simulación usa supuestos propios para lo que el juego no publica (duración de las animaciones y maná por golpe de combo; ver `ASSUMPTIONS` en `src/box/combat.ts`) y no incluye la defensa del jefe, mejoras de aliados ni efectos condicionales: compara builds de un mismo Invoker.

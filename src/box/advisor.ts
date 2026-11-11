@@ -17,10 +17,22 @@ export function gearRating(g: Gear): number {
   return Math.round(100 * Math.max(0, Math.min(1, 0.25 * rarity + 0.3 * rank + 0.3 * gradePart + 0.15 * subsPart)))
 }
 
-export function sellCandidates(box: Box): SellVerdict[] {
+/** Contexto de la cuenta para no recomendar vender lo que hace falta. */
+export type SellContext = {
+  /** Piezas reservadas en el plan (`relic12`). */
+  reserved?: Set<string>
+  /** Mejora que aportaría a alguien (texto) o null si a nadie de los candidatos. */
+  usefulFor?: (g: Gear) => string | null
+}
+/** Candidatas a venta. Nunca vende: solo explica motivos para vender y para conservar. Excluye las piezas
+ * reservadas en el plan, las útiles para tus Invokers y las que son de las pocas de su conjunto en esa ranura. */
+export function sellCandidates(box: Box, ctx: SellContext = {}): SellVerdict[] {
   const out: SellVerdict[] = []
+  const bySetSlot = new Map<string, number>()
+  for (const g of box.relics) if (g.set) bySetSlot.set(`${g.set}:${g.slot}`, (bySetSlot.get(`${g.set}:${g.slot}`) ?? 0) + 1)
   for (const g of [...box.relics, ...box.accessories]) {
     if (g.equippedHeroId !== null) continue
+    if (ctx.reserved?.has(`${g.kind}${g.id}`)) continue
     const reasons: string[] = [], keep: string[] = []
     const rating = gearRating(g), grade = gradeScore(g)
     if (g.rank <= 3) reasons.push(`Rango ${g.rank}★`)
@@ -33,7 +45,10 @@ export function sellCandidates(box: Box): SellVerdict[] {
     if (grade !== null && grade >= 3) keep.push('Buenas notas')
     if (g.subs.some(s => s.grade === 'S' || s.grade === 'A')) keep.push('Tiene una sub A/S')
     if (g.level >= 15) keep.push(`Ya está a +${g.level}`)
-    const score = Math.max(0, 100 - rating) + reasons.length * 8 - keep.length * 15
+    if (g.kind === 'relic' && g.set && (bySetSlot.get(`${g.set}:${g.slot}`) ?? 0) <= 2) keep.push(`Una de las ${bySetSlot.get(`${g.set}:${g.slot}`)} piezas de ${g.set} para esta ranura`)
+    const useful = ctx.usefulFor?.(g)
+    if (useful) keep.push(useful)
+    const score = Math.max(0, 100 - rating) + reasons.length * 8 - keep.length * 15 - (useful ? 100 : 0)
     if (reasons.length && score >= 50) out.push({ gear: g, score, reasons, keep })
   }
   return out.sort((a, b) => b.score - a.score)

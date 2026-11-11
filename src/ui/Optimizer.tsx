@@ -1,57 +1,33 @@
-import { useDeferredValue, useEffect, useMemo, useState } from 'react'
-import { ArrowRight, Coins, Crosshair, HeartPulse, Info, ListChecks, ListPlus, Plus, Shield, SlidersHorizontal, Swords, Upload, X } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { AlertTriangle, ArrowRight, Wand2, Coins, Crosshair, Loader2, HeartPulse, Info, ListChecks, ListPlus, Plus, Shield, SlidersHorizontal, Swords, X } from 'lucide-react'
 import { useAccount } from './account'
 import { BonusLine, Chips, Empty, fmtPower, NeedsAccount, PageHead, Select, StalePowerNote } from './common'
-import { EmptySlot, GameImg, GearIcon, Portrait, SetIcon, StatIcon, Stars } from './Art'
-import { entryFrom, portalUrl, reservedBy, usePlan, type PlanEntry } from './plan'
+import { EmptySlot, GearIcon, Portrait, SetIcon, StatIcon, Stars } from './Art'
+import { entryFrom, reservedBy, usePlan } from './plan'
 import { ACCESSORY_SLOTS, CORE_STATS, PERCENT_OF_BASE, fmtInt, fmtStat, RELIC_SLOTS, SET_LABEL, SLOT_LABEL, STAT_LABEL, STAT_SHORT, t, TOLERANCES } from '../box/i18n'
-import { optimize, PRESETS, presetFor, STAT_SCALE, type Change, type Pool } from '../box/optimizer'
+import { PRESETS, presetFor, STAT_SCALE, type Change, type OptimizeOptions, type Pool } from '../box/optimizer'
 import { activeSetBonuses, addBonus, rating, type Stats } from '../box/stats'
 import { ASSUMPTIONS, DEFAULT_SIM, EFFECT_LABEL, indexOf, loadKits, profileOf, simulate, skillLevels, type Kit, type Mix, type SimResult } from '../box/combat'
-import { teamHeroIds } from '../box/advisor'
+import { useActiveTeams } from './activeTeams'
+import { useOptimizer } from './useOptimizer'
 import type { Box, Gear, Hero } from '../box/model'
 
+const EFFORT_COST = { min: 12, balanced: 3, max: 0 } as const
 const PROPOSAL_STATS = ['attack', 'criticalRate', 'criticalDamage', 'accuracy', 'comboSpeed', 'skillSpeed', 'health']
 
-function PlanPanel({ plan, remove, clear, go }: { plan: PlanEntry[]; remove: (id: number) => void; clear: () => void; go: (p: string) => void }) {
-  const [name, setName] = useState(() => `Nexo ${new Date().toLocaleDateString('es-ES')}`)
-  const gold = plan.reduce((s, e) => s + e.gold, 0), changes = plan.reduce((s, e) => s + e.changes, 0)
-  const hasExtension = typeof document !== 'undefined' && !!document.documentElement.dataset.nexoExtension
-  return <section className="panel plan">
-    <div className="panel-title"><h2><ListChecks size={18} /> Tu plan</h2><small>{plan.length} Invokers · {changes} cambios · ~{fmtInt(gold)} oro</small></div>
-    <ul className="plan-list">{plan.map(e => <li key={e.heroId}>
-      <button className="link" onClick={() => go(`/optimizador/${e.heroId}`)}><GameImg path={e.portrait} alt="" className="plan-portrait" />{e.name}</button>
-      <small>{e.changes} cambios · {fmtInt(e.gold)} oro{e.damageGain ? ` · daño ${e.damageGain >= 0 ? '+' : ''}${(100 * e.damageGain).toFixed(1)} %` : ''}</small>
-      <button className="icon-btn" aria-label={`Quitar ${e.name} del plan`} onClick={() => remove(e.heroId)}><X size={15} /></button>
-    </li>)}</ul>
-    <div className="link-row">
-      <input value={name} onChange={e => setName(e.target.value)} aria-label="Nombre del preset" maxLength={60} />
-      <a className="btn primary" href={portalUrl(plan, name)} target="_blank" rel="noopener" referrerPolicy="strict-origin"><Upload size={16} /> Enviar a invokers.com</a>
-      <button className="btn" onClick={() => { if (confirm('¿Vaciar el plan?')) clear() }}>Vaciar</button>
-    </div>
-    {hasExtension ? <p className="fine ok-text">✓ Extensión de Nexo instalada: al enviar, el plan se guarda solo y se abre en <b>Presets</b> del optimizador oficial. Solo tienes que pulsar <b>Apply</b>.</p> : <>
-      <ol className="steps-mini">
-        <li>Pulsa <b>Enviar a invokers.com</b>: se abre el optimizador oficial con tus Invokers (inicia sesión si te lo pide).</li>
-        <li>Toca el <b>marcador de Nexo</b> y confirma: el plan queda guardado en <b>Presets</b>.</li>
-        <li>En <b>Presets</b>, pulsa <b>Apply</b> para revisar el oro y equipar.</li>
-      </ol>
-      <p className="fine">¿Sin marcador? Instala la <a href="./nexo-extension.zip" download>extensión de Nexo para Chrome/Edge</a> y el plan aparecerá directamente en Presets (descomprime el archivo, abre <code>chrome://extensions</code>, activa «Modo de desarrollador» y pulsa «Cargar descomprimida»).</p>
-    </>}
-  </section>
-}
 
 export function Optimizer({ heroId }: { heroId?: number }) {
   const { account, go } = useAccount()
   const heroes = useMemo(() => [...(account?.box.heroes ?? [])].filter(h => h.basis && h.gearBonus).sort((a, b) => b.power - a.power), [account])
   if (!account) return <NeedsAccount />
   if (!heroes.length && account.box.merge) return <><PageHead kicker="Herramientas" title="Optimizador" /><Empty title="No se pudo combinar la carpeta con tu enlace">Ningún Invoker de la carpeta del juego coincide con la caja del enlace{account.box.merge.officialSnapshot ? ` del ${new Date(account.box.merge.officialSnapshot).toLocaleDateString('es-ES')}` : ''} ({account.box.merge.changedHeroes} han cambiado de nivel, rango o despertar). Pulsa «Refresh link» en invokers.com e importa el enlace de nuevo.</Empty></>
-  if (!heroes.length) return <><PageHead kicker="Herramientas" title="Optimizador" /><Empty title="Importa tu enlace una vez" action={<button className="btn primary" onClick={() => go('/importar')}>Importar enlace</button>}>El optimizador exacto usa las estadísticas base que publica el portal oficial. Importa el enlace de tu caja al menos una vez; después puedes seguir actualizando desde la carpeta del juego.</Empty></>
+  if (!heroes.length) return <><PageHead kicker="Herramientas" title="Optimizador" /><Empty title="Importa tu enlace una vez" action={<button className="btn primary" onClick={() => go('/importar')}>Importar enlace</button>}>El optimizador usa las estadísticas base que publica el portal oficial. Importa el enlace de tu caja al menos una vez; después puedes seguir actualizando desde la carpeta del juego.</Empty></>
   const asked = heroId !== undefined ? account.index.heroes.get(heroId) : undefined
   const hero = asked && asked.basis && asked.gearBonus ? asked : heroes[0]
   const merge = account.box.merge
   return <>
     {asked && hero !== asked && <div className="note warn">{asked.name} ha cambiado de nivel, rango o despertar desde tu última importación por enlace, así que su base no es exacta. Pulsa «Refresh link» en invokers.com e importa el enlace para optimizarlo.</div>}
-    {merge && merge.changedHeroes > 0 && <div className="note">Combinando tu carpeta del juego con la caja del enlace{merge.officialSnapshot ? ` del ${new Date(merge.officialSnapshot).toLocaleDateString('es-ES')}` : ''}: {merge.exactHeroes} Invokers exactos, {merge.changedHeroes} han cambiado desde entonces (actualiza el enlace para incluirlos).</div>}
+    {merge && merge.changedHeroes > 0 && <div className="note">Combinando tu carpeta del juego con la caja del enlace{merge.officialSnapshot ? ` del ${new Date(merge.officialSnapshot).toLocaleDateString('es-ES')}` : ''}: {merge.exactHeroes} Invokers con estadísticas recalculadas, {merge.changedHeroes} han cambiado desde entonces (actualiza el enlace para incluirlos).</div>}
     <OptimizerFor key={hero.id} hero={hero} heroes={heroes} onHero={id => go(`/optimizador/${id}`)} />
   </>
 }
@@ -164,31 +140,33 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
   const [weights, setWeights] = useState<Record<string, number>>({})
   const [pool, setPool] = useState<Pool>('unlocked')
   const [protectTeams, setProtectTeams] = useState(true)
-  const [avoidMoves, setAvoidMoves] = useState(true)
+  const [effort, setEffort] = useState<'min' | 'balanced' | 'max'>('balanced')
+  const active = useActiveTeams(box)
   const [reqSet, setReqSet] = useState('none'), [reqPieces, setReqPieces] = useState<'3' | '5' | '8'>('3')
   const [minimums, setMinimums] = useState<Record<string, number>>({})
   const [newMin, setNewMin] = useState('accuracy')
   const [maxLevel, setMaxLevel] = useState(false)
   const [sel, setSel] = useState(0)
-  const { plan, upsert, remove, clear } = usePlan(box)
+  const [planMsg, setPlanMsg] = useState('')
+  const { plan, upsert, remove } = usePlan(box)
   const reserved = useMemo(() => reservedBy(plan, hero.id), [plan, hero.id])
-  const teamIds = useMemo(() => teamHeroIds(box), [box])
+  const teamIds = active.heroes
   const mode: Objective = objective === 'sim' && !(kit && mix) ? 'damage' : objective
   const settings = useMemo(() => ({ duration, targetRes }), [duration, targetRes])
-  const opts = useDeferredValue({ mode, mix, settings, weights, pool, protectTeams, avoidMoves, reqSet, reqPieces, minimums, maxLevel, reserved })
-  const full = useMemo(() => {
+  const opts = useMemo((): OptimizeOptions | null => {
     if (kit === undefined) return null
-    const protectedHeroes = new Set(opts.protectTeams ? [...teamIds].filter(id => id !== hero.id) : [])
-    const w = opts.mode === 'sim' ? { ...opts.weights, damage: 10 } : opts.mode === 'damage' ? { damage: 10, ...opts.weights } : opts.weights
-    return optimize(index, hero, {
-      objective: opts.mode, weights: w, pool: opts.pool, protectedHeroes, moveAversion: opts.avoidMoves ? 0.35 : 0, changeCost: opts.avoidMoves ? 1.5 : 0,
-      requiredSet: opts.reqSet === 'none' ? null : { set: opts.reqSet, pieces: Number(opts.reqPieces) as 3 | 5 | 8 }, minimums: opts.minimums,
-      maxLevel: opts.maxLevel, reserved: opts.reserved, alternatives: 7,
-      sim: opts.mode === 'sim' && kit && opts.mix ? { kit, levels, settings: opts.settings, mix: opts.mix } : undefined,
-    })
-  }, [index, hero, opts, teamIds, kit, levels])
+    const protectedHeroes = new Set(protectTeams ? [...teamIds].filter(id => id !== hero.id) : [])
+    const w = mode === 'sim' ? { ...weights, damage: 10 } : mode === 'damage' ? { damage: 10, ...weights } : weights
+    return {
+      objective: mode, weights: w, pool, protectedHeroes, moveAversion: effort === 'max' ? 0 : 0.35, changeCost: EFFORT_COST[effort],
+      requiredSet: reqSet === 'none' ? null : { set: reqSet, pieces: Number(reqPieces) as 3 | 5 | 8 }, minimums,
+      maxLevel, reserved, alternatives: 7,
+      sim: mode === 'sim' && kit && mix ? { kit, levels, settings, mix } : undefined,
+    }
+  }, [kit, protectTeams, teamIds, hero.id, mode, weights, pool, effort, reqSet, reqPieces, minimums, maxLevel, reserved, levels, settings, mix])
+  const { state: calc, last: full, cancel } = useOptimizer(box, hero.id, opts)
   useEffect(() => setSel(0), [full])
-  if (!full) return <div className="loading">Cargando las habilidades de {hero.name}…</div>
+  if (!full) return <div className="loading" role="status"><Loader2 className="spin" size={18} /> {calc.status === 'error' ? `No se pudo calcular: ${calc.message}` : `Calculando la build de ${hero.name}…`}{calc.status === 'running' && <button className="btn small" onClick={cancel}>Cancelar</button>}</div>
   const proposals = full.alternatives ?? [full]
   const result = proposals[Math.min(sel, proposals.length - 1)]
   const inPlan = plan.find(e => e.heroId === hero.id)
@@ -204,7 +182,7 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
   const changed = new Set(result.changes.map(c => c.slot))
   const kept = [...RELIC_SLOTS, ...ACCESSORY_SLOTS].map(s => (RELIC_SLOTS.includes(s) ? result.relics : result.accessories)[s]).filter((g): g is Gear => !!g && !result.changes.some(c => c.to === g))
   return <>
-    <PageHead kicker="Herramientas" title="Optimizador de equipo">Optimiza cada campeón según lo que hace de verdad: sus habilidades, de qué escalan, sus enfriamientos y si necesita precisión contra el jefe.</PageHead>
+    <header className="goal-head"><Wand2 size={20} aria-hidden /><div><h1>Optimizador</h1><p className="hide-sm">Builds para cada campeón según sus habilidades, de qué escalan, sus enfriamientos y si necesita precisión contra el jefe.</p></div></header>
     <section className={`panel champion r-${hero.rarity.toLowerCase()}`}>
       <Portrait c={hero} size="lg" />
       <div className="champion-main">
@@ -221,15 +199,15 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
           {[...profile.debuffs, ...profile.control, ...profile.buffs].slice(0, 8).map(e => <span key={e}>{EFFECT_LABEL[e] ?? e}</span>)}
         </div> : <p className="fine">No hay ficha de habilidades para este campeón; se usa el daño por golpe.</p>}
       </div>
-      {mix && <div className="champion-mix">
-        <h3 className="sub">Qué se optimiza</h3>
+      {mix && <details className="champion-mix">
+        <summary><span className="sub">Qué se optimiza</span> {MIX_KEYS.filter(m => mix[m.key] > 0.005).map(m => `${m.label} ${Math.round(100 * mix[m.key])}`).join(' · ')}</summary>
         {MIX_KEYS.map(m => <label key={m.key} className="weight" title={m.hint}>
           <span>{m.icon} {m.label}</span>
           <input type="range" min={0} max={100} step={5} value={Math.round(100 * mix[m.key])} disabled={mode !== 'sim'} onChange={e => setMixKey(m.key, Number(e.target.value))} />
           <b>{Math.round(100 * mix[m.key])}</b>
         </label>)}
         <button className="link" onClick={() => setMix(profile!.mix)}>Restablecer el reparto del campeón</button>
-      </div>}
+      </details>}
     </section>
     <div className="opt-layout">
       <aside className="panel opt-controls">
@@ -256,8 +234,11 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
         </details>
         <h3 className="sub">Piezas disponibles</h3>
         <Chips label="Origen" value={pool} onChange={setPool} options={[{ id: 'free', label: 'Solo libres' }, { id: 'unlocked', label: '+ no bloqueados' }, { id: 'all', label: 'Todas' }]} />
-        <label className="check"><input type="checkbox" checked={protectTeams} onChange={e => setProtectTeams(e.target.checked)} /> No tocar a Invokers de mis equipos ({teamIds.size})</label>
-        <label className="check"><input type="checkbox" checked={avoidMoves} onChange={e => setAvoidMoves(e.target.checked)} /> Evitar mover piezas por mejoras mínimas</label>
+        <label className="check"><input type="checkbox" checked={protectTeams} onChange={e => setProtectTeams(e.target.checked)} /> No tocar a Invokers de equipos activos ({teamIds.size})</label>
+        {active.teams.length === 0 && <p className="hint">No has marcado equipos activos. <button className="link" onClick={() => go('/objetivo')}>Elegirlos</button></p>}
+        <h3 className="sub">Cambios</h3>
+        <Chips label="Cambios" value={effort} onChange={setEffort} options={[{ id: 'min', label: 'Mínimos' }, { id: 'balanced', label: 'Equilibrio' }, { id: 'max', label: 'Máximo beneficio' }]} />
+        <p className="hint">{effort === 'min' ? 'Solo cambia piezas que aportan mucho: menos oro y menos movimientos.' : effort === 'max' ? 'Acepta cualquier mejora, aunque sea pequeña.' : 'Cada cambio debe compensar un mínimo.'}</p>
         <label className="check"><input type="checkbox" checked={maxLevel} onChange={e => setMaxLevel(e.target.checked)} /> Principales al nivel máximo (si subes las piezas)</label>
         {reserved.size > 0 && <p className="hint">{reserved.size} piezas reservadas por tu plan para otros Invokers.</p>}
         <h3 className="sub">Restricciones</h3>
@@ -278,7 +259,10 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
         </div>
       </aside>
       <div className="opt-results">
-        {plan.length > 0 && <PlanPanel plan={plan} remove={remove} clear={clear} go={go} />}
+        {calc.status === 'running' && <div className="calc-bar" role="status"><Loader2 className="spin" size={15} /> Recalculando con las opciones nuevas… <button className="btn small" onClick={cancel}>Cancelar</button></div>}
+        {calc.status === 'error' && <div className="note warn" role="alert">No se pudo calcular: {calc.message}</div>}
+        {plan.length > 0 && <p className="plan-link"><ListChecks size={15} /> Tu plan: {plan.length} Invokers. <button className="link" onClick={() => go('/plan')}>Ver plan</button></p>}
+        {!full.feasible && <div className="no-solution" role="alert"><AlertTriangle size={20} /><div><b>Sin solución válida</b><p>{full.problems.join(' ')} Quita el conjunto obligatorio o amplía las piezas disponibles. La tabla muestra combinaciones que no cumplen la condición solo como referencia.</p></div></div>}
         <section className="panel">
           <div className="panel-title"><h2>Propuestas</h2><small>Toca una para verla{maxLevel ? ' · principales al nivel máximo' : ''}</small></div>
           <div className="table-wrap"><table className="data proposals">
@@ -287,8 +271,8 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
               <tr className="current-row"><td>Actual</td><td>{setsBefore.map(x => <span key={x.set} className="set-chip"><SetIcon set={x.set} />×{x.pieces}</span>)}</td>{simMode && <td>100</td>}<td>{fmtInt(simMode ? full.simBefore!.damage : full.damageBefore)}</td>{simMode && <td>{Math.round(100 * full.simBefore!.land)} %</td>}{PROPOSAL_STATS.map(k => <td key={k}>{fmtStat(k, full.before[k] ?? 0)}</td>)}<td>—</td><td>—</td></tr>
               {proposals.map((p, i) => { const ps = [...Object.values(p.relics), ...Object.values(p.accessories)].filter((x): x is Gear => !!x)
                 const dmg = simMode ? p.sim!.damage : p.damageAfter, dmg0 = simMode ? p.simBefore!.damage : p.damageBefore
-                return <tr key={i} className={i === sel ? 'sel' : ''} onClick={() => setSel(i)}>
-                  <td>{i + 1}</td>
+                return <tr key={i} className={`${i === sel ? 'sel' : ''} ${!p.feasible || !p.minimumsMet ? 'invalid' : ''}`} onClick={() => setSel(i)} tabIndex={0} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSel(i) } }} aria-selected={i === sel}>
+                  <td>{i + 1}{!p.feasible || !p.minimumsMet ? <span className="tag bad" title={[...p.problems, ...p.unmet.map(k => `No alcanza ${STAT_LABEL[k] ?? k}`)].join(' ')}>No cumple</span> : null}</td>
                   <td>{activeSetBonuses(ps, index.rules).map(x => <span key={x.set} className="set-chip on"><SetIcon set={x.set} />×{x.pieces}</span>)}</td>
                   {simMode && <td><b className={(p.index ?? 100) > 100.05 ? 'up' : ''}>{(p.index ?? 100).toFixed(1)}</b></td>}
                   <td><b>{fmtInt(dmg)}</b> <small className={dmg >= dmg0 ? 'up' : 'down'}>{dmg0 ? `${dmg >= dmg0 ? '+' : ''}${(100 * (dmg / dmg0 - 1)).toFixed(1)} %` : ''}</small></td>
@@ -298,12 +282,19 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
                 </tr> })}
             </tbody>
           </table></div>
+          <details className="trust-legend"><summary>Qué es dato oficial, cálculo o supuesto</summary><ul>
+            <li><b>Dato oficial</b>: estadísticas de tu caja, piezas, conjuntos, oro de desequipar y fórmulas de habilidades publicadas por invokers.com.</li>
+            <li><b>Cálculo determinista</b>: las estadísticas de cada propuesta, con la fórmula comprobada sin discrepancias contra tu caja.</li>
+            <li><b>Búsqueda</b>: programación dinámica sobre pares de conjuntos, varios arranques y búsqueda local. Da la mejor combinación encontrada; con simulación o mínimos no hay garantía de óptimo.</li>
+            <li><b>Supuestos</b>: duración de animaciones y maná por golpe en la simulación; no incluye la defensa del jefe ni efectos condicionales. Las subestadísticas que salgan al subir una pieza son desconocidas: «nivel máximo» solo sube la principal.</li>
+          </ul></details>
           {simMode && <p className="fine">Índice: 100 es tu equipo actual. Combina daño, control, sustento y aguante con el reparto de este campeón.</p>}
         </section>
         <section className="panel">
           <div className="panel-title"><h2>Propuesta {Math.min(sel, proposals.length - 1) + 1}</h2>
             <span className={`score ${improvement > 0.01 ? 'up' : ''}`}>{simMode ? `Índice ${(result.index ?? 100).toFixed(1)}` : improvement > 0.01 ? `+${improvement.toFixed(1)} puntos` : 'Ya es la mejor build con estas opciones'}</span>
           </div>
+          {planMsg && <p className="note" role="status">{planMsg}</p>}
           {!result.minimumsMet && <div className="note warn"><Info size={16} /> No se alcanza el mínimo de {result.unmet.map(s => STAT_LABEL[s]).join(', ')} con estas piezas. Se muestra la build más cercana.</div>}
           {simMode && profile?.needsAccuracy && result.sim!.land === 0 && <div className="note warn"><Info size={16} /> Con tus piezas no se llega a la precisión mínima ({targetRes - 120}) para que sus perjuicios entren contra RES {targetRes}. La propuesta prioriza el daño; baja la RES del jefe si vas a usarlo en otro contenido.</div>}
           <div className="set-compare">
@@ -312,7 +303,7 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
             <div><small>Propuestos</small>{setsAfter.length ? setsAfter.map(s => <span key={s.set} className="set-chip on"><SetIcon set={s.set} />{t(SET_LABEL, s.set)} ×{s.pieces}</span>) : <span className="muted">Ninguno</span>}</div>
           </div>
           <div className="row-actions">
-            <button className="btn primary" disabled={!result.changes.length} onClick={() => upsert(entryFrom(hero, result))}><ListPlus size={16} /> {inPlan ? 'Actualizar en el plan' : 'Añadir al plan'}</button>
+            <button className="btn primary" disabled={!result.changes.length || !result.feasible || !result.minimumsMet} title={!result.feasible || !result.minimumsMet ? 'Esta propuesta no cumple las restricciones' : undefined} onClick={() => { const c = upsert(entryFrom(hero, result)); setPlanMsg(c.length ? `No se añadió: ${c.length} piezas ya están reservadas en tu plan para otro Invoker.` : 'Añadido a tu plan.') }}><ListPlus size={16} /> {inPlan ? 'Actualizar en el plan' : 'Añadir al plan'}</button>
             {inPlan && <button className="btn" onClick={() => remove(hero.id)}>Quitar del plan</button>}
             <span className="gold"><Coins size={16} /> ~{fmtInt(result.goldCost)} oro · {result.changes.length} cambios</span>
           </div>

@@ -4,7 +4,10 @@ import { useAccount } from './account'
 import { Chips, GearCard, NeedsAccount, PageHead } from './common'
 import { GearIcon, Portrait, SetIcon, Stars } from './Art'
 import { fmtInt, fmtStat, SET_LABEL, SLOT_LABEL, STAT_LABEL, t, TOLERANCES, bonusName, fmtBonus } from '../box/i18n'
-import { diagnose, sellCandidates, teamHeroIds, upgradeQueue } from '../box/advisor'
+import { diagnose, gearRating, sellCandidates, teamHeroIds, upgradeQueue } from '../box/advisor'
+import { whoBenefits } from '../box/usefulness'
+import { reservedBy, usePlan } from './plan'
+import { useActiveTeams } from './activeTeams'
 
 type Tab = 'venta' | 'mejoras' | 'revision' | 'tolerancias'
 export function Advisor({ tab }: { tab?: string }) {
@@ -24,10 +27,18 @@ export function Advisor({ tab }: { tab?: string }) {
 function Sell() {
   const { account } = useAccount()
   const [limit, setLimit] = useState(40)
-  const list = useMemo(() => sellCandidates(account!.box), [account])
-  const gold = list.reduce((s, x) => s + x.gear.unequipGold, 0)
+  const { plan } = usePlan(account!.box)
+  const active = useActiveTeams(account!.box)
+  const list = useMemo(() => {
+    const { box, index } = account!
+    const candidates = [...new Map([...box.heroes.filter(h => active.heroes.has(h.id) || plan.some(e => e.heroId === h.id)), ...[...box.heroes].filter(h => h.basis).sort((a, b) => b.power - a.power).slice(0, 15)].map(h => [h.id, h])).values()]
+    return sellCandidates(box, {
+      reserved: reservedBy(plan, -1),
+      usefulFor: g => { if (gearRating(g) < 25) return null; const u = whoBenefits(index, g, candidates)[0]; return u ? `Mejora a ${u.hero.name} (${u.unit === 'damage' ? `+${(100 * u.gain).toFixed(1)} % daño` : `+${u.gain.toFixed(1)} pts`})` : null },
+    })
+  }, [account, plan, active.heroes])
   return <section className="advisor">
-    <p className="lead">{list.length} piezas libres con poco valor. Revisa los motivos: las notas A–D del portal valoran cada subestadística. <span className="muted">Valor de referencia: {fmtInt(gold)} oro (precio de desequipar).</span></p>
+    <p className="lead">{list.length} piezas libres con poco valor. Se excluyen las reservadas en tu plan, las que mejoran a tus Invokers (equipos activos, plan y los 15 más fuertes) y las pocas de su conjunto en esa ranura. Nexo no vende nada: revisa los motivos y decide en el juego. El oro de desequipar no es el precio de venta, que la caja no publica.</p>
     <div className="gear-grid">{list.slice(0, limit).map(v => <GearCard key={`${v.gear.kind}${v.gear.id}`} g={v.gear} extra={<div className="verdict">
       {v.reasons.map(r => <span key={r} className="tag bad">{r}</span>)}{v.keep.map(r => <span key={r} className="tag good">{r}</span>)}
     </div>} />)}</div>

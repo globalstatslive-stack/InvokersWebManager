@@ -31,11 +31,18 @@
 - Contraste con una simulación de referencia para Ozmol: lanzamientos y daño dentro de ~8 %.
 - Extensión de Chrome para guardar el plan como preset sin marcador.
 
+## Versión 0.8
+
+- Fiabilidad: «nivel máximo» ya no altera el «antes»; un conjunto obligatorio imposible muestra «Sin solución válida»; el importador valida IDs, ranuras, dueños y asignaciones (y conserva la última caja válida); el cálculo va en un Web Worker con progreso, cancelación y descarte de resultados obsoletos. Pruebas de regresión en `engine.test.ts`, `goal.test.ts` y `account.test.ts`.
+- Textos honestos: dato oficial / cálculo / heurística / supuesto; privacidad del proxy; instantánea, actualización y caducidad del enlace.
+- Rediseño móvil: Colección (búsqueda visible, filtros plegables con contador, 2 columnas o lista compacta, personajes/ejemplares, estados), Inicio útil en la primera pantalla, barra inferior Inicio · Colección · Objetivo · Plan · Más. Sin desbordamiento a 360/390/412 px ni en escritorio.
+- Objetivo de progreso con 17 jefes de las guías oficiales, diagnóstico, tres planes con coste y donantes, mínimos inalcanzables explicados, asignación conjunta frente a secuencial y protección de equipos activos.
+- «¿A quién le sirve?» por pieza, venta que respeta reservas, utilidad y conjuntos; plan con seguimiento estimado frente a observado.
+
 ## Pendiente
 
 - Validar en el juego los supuestos de tiempos y maná (contar definitivas en 3 min).
-
-- Probar el marcador mágico en Chrome Android real con el enlace del usuario.
-- Simulación de daño con habilidades y defensa enemiga; optimización de equipos completos (repartir piezas entre varios Invokers).
+- La simulación no incluye la defensa del jefe ni sinergias entre aliados; la asignación conjunta es heurística.
+- Ampliar el objetivo a más modos (agujas, arena) cuando haya datos oficiales equivalentes a las guías de jefes.
 - Datos de habilidades y descripciones del catálogo público.
 - Probar la importación desde la carpeta del juego en Windows y Mac con archivos reales.

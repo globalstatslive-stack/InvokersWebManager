@@ -1,10 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowUpRight, Bookmark, Check, ClipboardPaste, Copy, Download, FolderOpen, Loader2, Monitor, RefreshCw, Server, ShieldCheck, Smartphone, Upload } from 'lucide-react'
 import { useAccount } from './account'
-import { GameImg } from './Art'
-import { CHARACTERS } from '../catalog'
 
-const HERO_ART = ['IRN036', 'LTS038', 'CAM004', 'FRB003']
 import { sharedBoxUrl } from '../officialImport'
 import { droppedFiles, folderPreference, fromInput, readFolder, selectSnapshots, type FolderPreference, type ReadDirectory } from '../folderSync'
 
@@ -42,12 +39,11 @@ const PATHS: Record<Os, string> = {
   windows: '%USERPROFILE%\\AppData\\LocalLow\\Hit_Zone\\Invokers',
   mac: '~/Library/Application Support/Hit_Zone/Invokers',
 }
-const isMobile = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches && innerWidth < 900)
 const pickerApi = () => (window as unknown as { showDirectoryPicker?: (o: { mode: 'read'; id?: string; startIn?: string }) => Promise<ReadDirectory> }).showDirectoryPicker
 
 export function ImportPage({ receiving }: { receiving?: boolean }) {
   const { importFiles, account } = useAccount()
-  const [method, setMethod] = useState<'file' | 'link'>(() => isMobile() ? 'link' : 'file')
+  const [method, setMethod] = useState<'file' | 'link'>('link')
   const [os, setOs] = useState<Os>(() => /Mac/i.test(navigator.platform || navigator.userAgent) ? 'mac' : 'windows')
   const [link, setLink] = useState(() => store.get(LINK_KEY))
   const [proxy, setProxy] = useState(() => store.get(PROXY_KEY))
@@ -98,25 +94,22 @@ export function ImportPage({ receiving }: { receiving?: boolean }) {
     await importFiles([new File([text], 'caja-pegada.json', { type: 'application/json' })]); setPaste('')
   })
   const copy = async (text: string, done?: () => void) => { try { await navigator.clipboard.writeText(text); done?.() } catch { setError('No se pudo copiar. Selecciona el texto y cópialo a mano.') } }
-  const banner = account ? [...account.box.heroes].sort((a, b) => b.power - a.power).slice(0, 4) : HERO_ART.map(code => CHARACTERS.find(c => c.code === code)).filter((c): c is NonNullable<typeof c> => !!c).map((c, i) => ({ id: i, portrait: c.portrait }))
 
   return <div className="import">
-    <section className="import-hero">
-      <div className="import-hero-art">{banner.map((h, i) => <GameImg key={h.id} path={h.portrait} alt="" className={`ih ih${i}`} />)}</div>
-      <span className="kicker">Sincronizar</span>
-      <h1>{receiving ? 'Recibiendo tu caja…' : 'Importar tu caja'}</h1>
-      <p>{receiving ? 'Esta pestaña espera los datos del marcador de invokers.com.' : 'En ordenador, importa la carpeta del juego: un clic y se recuerda. En móvil y tableta, pega el enlace de tu caja compartida.'}</p>
-    </section>
+    <header className="goal-head import-head">
+      <Download size={20} aria-hidden /><div><h1>{receiving ? 'Recibiendo tu caja…' : 'Importar tu caja'}</h1>
+      <p>{receiving ? 'Esta pestaña espera los datos de invokers.com.' : 'Pega el enlace de tu caja compartida de invokers.com. En ordenador también puedes leer la carpeta del juego.'}</p></div>
+    </header>
     {receiving && <div className="note"><Loader2 className="spin" size={16} /> Esperando datos de invokers.com…</div>}
     {error && <div className="note warn" role="alert">{error}</div>}
     {status && <div className="note ok" role="status">{status}</div>}
 
     <div className="method-tabs" role="tablist" aria-label="Forma de importar">
-      <button role="tab" aria-selected={method === 'file'} className={method === 'file' ? 'on' : ''} onClick={() => setMethod('file')}>
-        <Monitor size={22} /><span><b>Desde el juego</b><small>PC y Mac · carpeta del juego</small></span>{!isMobile() && <em className="badge">Recomendado</em>}
-      </button>
       <button role="tab" aria-selected={method === 'link'} className={method === 'link' ? 'on' : ''} onClick={() => setMethod('link')}>
-        <Smartphone size={22} /><span><b>Con tu enlace</b><small>Móvil y tableta · caja compartida</small></span>{isMobile() && <em className="badge">Recomendado</em>}
+        <Smartphone size={22} /><span><b>Con tu enlace</b><small>Móvil y ordenador · recomendado</small></span>
+      </button>
+      <button role="tab" aria-selected={method === 'file'} className={method === 'file' ? 'on' : ''} onClick={() => setMethod('file')}>
+        <Monitor size={22} /><span><b>Carpeta del juego</b><small>PC y Mac · sin estadísticas base</small></span>
       </button>
     </div>
 
@@ -146,7 +139,7 @@ export function ImportPage({ receiving }: { receiving?: boolean }) {
           </div>}
         </div>
       </section>
-      <p className="fine wide">La carpeta del juego da tus Invokers, Titanes y piezas. Para el <b>optimizador exacto</b> y los registros de combate, importa también tu enlace: aporta las estadísticas base que publica el portal.</p>
+      <p className="fine wide">La carpeta del juego da tus Invokers, Titanes y piezas. Para el <b>optimizador</b> (con estadísticas calculadas con la fórmula verificada) y los registros de combate, importa también tu enlace: aporta las estadísticas base que publica el portal.</p>
     </div> :
 
     <div className="import-grid single">
@@ -162,7 +155,11 @@ export function ImportPage({ receiving }: { receiving?: boolean }) {
           <li>Activa «compartir» y pulsa <b>Refresh link</b> para una instantánea nueva.</li>
           <li>Copia el enlace, pégalo arriba y pulsa <b>Importar</b>. Lo recordamos para la próxima vez.</li>
         </ol>
-        {account?.box.expiresAt && <small className="muted">Tu enlace actual caduca el {new Date(account.box.expiresAt).toLocaleDateString('es-ES')}.</small>}
+        <div className="snapshot-info">
+          <b>El enlace es una instantánea, no una sincronización.</b>
+          <p>Refleja tu caja tal como estaba cuando creaste el enlace o pulsaste «Refresh link». Lo que cambies después en el juego no aparece hasta que pulses «Refresh link» en invokers.com y vuelvas a importar. Cada enlace dura una semana; «Refresh» lo actualiza y lo renueva otra semana.</p>
+          {account?.box.snapshotAt && <p>Tu caja actual es del <b>{new Date(account.box.snapshotAt).toLocaleString('es-ES', { dateStyle: 'medium', timeStyle: 'short' })}</b>{account.box.expiresAt ? <> · el enlace caduca el <b>{new Date(account.box.expiresAt).toLocaleDateString('es-ES')}</b></> : null}.</p>}
+        </div>
       </section>
       <details className="other-ways" open={needsHelp || !proxyUrl()}>
       <summary>¿No funciona el enlace? Otras formas de importar</summary>
@@ -204,15 +201,15 @@ export function ImportPage({ receiving }: { receiving?: boolean }) {
     </div>}
 
     <section className="grid-2 trust">
-      <div className="panel"><h3 className="sub"><ShieldCheck size={15} /> Lo que hace Nexo</h3><ul className="ticks">
-        <li>Lee la caja que guarda el juego o la que publica tu enlace, en tu navegador.</li>
-        <li>Guarda tus importaciones solo en este dispositivo para ver tu progreso.</li>
-        <li>Actualiza con un clic desde la carpeta recordada o el enlace guardado.</li>
+      <div className="panel"><h3 className="sub"><ShieldCheck size={15} /> Qué pasa con tus datos</h3><ul className="ticks">
+        <li>Con el enlace, el proxy de Nexo (un Cloudflare Worker) descarga tu caja pública de invokers.com y te la entrega: <b>procesa la caja en tránsito</b>. Su código no la guarda, pero Cloudflare, como cualquier servicio web, puede registrar datos técnicos de la petición, como la dirección del enlace.</li>
+        <li>Después, la caja se guarda <b>solo en este navegador</b> (hasta cinco importaciones). Puedes borrarla en Historial.</li>
+        <li>La carpeta del juego se lee en tu navegador y no pasa por ningún servidor.</li>
       </ul></div>
       <div className="panel"><h3 className="sub">Lo que no hace</h3><ul className="dashes">
-        <li>No envía tus datos a ningún servidor de Nexo.</li>
-        <li>No encuentra la carpeta por sí solo: tú la eliges una vez (por eso te damos la ruta).</li>
+        <li>No pide tu contraseña ni tu sesión del juego.</li>
         <li>No escribe nada en el juego ni en su carpeta.</li>
+        <li>Si una actualización falla, conserva tu última caja válida.</li>
       </ul></div>
     </section>
     <input ref={folderInput} type="file" hidden multiple {...{ webkitdirectory: '' }} onChange={e => { onFolderInput(e.target.files); e.target.value = '' }} />
