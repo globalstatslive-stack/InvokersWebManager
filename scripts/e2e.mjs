@@ -20,6 +20,7 @@ try {
   await page.getByRole('tab', { name: /Desde el juego/ }).click()
   assert.ok((await page.locator('.path-row code').innerText()).includes('Hit_Zone'))
   await page.getByRole('tab', { name: /Con tu enlace/ }).click()
+  await page.evaluate(() => document.querySelector('details.other-ways')?.setAttribute('open', ''))
   // 1) Pegar el JSON de la caja.
   await page.getByLabel('Datos de la caja').fill(json)
   await page.getByRole('button', { name: 'Importar texto' }).click()
@@ -47,6 +48,7 @@ try {
     ? r.fulfill({ contentType: 'application/json', body: json }) : r.fulfill({ contentType: 'text/html', body: '<p>caja</p>' }))
   await page.evaluate(() => { location.hash = '#/importar' })
   await page.getByRole('tab', { name: /Con tu enlace/ }).click()
+  await page.evaluate(() => document.querySelector('details.other-ways')?.setAttribute('open', ''))
   await page.waitForSelector('a.bookmarklet[href^="javascript:"]', { state: 'attached' })
   const code = decodeURIComponent((await page.locator('a.bookmarklet').getAttribute('href')).replace(/^javascript:/, ''))
   const portal = await context.newPage()

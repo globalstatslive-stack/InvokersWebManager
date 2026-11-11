@@ -45,7 +45,7 @@ Nexo busca los snapshots en `aggregate_snapshots`, los lee con su lector MemoryP
 **En móvil o tableta: con tu enlace**
 
 1. En [tu caja del portal](https://invokers.com/hub/box/invokers/) activa «compartir» y pulsa «Refresh link».
-2. Pega el enlace en «Con tu enlace». El portal no envía cabeceras CORS, así que la lectura directa solo funciona con un proxy (`proxy/cloudflare-worker.js`, configurable en «Avanzado» o fijo en `DEFAULT_PROXY`). Sin él, Nexo ofrece **copiar y pegar** los datos o el **marcador mágico**, que lee la caja en invokers.com y la envía a Nexo con `postMessage` (solo se aceptan mensajes de `invokers.com`).
+2. Pega el enlace en «Con tu enlace» y pulsa **Importar**. El portal no envía cabeceras CORS, así que Nexo lee la caja a través de su proxy en Cloudflare Workers (`proxy/cloudflare-worker.js`, desplegado en `https://nexo-proxy.globalstatslive.workers.dev`, fijado en `DEFAULT_PROXY`). Solo reenvía `/api/lamb/<código>`, solo responde a la web de Nexo y no guarda nada. Como alternativa quedan **copiar y pegar** los datos y el **marcador mágico** (lee la caja en invokers.com y la envía con `postMessage`; solo se aceptan mensajes de `invokers.com`).
 
 La caja del enlace incluye además las estadísticas base y los registros de combate, que habilitan el **optimizador exacto**.
 

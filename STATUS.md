@@ -8,6 +8,7 @@
 - Optimizador exacto (DP por pares de conjuntos + arranques múltiples + búsqueda local), objetivo de daño efectivo, mínimos, conjunto obligatorio y protección de equipos.
 - Asesor: revisión de builds, cola de mejoras, candidatas a venta con motivos y tolerancias por corrupción.
 - Importación al estilo de GG: «Desde el juego» (PC/Mac, ruta para copiar, carpeta recordada, arrastrar y soltar, actualizar con un clic) y «Con tu enlace» (móvil: proxy opcional, copiar y pegar o marcador mágico). Se retiró el puente Android.
+- Proxy propio en Cloudflare Workers desplegado y verificado con la caja real (200, CORS solo para la web de Nexo, códigos no válidos rechazados): el enlace se importa con un toque.
 - Se mantienen el lector `.dat` MemoryPack, el receptor Web Share Target y la carpeta recordada.
 
 ## Evidencia
@@ -23,4 +24,3 @@
 - Simulación de daño con habilidades y defensa enemiga; optimización de equipos completos (repartir piezas entre varios Invokers).
 - Datos de habilidades y descripciones del catálogo público.
 - Probar la importación desde la carpeta del juego en Windows y Mac con archivos reales.
-- Desplegar un proxy público para que el enlace se importe con un toque en móvil.
