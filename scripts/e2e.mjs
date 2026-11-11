@@ -38,7 +38,7 @@ try {
   await page.evaluate(() => { location.hash = '#/invokers' })
   await page.locator('.hero-card').first().click()
   await page.getByRole('button', { name: 'Optimizar equipo' }).click()
-  await page.locator('.dmg-strip').waitFor()
+  await page.locator('.combat').waitFor({ timeout: 30000 })
   await page.locator('.stat-table.compare tr').first().waitFor()
   // Propuestas alternativas y plan.
   await page.getByRole('button', { name: /Añadir al plan/ }).click()
@@ -47,7 +47,7 @@ try {
   assert.ok(planHref.startsWith('https://invokers.com/hub/optimizer/?heroes=') && planHref.includes('&from=Nexo#nexo-plan='), planHref)
   // 4) Persistencia tras recargar (el plan también se conserva).
   await page.reload()
-  await page.locator('.dmg-strip').waitFor()
+  await page.locator('.combat').waitFor({ timeout: 30000 })
   await page.locator('.plan-list li').first().waitFor()
   // 5) Marcador mágico: una página simulada de invokers.com envía la caja a la web.
   await context.route('https://invokers.com/**', r => new URL(r.request().url()).pathname.startsWith('/api/lamb/')

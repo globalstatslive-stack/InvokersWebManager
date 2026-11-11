@@ -518,3 +518,74 @@ table.data.proposals .set-chip .mini-icon { width: 16px; height: 16px; }
 .plan-list li { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 10px; background: var(--bg-2); }
 .plan-list li small { flex: 1; color: var(--muted); }
 .plan-portrait { width: 30px; height: 30px; border-radius: 8px; object-fit: cover; margin-right: 6px; }
+
+.ok-text { color: var(--up); }
+
+/* ---------- Optimizador por campeón ---------- */
+.champion { --c: var(--legendary); display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(240px, 320px); gap: 22px; align-items: center; margin-bottom: 16px; background: linear-gradient(120deg, #151d33, #0e1322); position: relative; overflow: hidden; }
+.champion.r-epic { --c: var(--epic); } .champion.r-rare { --c: var(--rare); } .champion.r-uncommon { --c: var(--uncommon); } .champion.r-common { --c: var(--common); } .champion.r-mythic { --c: var(--mythic); }
+.champion::before { content: ''; position: absolute; inset: -40% auto auto -10%; width: 50%; height: 180%; background: radial-gradient(closest-side, color-mix(in srgb, var(--c) 22%, transparent), transparent); pointer-events: none; }
+.champion > * { position: relative; }
+.champion .portrait.lg { width: 132px; height: 132px; }
+.champion-main h2 { font-size: 24px; margin: 10px 0 4px; }
+.champion-main small { color: var(--text-2); }
+.champion-main .field { max-width: 360px; }
+.champion .tags { margin: 12px 0 0; }
+.tags .tag-strong { border-color: var(--gold-dim); color: var(--gold-2); font-weight: 600; }
+.tags .tag-strong.warn { border-color: #6c4c1c; color: #ffd9a1; }
+.champion-mix { padding: 12px 14px; border-radius: 12px; background: #00000040; border: 1px solid var(--line); }
+.champion-mix .sub { margin-top: 0; }
+.champion-mix .weight { grid-template-columns: 96px 1fr 28px; padding: 2px 0; }
+.champion-mix .link { font-size: 12.5px; margin-top: 6px; }
+h3.sub.first { margin-top: 0; }
+.field.res { margin-top: 10px; }
+.field.res input { width: 120px; }
+.tag-btn.on { border-color: var(--gold); color: var(--gold-2); }
+.opt-controls .chips-wrap { margin-top: 8px; }
+.extra-weights { margin-top: 14px; }
+.extra-weights summary { cursor: pointer; color: var(--text-2); font-weight: 600; font-size: 13.5px; display: flex; align-items: center; gap: 6px; }
+.extra-weights .weights { margin-top: 8px; }
+.combat-top { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; padding: 12px 14px; border-radius: 12px; background: var(--bg-2); }
+.combat-total { display: grid; grid-template-columns: auto auto; column-gap: 10px; align-items: baseline; }
+.combat-total small { grid-column: 1 / -1; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-size: 11px; }
+.combat-total b { font-family: var(--display); font-size: 30px; color: var(--gold-2); }
+.combat-total em { font-style: normal; font-weight: 700; }
+.combat-total span { grid-column: 1 / -1; color: var(--text-2); font-size: 13px; }
+.combat-rates { display: grid; grid-template-columns: repeat(3, auto); gap: 4px 20px; font-size: 13px; color: var(--muted); margin-left: auto; }
+.combat-rates b { color: var(--text); }
+.combat-rates .up b { color: var(--up); } .combat-rates .down b { color: var(--down); }
+.grid-2.inner { margin-top: 4px; gap: 22px; }
+.skill-bars, .gain-bars { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.skill-bars li { display: grid; grid-template-columns: auto 1fr auto; column-gap: 10px; row-gap: 4px; align-items: center; font-size: 14px; }
+.skill-tag { font-size: 11px; padding: 2px 7px; border-radius: 6px; border: 1px solid var(--line-2); color: var(--text-2); white-space: nowrap; }
+.skill-name small { color: var(--muted); }
+.bar { grid-column: 1 / -1; height: 6px; border-radius: 6px; background: #ffffff0d; overflow: hidden; }
+.bar i { display: block; height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--gold-dim), var(--gold)); }
+.gain-bars li { display: grid; grid-template-columns: 1fr auto; row-gap: 4px; font-size: 14px; }
+.gain-bars .bar i { background: linear-gradient(90deg, #2f7a5a, var(--up)); }
+.assumptions { margin-top: 14px; color: var(--text-2); font-size: 13px; }
+.assumptions summary { cursor: pointer; color: var(--muted); }
+.swap { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 10px; align-items: center; margin-bottom: 10px; }
+.swap .gear-card { margin-top: 0; height: 100%; }
+.swap-side:first-child .gear-card { opacity: .72; }
+.swap-side:last-child .gear-card { border-color: #5fd39a66; box-shadow: 0 0 0 1px #5fd39a22; }
+.swap-arrow { color: var(--up); }
+.gear-card.ghost { display: grid; place-items: center; min-height: 90px; color: var(--muted); border-style: dashed; }
+button.tag { border: 0; cursor: pointer; font: inherit; font-size: 12px; }
+.kept { margin-top: 6px; }
+.kept summary { cursor: pointer; color: var(--text-2); font-weight: 600; }
+.kept-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.row-actions .gold { margin-left: auto; }
+@media (max-width: 1100px) {
+  .champion { grid-template-columns: auto minmax(0, 1fr); }
+  .champion-mix { grid-column: 1 / -1; }
+  .opt-results { order: 0; }
+}
+@media (max-width: 860px) {
+  .champion { grid-template-columns: 1fr; gap: 14px; }
+  .champion .portrait.lg { width: 96px; height: 96px; }
+  .combat-rates { grid-template-columns: repeat(2, auto); margin-left: 0; }
+  .swap { grid-template-columns: 1fr; }
+  .swap-arrow { transform: rotate(90deg); justify-self: center; }
+}
+.bonuses li span.grade, .bonuses li .rolls { flex: 0 0 auto; }

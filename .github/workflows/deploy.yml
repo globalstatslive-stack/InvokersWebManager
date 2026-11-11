@@ -25,6 +25,8 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      - name: Empaquetar la extensión de Chrome
+        run: cd extension && zip -r ../dist/nexo-extension.zip . -x '*.DS_Store'
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
