@@ -1,12 +1,12 @@
 import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { ArrowRight, Coins, Crosshair, HeartPulse, Info, ListChecks, ListPlus, Plus, Shield, SlidersHorizontal, Swords, Upload, X } from 'lucide-react'
 import { useAccount } from './account'
-import { Chips, Empty, GearCard, NeedsAccount, PageHead, Select } from './common'
+import { BonusLine, Chips, Empty, fmtPower, NeedsAccount, PageHead, Select, StalePowerNote } from './common'
 import { EmptySlot, GameImg, GearIcon, Portrait, SetIcon, StatIcon, Stars } from './Art'
 import { entryFrom, portalUrl, reservedBy, usePlan, type PlanEntry } from './plan'
-import { ACCESSORY_SLOTS, CORE_STATS, fmtInt, fmtStat, RELIC_SLOTS, SET_LABEL, SLOT_LABEL, STAT_LABEL, STAT_SHORT, t, TOLERANCES } from '../box/i18n'
-import { optimize, PRESETS, presetFor, type Pool } from '../box/optimizer'
-import { activeSetBonuses, rating, type Stats } from '../box/stats'
+import { ACCESSORY_SLOTS, CORE_STATS, PERCENT_OF_BASE, fmtInt, fmtStat, RELIC_SLOTS, SET_LABEL, SLOT_LABEL, STAT_LABEL, STAT_SHORT, t, TOLERANCES } from '../box/i18n'
+import { optimize, PRESETS, presetFor, STAT_SCALE, type Change, type Pool } from '../box/optimizer'
+import { activeSetBonuses, addBonus, rating, type Stats } from '../box/stats'
 import { ASSUMPTIONS, DEFAULT_SIM, EFFECT_LABEL, indexOf, loadKits, profileOf, simulate, skillLevels, type Kit, type Mix, type SimResult } from '../box/combat'
 import { teamHeroIds } from '../box/advisor'
 import type { Box, Gear, Hero } from '../box/model'
@@ -122,6 +122,33 @@ function CombatPanel({ box, hero, kit, levels, stats, mix, settings, before, sim
   </section>
 }
 
+function PieceMini({ g, label, slot, tone }: { g: Gear | null; label: string; slot: string; tone: 'out' | 'in' }) {
+  return <div className={`piece-mini ${tone}`}>
+    <span className="piece-label">{label}</span>
+    {g ? <>
+      <div className="piece-head"><GearIcon g={g} size="sm" /><span><b>{g.set ? t(SET_LABEL, g.set) : g.faction}</b><small>{g.rank}★ · +{g.level}</small></span></div>
+      <ul className="bonuses mini"><BonusLine b={g.main} main />{g.subs.map((b, i) => <BonusLine key={i} b={b} />)}</ul>
+    </> : <p className="muted">{tone === 'out' ? `${t(SLOT_LABEL, slot)} vacío` : 'Se queda vacío'}</p>}
+  </div>
+}
+function SwapCard({ change: c, hero, maxLevel, go }: { change: Change; hero: Hero; maxLevel: boolean; go: (p: string) => void }) {
+  const deltas = useMemo(() => {
+    const plus: Stats = {}, minus: Stats = {}
+    for (const [g, out] of [[c.to, plus], [c.from, minus]] as const) if (g) { addBonus(out, g.main, hero.basis); for (const b of g.subs) addBonus(out, b, hero.basis) }
+    const unit = (k: string) => (PERCENT_OF_BASE.has(k) ? (hero.basis?.[k] || 1) : 1) * (STAT_SCALE[k] ?? 10)
+    return [...new Set([...Object.keys(plus), ...Object.keys(minus)])].map(k => ({ k, d: (plus[k] ?? 0) - (minus[k] ?? 0) }))
+      .filter(x => Math.abs(x.d) / unit(x.k) > 0.05).sort((a, b) => Math.abs(b.d) / unit(b.k) - Math.abs(a.d) / unit(a.k)).slice(0, 6)
+  }, [c, hero])
+  return <article className="swap-card">
+    <header>
+      <b>{t(SLOT_LABEL, c.slot)}</b>
+      <span className="delta-chips">{deltas.map(x => <span key={x.k} className={x.d > 0 ? 'up' : 'down'}>{STAT_SHORT[x.k] ?? STAT_LABEL[x.k] ?? x.k} {fmtStat(x.k, x.d, true)}</span>)}</span>
+      <span className="swap-origin">{c.to ? c.takenFrom ? <button className="tag sev-2" onClick={() => go(`/invoker/${c.takenFrom!.id}`)}>Quitar a {c.takenFrom.name}</button> : <span className="tag good">Pieza libre</span> : null}{maxLevel && c.to?.mainAtMax && <span className="tag sev-2">Subir al máximo</span>}</span>
+    </header>
+    <div className="swap-body"><PieceMini g={c.from} label="Quitas" slot={c.slot} tone="out" /><ArrowRight size={18} className="swap-arrow" /><PieceMini g={c.to} label="Pones" slot={c.slot} tone="in" /></div>
+  </article>
+}
+
 function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; onHero: (id: number) => void }) {
   const { account, go } = useAccount()
   const { box, index } = account!
@@ -154,7 +181,7 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
     const protectedHeroes = new Set(opts.protectTeams ? [...teamIds].filter(id => id !== hero.id) : [])
     const w = opts.mode === 'sim' ? { ...opts.weights, damage: 10 } : opts.mode === 'damage' ? { damage: 10, ...opts.weights } : opts.weights
     return optimize(index, hero, {
-      objective: opts.mode, weights: w, pool: opts.pool, protectedHeroes, moveAversion: opts.avoidMoves ? 0.35 : 0,
+      objective: opts.mode, weights: w, pool: opts.pool, protectedHeroes, moveAversion: opts.avoidMoves ? 0.35 : 0, changeCost: opts.avoidMoves ? 1.5 : 0,
       requiredSet: opts.reqSet === 'none' ? null : { set: opts.reqSet, pieces: Number(opts.reqPieces) as 3 | 5 | 8 }, minimums: opts.minimums,
       maxLevel: opts.maxLevel, reserved: opts.reserved, alternatives: 7,
       sim: opts.mode === 'sim' && kit && opts.mix ? { kit, levels, settings: opts.settings, mix: opts.mix } : undefined,
@@ -174,6 +201,7 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
   const simMode = mode === 'sim' && !!result.sim
   const scaleLabel = profile ? (['attack', 'defense', 'health'] as const).filter(k => profile.scaling[k] > 0.05).map(k => `${STAT_SHORT[k]} ${Math.round(100 * profile.scaling[k])} %`).join(' · ') : ''
   const setMixKey = (k: keyof Mix, v: number) => { if (!mix) return; const next = { ...mix, [k]: v / 100 }; const sum = next.damage + next.control + next.sustain + next.tough || 1; setMix({ damage: next.damage / sum, control: next.control / sum, sustain: next.sustain / sum, tough: next.tough / sum }) }
+  const changed = new Set(result.changes.map(c => c.slot))
   const kept = [...RELIC_SLOTS, ...ACCESSORY_SLOTS].map(s => (RELIC_SLOTS.includes(s) ? result.relics : result.accessories)[s]).filter((g): g is Gear => !!g && !result.changes.some(c => c.to === g))
   return <>
     <PageHead kicker="Herramientas" title="Optimizador de equipo">Optimiza cada campeón según lo que hace de verdad: sus habilidades, de qué escalan, sus enfriamientos y si necesita precisión contra el jefe.</PageHead>
@@ -181,10 +209,11 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
       <Portrait c={hero} size="lg" />
       <div className="champion-main">
         <label className="field"><span>Campeón</span>
-          <select value={hero.id} onChange={e => onHero(Number(e.target.value))}>{heroes.map(h => <option key={h.id} value={h.id}>{h.name} · {h.rank}★ Nv.{h.level} · {fmtInt(h.power)}</option>)}</select>
+          <select value={hero.id} onChange={e => onHero(Number(e.target.value))}>{heroes.map(h => <option key={h.id} value={h.id}>{h.name} · {h.rank}★ Nv.{h.level} · {fmtPower(h)}</option>)}</select>
         </label>
         <h2>{hero.fullName}</h2>
         <small><Stars n={hero.rank} /> · nivel {hero.level} · despertar {hero.awakeLevel} · habilidades {levels.slice(1, 4).join('/')} · definitiva {levels[4]}</small>
+        {hero.powerStale && <StalePowerNote />}
         {profile ? <div className="tags">
           {scaleLabel && <span className="tag-strong">Su daño escala con {scaleLabel}</span>}
           {profile.needsAccuracy && <span className="tag-strong warn">Necesita precisión: {profile.accuracySkills.length} habilidades</span>}
@@ -302,14 +331,17 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
         </section>
         <section className="panel">
           <div className="panel-title"><h2>Piezas de la build</h2><small>{result.changes.length ? `${result.changes.length} cambian · ${kept.length} se quedan` : 'Sin cambios'}</small></div>
-          {result.changes.length === 0 && <p className="muted">Tu equipo actual ya es el mejor con estas opciones.</p>}
-          {result.changes.map(c => <div key={c.slot} className="swap">
-            <div className="swap-side">{c.from ? <GearCard g={c.from} /> : <div className="gear-card ghost">{t(SLOT_LABEL, c.slot)} vacío</div>}</div>
-            <ArrowRight size={20} className="swap-arrow" />
-            <div className="swap-side">{c.to ? <GearCard g={c.to} owner={c.takenFrom?.name ?? null} extra={<div className="verdict">{c.takenFrom ? <button className="tag sev-2" onClick={() => go(`/invoker/${c.takenFrom!.id}`)}>Quitar a {c.takenFrom.name}</button> : <span className="tag good">Pieza libre</span>}{maxLevel && c.to.mainAtMax && <span className="tag sev-2">Subir al máximo</span>}</div>} /> : <div className="gear-card ghost">Quitar pieza</div>}</div>
-          </div>)}
-          {kept.length > 0 && <details className="kept"><summary>{kept.length} piezas que se quedan</summary><div className="kept-list">{[...RELIC_SLOTS, ...ACCESSORY_SLOTS].map(s => { const g = (RELIC_SLOTS.includes(s) ? result.relics : result.accessories)[s]; return g && kept.includes(g) ? <GearIcon key={s} g={g} /> : null })}{[...RELIC_SLOTS, ...ACCESSORY_SLOTS].filter(s => !(RELIC_SLOTS.includes(s) ? result.relics : result.accessories)[s] && (RELIC_SLOTS.includes(s) || hero.awakeLevel >= (box.accessorySlotAwake[s] ?? 0))).map(s => <EmptySlot key={s} slot={s} />)}</div></details>}
-          <p className="fine">Añade varios Invokers al plan y envíalo a invokers.com como preset para aplicarlo con el botón oficial. El oro es una estimación con los precios de desequipar publicados.</p>
+          <div className="doll-compare">
+            <small>Ahora</small>
+            <div className="doll-row">{[...RELIC_SLOTS, ...ACCESSORY_SLOTS].map(s => { const isRelic = RELIC_SLOTS.includes(s), id = (isRelic ? hero.relics : hero.accessories)[s], g = id === undefined ? undefined : isRelic ? index.relic(id) : index.accessory(id)
+              return <span key={s} className={`doll-cell ${changed.has(s) ? 'out' : ''}`} title={t(SLOT_LABEL, s)}>{g ? <GearIcon g={g} size="sm" /> : <EmptySlot slot={s} size="sm" />}</span> })}</div>
+            <small>Propuesta</small>
+            <div className="doll-row">{[...RELIC_SLOTS, ...ACCESSORY_SLOTS].map(s => { const g = (RELIC_SLOTS.includes(s) ? result.relics : result.accessories)[s]
+              return <span key={s} className={`doll-cell ${changed.has(s) ? 'in' : ''}`} title={t(SLOT_LABEL, s)}>{g ? <GearIcon g={g} size="sm" /> : <EmptySlot slot={s} size="sm" />}</span> })}</div>
+          </div>
+          {result.changes.length === 0 ? <p className="muted">Tu equipo actual ya es el mejor con estas opciones.</p> : <h3 className="sub">Cambios, pieza a pieza</h3>}
+          {result.changes.map(c => <SwapCard key={c.slot} change={c} hero={hero} maxLevel={maxLevel} go={go} />)}
+          <p className="fine">Los números de cada cambio son lo que aporta la pieza nueva menos la que quitas (sin contar los conjuntos). Añade varios Invokers al plan y envíalo a invokers.com como preset. El oro es una estimación con los precios de desequipar publicados.</p>
         </section>
       </div>
     </div>

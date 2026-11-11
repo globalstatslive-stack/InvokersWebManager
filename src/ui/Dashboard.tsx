@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { ArrowRight, Clock3, Gem, Shield, Sparkles, Swords, Trophy, Wand2 } from 'lucide-react'
 import { useAccount } from './account'
-import { Meter } from './common'
+import { fmtPower, Meter, StalePowerNote } from './common'
 import { ImportPage } from './ImportPage'
 import { ElementIcon, FactionIcon, GameImg, Portrait, Stars } from './Art'
 import { CLASS_LABEL, ELEMENT_LABEL, fmtInt, RARITIES, RARITY_LABEL, t } from '../box/i18n'
@@ -47,8 +47,9 @@ export function Dashboard() {
         <div className="top-list">{top.map((h, i) => <button key={h.id} className="top-row" onClick={() => go(`/invoker/${h.id}`)}>
           <span className="rank-n">{i + 1}</span><Portrait c={h} size="sm" />
           <span className="top-name"><b>{h.name}</b><small><ElementIcon element={h.element} /> {t(ELEMENT_LABEL, h.element)} · {t(CLASS_LABEL, h.cls)}</small></span>
-          <span className="top-power"><Stars n={h.rank} /><b>{fmtInt(h.power)}</b></span>
+          <span className="top-power"><Stars n={h.rank} /><b>{fmtPower(h)}</b></span>
         </button>)}</div>
+        <StalePowerNote />
       </div>
       <div className="panel">
         <div className="panel-title"><h2>Qué hacer ahora</h2></div>

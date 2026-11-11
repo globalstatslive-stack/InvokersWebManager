@@ -22,6 +22,8 @@ export type OptimizeOptions = {
   minimums?: Record<string, number>
   /** Penaliza mover piezas de otros Invokers (0 = sin penalización). */
   moveAversion?: number
+  /** Puntos que debe ganar cada cambio de pieza para merecer la pena (0 = cualquier mejora). */
+  changeCost?: number
   /** 'damage' maximiza ATQ × (1 + crítico × daño crítico) además de los pesos del resto. */
   objective?: 'weights' | 'damage' | 'sim'
   /** Con objective = 'sim': simulación de combate del campeón y reparto del índice. */
@@ -108,6 +110,7 @@ export function optimize(index: BoxIndex, hero: Hero, opts: OptimizeOptions): Bu
   const current = index.equipped(hero).map(g => pieces.get(gearKey(g))!)
   const minimums = Object.entries(opts.minimums ?? {}).filter(([, v]) => v > 0)
   const aversion = opts.moveAversion ?? 0.15
+  const changeCost = opts.changeCost ?? 0
   const damage = opts.objective === 'damage'
   /** Puntos por cada 100 % (en log) de daño efectivo: peso «damage» 0–10. */
   const DAMAGE_POINTS = 60 * (opts.weights.damage ?? 10)
@@ -127,7 +130,7 @@ export function optimize(index: BoxIndex, hero: Hero, opts: OptimizeOptions): Bu
     if (damage) j += DAMAGE_POINTS * Math.log(Math.max(1e-9, damageValue(stats)) / base)
     if (sim) j += simPoints(stats)
     for (const [k, v] of minimums) j -= MIN_PENALTY * Math.max(0, v - (stats[k] ?? 0)) / unit(k)
-    for (const g of pieces) if (g.equippedHeroId !== null && g.equippedHeroId !== hero.id) j -= aversion
+    for (const g of pieces) if (g.equippedHeroId !== hero.id) j -= changeCost + (g.equippedHeroId !== null ? aversion : 0)
     return { stats, j }
   }
   /** Pesos lineales equivalentes alrededor de unas estadísticas (gradiente del objetivo). */
@@ -244,7 +247,7 @@ export function optimize(index: BoxIndex, hero: Hero, opts: OptimizeOptions): Bu
       if (p === undefined) {
         p = piecePoints(g, hero, w)
         if (g.equippedHeroId === hero.id) p += 1e-6
-        else if (g.equippedHeroId !== null) p -= aversion
+        else p -= changeCost + (g.equippedHeroId !== null ? aversion : 0)
         points.set(g, p)
       }
       return p

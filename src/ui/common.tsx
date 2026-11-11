@@ -56,3 +56,13 @@ export const pct = (n: number) => `${Math.round(n * 100)} %`
 export function Meter({ value, max, tone = 'gold' }: { value: number; max: number; tone?: string }) {
   return <span className={`meter ${tone}`}><i style={{ width: `${Math.max(2, Math.min(100, max ? 100 * value / max : 0))}%` }} /></span>
 }
+
+/** Poder de un Invoker; con asterisco si es el del último enlace y su equipo ha cambiado. */
+export const fmtPower = (h: { power: number; powerStale?: boolean }) => `${new Intl.NumberFormat('es-ES').format(h.power)}${h.powerStale ? '*' : ''}`
+export function StalePowerNote() {
+  const { account } = useAccount()
+  const n = account?.box.heroes.filter(h => h.powerStale).length ?? 0
+  if (!n) return null
+  const when = account?.box.merge?.officialSnapshot
+  return <p className="fine stale-note">* El poder de {n} Invoker{n > 1 ? 's es' : ' es'} el de tu último enlace{when ? ` (${new Date(when).toLocaleDateString('es-ES')})` : ''}: su equipo ha cambiado y la carpeta del juego no incluye el poder. Pulsa «Refresh link» en invokers.com e importa el enlace para actualizarlo.</p>
+}

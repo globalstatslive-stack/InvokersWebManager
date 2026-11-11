@@ -26,6 +26,8 @@ export type Hero = Character2 & {
   /** Estadísticas base (sin equipo), ya convertidas desde coma fija. */
   basis: Record<string, number> | null
   activeSets: { set: string; pieces: number; tiers: number[] }[]
+  /** El poder es el del último enlace y su equipo o nivel ha cambiado desde entonces. */
+  powerStale?: boolean
 }
 export type Titan = Character2 & {
   id: number; rank: number; level: number; locked: boolean; power: number; battles: number; empowerment: number

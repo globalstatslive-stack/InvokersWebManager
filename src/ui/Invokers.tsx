@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react'
 import { LayoutGrid, List, Lock } from 'lucide-react'
 import { useAccount } from './account'
-import { Chips, NeedsAccount, PageHead, SearchBox, Select } from './common'
+import { Chips, fmtPower, NeedsAccount, PageHead, SearchBox, Select } from './common'
 import { ClassIcon, ElementIcon, FactionIcon, Portrait, Stars } from './Art'
-import { CLASS_LABEL, CORE_STATS, ELEMENT_LABEL, fmtInt, fmtStat, RARITIES, RARITY_LABEL, STAT_LABEL, STAT_SHORT, t } from '../box/i18n'
+import { CLASS_LABEL, CORE_STATS, ELEMENT_LABEL, fmtStat, RARITIES, RARITY_LABEL, STAT_LABEL, STAT_SHORT, t } from '../box/i18n'
 import type { Hero } from '../box/model'
 
 const SORTS = [{ id: 'power', label: 'Poder' }, { id: 'level', label: 'Nivel' }, { id: 'rank', label: 'Rango' }, { id: 'rarity', label: 'Rareza' }, { id: 'name', label: 'Nombre' }, { id: 'battles', label: 'Combates' }, ...CORE_STATS.map(s => ({ id: `stat:${s}`, label: STAT_LABEL[s] }))]
@@ -52,13 +52,13 @@ export function Invokers() {
       </Portrait>
       <span className="hero-card-name">{h.name}</span>
       <Stars n={h.rank} />
-      <span className="hero-card-meta">Nv. {h.level} · {statCol ? `${STAT_SHORT[statCol] ?? statCol} ${fmtStat(statCol, h.stats[statCol] ?? 0)}` : fmtInt(h.power)}</span>
+      <span className="hero-card-meta">Nv. {h.level} · {statCol ? `${STAT_SHORT[statCol] ?? statCol} ${fmtStat(statCol, h.stats[statCol] ?? 0)}` : fmtPower(h)}</span>
     </button>)}</div> :
       <div className="table-wrap"><table className="data">
         <thead><tr><th>Invoker</th><th>Rango</th><th>Nivel</th><th>Poder</th>{CORE_STATS.slice(0, 9).map(s => <th key={s} className={statCol === s ? 'sorted' : ''}>{STAT_SHORT[s]}</th>)}</tr></thead>
         <tbody>{list.map(h => <tr key={h.id} onClick={() => go(`/invoker/${h.id}`)}>
           <td className="name-cell"><Portrait c={h} size="sm" /><span><b>{h.name}</b><small><FactionIcon faction={h.faction} /> <ElementIcon element={h.element} /></small></span></td>
-          <td><Stars n={h.rank} /></td><td>{h.level}</td><td><b>{fmtInt(h.power)}</b></td>
+          <td><Stars n={h.rank} /></td><td>{h.level}</td><td><b>{fmtPower(h)}</b></td>
           {CORE_STATS.slice(0, 9).map(s => <td key={s} className={statCol === s ? 'sorted' : ''}>{h.stats[s] !== undefined ? fmtStat(s, h.stats[s]) : '—'}</td>)}
         </tr>)}</tbody>
       </table></div>}

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { ArrowLeft, Lock, Swords, Wand2 } from 'lucide-react'
 import { useAccount } from './account'
-import { Empty, GearCard, NeedsAccount } from './common'
+import { Empty, fmtPower, GearCard, NeedsAccount, StalePowerNote } from './common'
 import { ClassIcon, ElementIcon, EmptySlot, FactionIcon, GameImg, GearIcon, Portrait, SetIcon, StatIcon, Stars } from './Art'
 import { ACCESSORY_SLOTS, bonusName, CLASS_LABEL, CORE_STATS, ELEMENT_LABEL, fmtBonus, fmtInt, fmtStat, MODE_LABEL, RARITY_LABEL, RELIC_SLOTS, SET_LABEL, SKILL_LABEL, SLOT_LABEL, STAT_LABEL, t, TOLERANCES } from '../box/i18n'
 import { rating, TIERS } from '../box/stats'
@@ -35,7 +35,7 @@ export function HeroDetail({ id }: { id: number }) {
           {hero.soulSign && <span><GameImg path={hero.soulSignIcon} alt="" className="mini-icon" /> {hero.soulSign}</span>}
         </div>
         <div className="hero-numbers">
-          <div><small>Poder</small><b>{fmtInt(hero.power)}</b></div>
+          <div><small>Poder</small><b>{fmtPower(hero)}</b></div>
           <div><small>Nivel</small><b>{hero.level}<em>/{hero.maxLevel}</em></b></div>
           <div><small>Rango</small><b><Stars n={hero.rank} /></b></div>
           <div><small>Despertar</small><b>{hero.awakeLevel}</b></div>
@@ -71,6 +71,7 @@ export function HeroDetail({ id }: { id: number }) {
         {hero.skills.length > 0 && <><h3 className="sub">Habilidades</h3><div className="skills">{hero.skills.map(s => <span key={s.kind}><small>{t(SKILL_LABEL, s.kind)}</small><b>{s.level}</b></span>)}</div></>}
       </div>
     </section>
+    {hero.powerStale && <StalePowerNote />}
     {teams.length > 0 && <section className="panel">
       <div className="panel-title"><h2><Swords size={18} /> Aparece en {teams.length} registros de combate</h2></div>
       <div className="chips-wrap">{teams.map((tm, i) => <button key={`${tm.mode}${tm.key}${i}`} className="tag-btn" onClick={() => go(`/equipos/${tm.mode}`)}>{t(MODE_LABEL, tm.mode)} · {tm.label}{tm.detail ? ` (${tm.detail})` : ''}</button>)}</div>

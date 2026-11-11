@@ -28,7 +28,10 @@ export function mergeWithOfficial(files: Box, official: Box): Box {
     const character = { code: o.code, name: o.name, fullName: o.fullName, portrait: o.portrait, rarity: o.rarity, element: o.element, cls: o.cls, role: o.role, faction: o.faction, soulSign: o.soulSign, soulSignIcon: o.soulSignIcon, boundIcon: o.boundIcon }
     const base = { ...h, ...character, battles: o.battles, skills: o.skills, maxLevel: o.maxLevel }
     const same = h.level === o.level && h.rank === o.rank && h.awakeLevel === o.awakeLevel
-    if (!same || !o.basis || !o.gearBonus) { changedHeroes++; return { ...base, power: h.power || o.power } }
+    const sameGear = (a: Record<string, number>, b: Record<string, number>) => Object.keys(a).length === Object.keys(b).length && Object.entries(a).every(([k, v]) => b[k] === v)
+    // Los .dat no traen el poder: se conserva el del enlace y se marca si ya no corresponde al equipo actual.
+    const powerStale = !h.power && (!same || !sameGear(h.relics, o.relics) || !sameGear(h.accessories, o.accessories))
+    if (!same || !o.basis || !o.gearBonus) { changedHeroes++; return { ...base, power: h.power || o.power, powerStale } }
     const pieces = [...Object.values(h.relics).map(id => byKey.get(`relic${id}`)), ...Object.values(h.accessories).map(id => byKey.get(`accessory${id}`))].filter((x): x is Gear => !!x)
     const contribution = gearContribution(o, pieces, rules)
     const stats: Record<string, number> = { ...o.stats }
@@ -36,7 +39,7 @@ export function mergeWithOfficial(files: Box, official: Box): Box {
     for (const [k, v] of Object.entries(contribution)) stats[k] = (stats[k] ?? 0) + v
     exactHeroes++
     return {
-      ...base, power: h.power || o.power, basis: o.basis, gearBonus: contribution, stats,
+      ...base, power: h.power || o.power, powerStale, basis: o.basis, gearBonus: contribution, stats,
       activeSets: activeSetBonuses(pieces, rules).map(s => ({ set: s.set, pieces: s.pieces, tiers: s.tiers })),
     }
   })
