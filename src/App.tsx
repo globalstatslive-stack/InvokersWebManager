@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { BookOpen, Database, Download, Home, Lightbulb, LayoutGrid, ListChecks, Menu, RefreshCw, Shield, Swords, Target, Wand2, X } from 'lucide-react'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { BookOpen, Calculator, CalendarDays, Database, Download, Gem, Home, Lightbulb, LayoutGrid, ListChecks, ListOrdered, Menu, Mountain, RefreshCw, Shield, Skull, Sparkles, Swords, Target, Users, Wand2, X } from 'lucide-react'
 import { clearSharedFiles, listImports, prepareFiles, readSharedFiles, saveImport, type ImportRecord } from './data'
 import { AccountContext, accountFrom, type Account } from './ui/account'
 import { GameImg } from './ui/Art'
@@ -13,7 +13,20 @@ import { Titans } from './ui/Titans'
 import { Optimizer } from './ui/Optimizer'
 import { Advisor } from './ui/Advisor'
 import { Teams } from './ui/Teams'
-import { Codex } from './ui/Codex'
+// La enciclopedia se carga bajo demanda: no pesa en la primera visita a la cuenta.
+const CharacterList = lazy(() => import('./ui/wiki/Characters').then(m => ({ default: m.CharacterList })))
+const CharacterPage = lazy(() => import('./ui/wiki/Characters').then(m => ({ default: m.CharacterPage })))
+const BossList = lazy(() => import('./ui/wiki/Bosses').then(m => ({ default: m.BossList })))
+const BossPage = lazy(() => import('./ui/wiki/Bosses').then(m => ({ default: m.BossPage })))
+const SpireList = lazy(() => import('./ui/wiki/Activities').then(m => ({ default: m.SpireList })))
+const SpirePage = lazy(() => import('./ui/wiki/Activities').then(m => ({ default: m.SpirePage })))
+const EventsPage = lazy(() => import('./ui/wiki/Activities').then(m => ({ default: m.EventsPage })))
+const Encyclopedia = lazy(() => import('./ui/wiki/Reference').then(m => ({ default: m.Encyclopedia })))
+const TierListPage = lazy(() => import('./ui/wiki/Reference').then(m => ({ default: m.TierListPage })))
+const GearPage = lazy(() => import('./ui/wiki/Reference').then(m => ({ default: m.GearPage })))
+const EffectsPage = lazy(() => import('./ui/wiki/Reference').then(m => ({ default: m.EffectsPage })))
+const ToolsPage = lazy(() => import('./ui/wiki/Reference').then(m => ({ default: m.ToolsPage })))
+const GuidesPage = lazy(() => import('./ui/wiki/Reference').then(m => ({ default: m.GuidesPage })))
 import { fetchBox, ImportPage, LINK_KEY, proxyUrl } from './ui/ImportPage'
 import { folderPreference, readFolder } from './folderSync'
 import { DataPage } from './ui/DataPage'
@@ -25,14 +38,26 @@ const NAV = [
   { path: '/objetivo', label: 'Objetivo', icon: Target },
   { path: '/plan', label: 'Plan', icon: ListChecks },
   { path: '/optimizador', label: 'Optimizador', icon: Wand2 },
-  { path: '/titanes', label: 'Titanes', icon: Shield },
+  { path: '/titanes', label: 'Mis Titanes', icon: Shield },
   { path: '/equipos', label: 'Récords', icon: Swords },
   { path: '/asesor', label: 'Asesor', icon: Lightbulb },
-  { path: '/codice', label: 'Códice', icon: BookOpen },
   { path: '/importar', label: 'Importar', icon: Download },
   { path: '/datos', label: 'Historial', icon: Database },
 ]
-const MOBILE = ['/', '/coleccion', '/objetivo', '/plan']
+const WIKI_NAV = [
+  { path: '/wiki', label: 'Enciclopedia', icon: BookOpen },
+  { path: '/wiki/invokers', label: 'Invokers', icon: Users },
+  { path: '/wiki/titanes', label: 'Titanes', icon: Shield },
+  { path: '/wiki/jefes', label: 'Jefes', icon: Skull },
+  { path: '/wiki/agujas', label: 'Agujas', icon: Mountain },
+  { path: '/wiki/eventos', label: 'Eventos', icon: CalendarDays },
+  { path: '/wiki/tier-list', label: 'Tier lists', icon: ListOrdered },
+  { path: '/wiki/equipamiento', label: 'Equipamiento', icon: Gem },
+  { path: '/wiki/efectos', label: 'Efectos', icon: Sparkles },
+  { path: '/wiki/herramientas', label: 'Calculadoras', icon: Calculator },
+  { path: '/wiki/guias', label: 'Guías oficiales', icon: BookOpen },
+]
+const MOBILE = ['/', '/coleccion', '/objetivo', '/wiki']
 const OFFICIAL_ORIGINS = ['https://invokers.com', 'https://www.invokers.com']
 const readRoute = () => (location.hash.replace(/^#/, '') || '/').split('?')[0]
 const stored = (k: string) => { try { return localStorage.getItem(k) ?? '' } catch { return '' } }
@@ -120,7 +145,7 @@ export default function App() {
   }
 
   const ctx = useMemo(() => ({ account, previous, records, go, importFiles, reload }), [account, previous, records, go, importFiles, reload])
-  const [, section, arg] = route.split('/')
+  const [, section, arg, arg2] = route.split('/')
   const page = (() => {
     switch (section) {
       case '': case undefined: return <Dashboard />
@@ -134,20 +159,36 @@ export default function App() {
       case 'optimizador': return <Optimizer heroId={arg ? Number(arg) : undefined} />
       case 'asesor': return <Advisor tab={arg} />
       case 'equipos': return <Teams mode={arg} />
-      case 'codice': return <Codex />
+      case 'codice': return <CharacterList kind="invokers" />
+      case 'wiki': switch (arg) {
+        case undefined: case '': return <Encyclopedia />
+        case 'invokers': return arg2 ? <CharacterPage kind="invokers" slug={arg2} /> : <CharacterList kind="invokers" />
+        case 'titanes': return arg2 ? <CharacterPage kind="titans" slug={arg2} /> : <CharacterList kind="titans" />
+        case 'jefes': return arg2 ? <BossPage slug={arg2} /> : <BossList />
+        case 'agujas': return arg2 ? <SpirePage slug={arg2} /> : <SpireList />
+        case 'eventos': return <EventsPage />
+        case 'tier-list': return <TierListPage kind={arg2 === 'titanes' ? 'titans' : 'invokers'} />
+        case 'equipamiento': return <GearPage />
+        case 'efectos': return <EffectsPage />
+        case 'herramientas': return <ToolsPage />
+        case 'guias': return <GuidesPage />
+        default: return <Encyclopedia />
+      }
       case 'importar': return <ImportPage />
       case 'recibir': return <ImportPage receiving />
       case 'datos': return <DataPage />
       default: return <Dashboard />
     }
   })()
-  const active = (path: string) => path === '/' ? route === '/' : route.startsWith(path) || (path === '/coleccion' && (route.startsWith('/invoker') || route.startsWith('/pieza') || route === '/equipo'))
+  const active = (path: string) => path === '/' ? route === '/' : path === '/wiki' ? route.startsWith('/wiki') : route.startsWith(path) || (path === '/coleccion' && (route.startsWith('/invoker') || route.startsWith('/pieza') || route === '/equipo'))
+  const activeWiki = (path: string) => path === '/wiki' ? route === '/wiki' : route.startsWith(path)
   const profile = account?.box.profile
   return <AccountContext.Provider value={ctx}>
     <div className="shell">
       <aside className={`side ${menu ? 'open' : ''}`}>
         <a className="brand" href="#/"><span className="brand-mark">N</span><span><b>NEXO</b><small>Invokers · Titan Legacy</small></span></a>
-        <nav>{NAV.map(n => <a key={n.path} href={`#${n.path}`} className={active(n.path) ? 'on' : ''}><n.icon size={18} />{n.label}</a>)}</nav>
+        <nav aria-label="Mi cuenta"><span className="nav-group">Mi cuenta</span>{NAV.map(n => <a key={n.path} href={`#${n.path}`} className={active(n.path) ? 'on' : ''}><n.icon size={18} />{n.label}</a>)}</nav>
+        <nav aria-label="Enciclopedia"><span className="nav-group">Enciclopedia</span>{WIKI_NAV.map(n => <a key={n.path} href={`#${n.path}`} className={activeWiki(n.path) ? 'on' : ''}><n.icon size={18} />{n.label}</a>)}</nav>
         <div className="side-foot">Proyecto de fans independiente. Ilustraciones © Hitzone, usadas conforme a su política de contenido de fans.</div>
       </aside>
       {menu && <button className="scrim" aria-label="Cerrar menú" onClick={() => setMenu(false)} />}
@@ -164,10 +205,10 @@ export default function App() {
             : <a className="btn small primary" href="#/importar"><Download size={15} />Importar caja</a>}
         </header>
         {toast && <div className={`toast ${toast.bad ? 'bad' : ''}`} role="status"><span>{toast.text}</span><button className="icon-btn" aria-label="Cerrar" onClick={() => setToast(undefined)}><X size={16} /></button></div>}
-        <main className="content">{loading ? <div className="loading">Cargando tu cuenta…</div> : page}</main>
-        <footer className="foot">Nexo · versión 0.8 · No afiliado a Hitzone. Tus importaciones se guardan solo en este navegador.</footer>
+        <main className="content">{loading ? <div className="loading">Cargando tu cuenta…</div> : <Suspense fallback={<div className="loading" role="status">Cargando…</div>}>{page}</Suspense>}</main>
+        <footer className="foot">Nexo · versión 0.9 · No afiliado a Hitzone. Tus importaciones se guardan solo en este navegador.</footer>
       </div>
-      <nav className="bottom-nav">{NAV.filter(n => MOBILE.includes(n.path)).map(n => <a key={n.path} href={`#${n.path}`} className={active(n.path) ? 'on' : ''}><n.icon size={20} /><span>{n.label}</span></a>)}
+      <nav className="bottom-nav">{[...NAV, WIKI_NAV[0]].filter(n => MOBILE.includes(n.path)).map(n => <a key={n.path} href={`#${n.path}`} className={active(n.path) ? 'on' : ''}><n.icon size={20} /><span>{n.label}</span></a>)}
         <button onClick={() => setMenu(true)}><Menu size={20} /><span>Más</span></button></nav>
     </div>
   </AccountContext.Provider>

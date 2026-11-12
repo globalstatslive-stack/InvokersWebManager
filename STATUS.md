@@ -39,10 +39,20 @@
 - Objetivo de progreso con 17 jefes de las guías oficiales, diagnóstico, tres planes con coste y donantes, mínimos inalcanzables explicados, asignación conjunta frente a secuencial y protección de equipos activos.
 - «¿A quién le sirve?» por pieza, venta que respeta reservas, utilidad y conjuntos; plan con seguimiento estimado frente a observado.
 
+## Versión 0.9
+
+- Enciclopedia con datos oficiales de invokers.com (versión del juego 0.62.1655): 242 Invokers y 39 Titanes con habilidades por nivel, 17 jefes, 6 agujas de 120 pisos, 5 cazas, tier lists, equipamiento, 71 efectos, 3 calculadoras y 65 guías enlazadas.
+- Integrada con la cuenta: lo que tienes y lo que te falta, tus mejor valorados por jefe, «Preparar este objetivo», tu PREC en la calculadora.
+- La probabilidad de que entre un perjuicio usa la tabla oficial (antes, una aproximación por tramos que difería entre 50 y 100 de RES − PREC).
+- Actualización semanal automática con comprobaciones (`update-data.yml`).
+- Pruebas: integridad de los datos, marcado seguro de textos, calculadoras contra los ejemplos publicados; e2e de la enciclopedia a 360/390/412/1440 px.
+
 ## Pendiente
 
 - Validar en el juego los supuestos de tiempos y maná (contar definitivas en 3 min).
 - La simulación no incluye la defensa del jefe ni sinergias entre aliados; la asignación conjunta es heurística.
-- Ampliar el objetivo a más modos (agujas, arena) cuando haya datos oficiales equivalentes a las guías de jefes.
+- Llevar el objetivo a las agujas con los datos de pisos ya disponibles (PREC/RES por piso).
+- Comprobar el primer lanzamiento del workflow semanal en GitHub Actions (que invokers.com responde a sus servidores).
+- Textos de habilidades en español: invokers.com solo los publica en inglés.
 - Datos de habilidades y descripciones del catálogo público.
 - Probar la importación desde la carpeta del juego en Windows y Mac con archivos reales.

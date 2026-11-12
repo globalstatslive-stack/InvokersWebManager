@@ -17,7 +17,7 @@ describe('identidad e ilustraciones del juego', () => {
     expect(new Set(CHARACTERS.map(x => x.code)).size).toBe(CHARACTERS.length)
     for (const [configId, code] of Object.entries(identities)) expect(characterFor({ configId })?.code).toBe(code)
     for (const c of CHARACTERS) {
-      expect(c.source.startsWith('https://www.invokers.com/')).toBe(true)
+      expect(c.source).toMatch(/^https:\/\/(www\.)?invokers\.com\//)
       for (const path of [c.portrait,c.elementIcon,c.roleIcon,c.factionIcon].filter(Boolean) as string[]) {
         expect(assetPaths.has(path)).toBe(true)
       }

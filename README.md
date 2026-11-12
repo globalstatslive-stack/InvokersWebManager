@@ -4,7 +4,7 @@
 
 Herramienta de fans independiente para gestionar tu cuenta de **Invokers: Titan Legacy** con los retratos, Titanes y objetos reales del juego. La idea central: **elige qué quieres superar, descubre qué cambiar, cuánto cuesta y cómo afecta a tus otros equipos**. El código y el diseño son propios; no incorpora código ni recursos de GGNoLuck. Las ilustraciones se publican conforme a la política oficial de contenido de fans.
 
-## Versión 0.8: qué incluye
+## Versión 0.9: qué incluye
 
 | Sección | Qué hace |
 |---|---|
@@ -14,13 +14,23 @@ Herramienta de fans independiente para gestionar tu cuenta de **Invokers: Titan 
 | **Plan** | Cambios guardados por Invoker, sin piezas repetidas entre Invokers. Al reimportar marca qué se aplicó y separa lo **estimado** de lo **observado**. Se puede enviar como preset al portal (extensión opcional). |
 | **Optimizador** | Un Invoker: simulación de combate con sus habilidades, daño efectivo o pesos; esfuerzo (mínimo coste / equilibrio / máximo), mínimos, conjunto obligatorio y protección de equipos activos. Se calcula en un Web Worker con progreso y cancelación; si no hay solución válida lo dice. |
 | **Asesor** | Revisión de builds, qué subir y candidatas a venta que excluyen las reservadas en el plan, las útiles para tus Invokers y las escasas de su conjunto. Nunca vende nada. |
-| **Titanes, Récords, Códice, Historial** | Titanes, récords por modo, catálogo con lo que te falta y comparación entre importaciones. |
+| **Mis Titanes, Récords, Historial** | Tus Titanes, récords por modo y comparación entre importaciones. |
+| **Enciclopedia** | Contenido del juego con datos oficiales de invokers.com, sin cuenta y, si la importas, con lo que tienes: **Invokers** y **Titanes** (estadísticas de nivel 1 y máximas, habilidades nivel a nivel, tolerancias, efectos y nota oficial en cada jefe), **Jefes** (todas las fases, corrupciones, objetivos de la guía y tier list; «Preparar este objetivo»), **Agujas** (120 pisos por elemento: enemigos, nivel, PREC, RES, recompensas), **Eventos** de caza y torneos, **Tier lists** oficiales, **Equipamiento** (principales y secundarias por ranura, notas de tirada, conjuntos y dónde conseguirlos, accesorios), **Efectos**, **Calculadoras** (precisión contra resistencia, recuperación, ticks) y un índice en español de las **guías oficiales**. |
+
+### Enciclopedia: datos oficiales y actualización
+
+`scripts/fetch-wiki.mjs` genera `src/catalog/wiki/` a partir de lo que publica invokers.com: la API de fichas (`/api/explore/invokers|titans`), las tier lists, las páginas de agujas y eventos, las tablas de sus calculadoras (que el portal genera a partir de las reglas del juego) y las tablas de las guías de reliquias y accesorios. Descarga los retratos nuevos con su huella al manifiesto y regenera `characters.json`, así que los Invokers, Titanes, jefes o eventos nuevos aparecen sin tocar código. Si una fuente cambia de formato, el script falla sin escribir nada.
+
+El workflow **Actualizar datos oficiales** (`.github/workflows/update-data.yml`) lo ejecuta cada martes junto a `fetch-bosses.mjs`, pasa las pruebas y la compilación, confirma en `main` y vuelve a publicar. También se puede lanzar a mano desde Actions.
+
+Conforme a la política de contenido de fans de invokers.com, Nexo usa los datos del juego con presentación y herramientas propias y **enlaza** a las guías oficiales en lugar de copiar su texto. Los textos de habilidades y efectos se muestran tal como los publica el juego (en inglés).
 
 ### Qué es dato oficial, cálculo o supuesto
 
 - **Dato oficial**: la caja (`/api/lamb/<código>`), estadísticas de los jefes y objetivos de las guías oficiales (`src/catalog/bosses.json`, generado con `scripts/fetch-bosses.mjs`), fichas de habilidades.
 - **Cálculo determinista**: estadísticas de una build. `total = total publicado − aporte publicado + aporte propuesto`, con 0 discrepancias frente al aporte publicado en la caja de prueba.
 - **Heurística**: la búsqueda de builds (programación dinámica por pares de conjuntos, varios arranques y búsqueda local) y la asignación conjunta del equipo. Encuentran buenas soluciones, pero no se garantiza el óptimo global.
+- **Tablas oficiales**: la probabilidad de que entre un perjuicio sale de la tabla RES − PREC de la calculadora oficial (también en el simulador y el objetivo).
 - **Supuesto**: la simulación de combate usa supuestos para lo que el juego no publica (animaciones, maná por golpe; `ASSUMPTIONS` en `src/box/combat.ts`). Nexo no estima probabilidades de victoria ni requisitos de jefe que no estén publicados, y un récord de mejor tiempo no indica la tasa de éxito reciente.
 
 ## Importar tu cuenta
@@ -46,7 +56,8 @@ npm run dev
 npm test             # unitarias + integridad de imágenes
 npm run build
 node scripts/fetch-skills.mjs <carpeta> && node scripts/build-skills.mjs <carpeta> # regenera src/catalog/skills.json desde las fichas públicas
-node scripts/e2e.mjs # con `npm run dev` activo; NEXO_BOX_JSON=/ruta/caja.json para una caja real
+NODE_USE_ENV_PROXY=1 node scripts/fetch-wiki.mjs   # regenera la enciclopedia (detrás de un proxy)
+node scripts/e2e.mjs # con `npm run dev` activo; NEXO_WIDTH=360 para otro ancho; NEXO_BOX_JSON=/ruta/caja.json para una caja real
 node scripts/share-e2e.mjs # con `npm run preview` activo
 BOX_JSON=/ruta/caja.json npm test # verifica la fórmula y el optimizador contra una caja real
 ```

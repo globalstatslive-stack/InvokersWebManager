@@ -1,0 +1,60 @@
+name: Actualizar datos oficiales
+
+# Cada semana descarga de invokers.com las fichas de Invokers y Titanes, tier lists, guías de jefes, agujas,
+# eventos y tablas de las calculadoras. Si todo pasa las comprobaciones, lo confirma en main y vuelve a publicar.
+# Si una fuente cambia de formato, los scripts fallan y no se toca nada: la web sigue con los datos anteriores.
+on:
+  schedule:
+    - cron: '17 5 * * 2'   # martes, 05:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
+      sha: ${{ steps.commit.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Guías de jefes
+        run: node scripts/fetch-bosses.mjs
+      - name: Enciclopedia, tier lists, agujas, eventos, calculadoras y retratos nuevos
+        run: node scripts/fetch-wiki.mjs
+      - name: Comprobaciones
+        run: |
+          npm test
+          npm run build
+      - name: Confirmar en main
+        id: commit
+        run: |
+          if git diff --quiet && [ -z "$(git ls-files --others --exclude-standard)" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A src/catalog public/game docs/game-assets-manifest.json
+          git commit -m "Datos oficiales de invokers.com: actualización del $(date -u +%F)"
+          git push origin HEAD:main
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+  deploy:
+    needs: refresh
+    if: needs.refresh.outputs.changed == 'true'
+    uses: ./.github/workflows/deploy.yml
+    with:
+      ref: ${{ needs.refresh.outputs.sha }}
+    secrets: inherit
