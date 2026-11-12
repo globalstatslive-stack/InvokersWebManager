@@ -53,6 +53,10 @@
 - Carta de personaje (marco por rareza, elemento y clase, nivel, estrellas, poder) en Colección, Inicio y enciclopedia; Inicio con perfil destacado; cabeceras, paneles, pestañas y botones con la identidad dorada de Nexo.
 - Eventos: calendario de torneos por días con la línea de hoy y las coronas que puedes saltarte.
 
+## Versión 0.11
+
+- Asesor › Equipo para un jefe: tus 5 mejores Invokers y Titanes para un jefe y fase (tier list oficial del jefe, inversión, elemento, tolerancias y precisión de la guía), con el porqué de cada uno, alternativas, descartar, lo que le falta (y piezas libres de tolerancia) y paso directo a Objetivo. Pesos de Nexo a la vista; sin probabilidades de victoria.
+
 ## Pendiente
 
 - Validar en el juego los supuestos de tiempos y maná (contar definitivas en 3 min).
