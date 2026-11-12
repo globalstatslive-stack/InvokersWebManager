@@ -27,10 +27,15 @@ export type Candidate = {
 }
 export type TeamPick = Candidate & { reasons: string[]; warnings: string[]; alternatives: Candidate[]; titan: TitanPick | null }
 export type TitanPick = { titan: Titan; tier: string | null; why: string }
+export type Swap = { need: Need; out: Candidate; in: Candidate; gains: Need[]; loses: Need[]; delta: number; pct: number }
 export type Recommendation = { picks: TeamPick[]; gaps: string[]; pool: number; record: { heroIds: number[]; highest: number } | null; overlap: number
   /** Necesidades del jefe: quién del equipo las cubre y, si nadie, quién de tu caja podría. */
-  needs: { need: Need; coveredBy: Hero[]; options: Hero[] }[]; bySkill: Candidate[] }
-export type Options = { size?: number; needTank?: boolean; needSustain?: boolean; exclude?: Set<number>; weights?: Weights; skills?: SkillContext }
+  needs: { need: Need; coveredBy: Hero[]; options: Hero[] }[]
+  /** Tus mejores por habilidades, por puntuación completa (nota, inversión y habilidades). */
+  bySkill: Candidate[]
+  /** Cambios de un miembro que cubren una necesidad sin cubrir, con lo que se gana y se pierde. */
+  swaps: Swap[]; total: number }
+export type Options = { size?: number; needTank?: boolean; needSustain?: boolean; exclude?: Set<number>; include?: number[]; weights?: Weights; skills?: SkillContext }
 
 const ROLE_ES: Record<Role, string> = { tank: 'tanque', sustain: 'curación o escudos', support: 'apoyo', damage: 'daño' }
 export const roleLabel = (r: Role) => ROLE_ES[r]
@@ -112,8 +117,10 @@ export function recommendTeam(box: Box, boss: Boss, stage: BossStage, profiles: 
   const pool = scoreCandidates(box, boss, stage, profiles, elements, opts.weights ?? DEFAULT_WEIGHTS, opts.exclude, opts.skills)
   const chosen: Candidate[] = []
   const take = (c?: Candidate) => { if (c && !chosen.includes(c) && chosen.length < size) chosen.push(c) }
-  if (opts.needTank ?? true) take(pool.find(c => c.role === 'tank'))
-  const sustains = (c: Candidate) => c.role === 'sustain' || !!(c.profile && (c.profile.heals || c.profile.shields))
+  // Elegidos a mano (p. ej. al aplicar un cambio): entran primero, con la misma copia que puntúa el resto.
+  for (const id of opts.include ?? []) take(pool.find(c => c.hero.id === id))
+  if ((opts.needTank ?? true) && !chosen.some(c => c.role === 'tank')) take(pool.find(c => c.role === 'tank'))
+  const sustains = (c: Candidate): boolean => c.role === 'sustain' || !!(c.profile && (c.profile.heals || c.profile.shields))
   if ((opts.needSustain ?? true) && !chosen.some(sustains)) take(pool.find(c => !chosen.includes(c) && sustains(c)))
   for (const c of pool) take(c)
   chosen.sort((a, b) => b.score - a.score)
@@ -151,11 +158,33 @@ export function recommendTeam(box: Box, boss: Boss, stage: BossStage, profiles: 
     coveredBy: picks.filter(p => p.fit.matched.includes(need)).map(p => p.hero),
     options: pool.filter(c => !chosen.includes(c) && c.fit.matched.includes(need)).slice(0, 3).map(c => c.hero),
   }))
-  for (const n of needs) if (!n.coveredBy.length && n.need.id !== 'amplify') gaps.push(`Nadie aporta ${n.need.label.toLowerCase()}: ${n.need.why}${n.options.length ? ` En tu caja: ${n.options.map(h => h.name).join(', ')}.` : ' No tienes a nadie que lo aporte.'}`)
-  const bySkill = pool.filter(c => c.fit.matched.length && !c.fit.avoided.length).sort((a, b) => b.fit.matched.length - a.fit.matched.length || b.score - a.score).slice(0, 8)
+  // Cambios: para cada necesidad sin cubrir, el mejor candidato que la cubre entra por el miembro cuya salida menos
+  // cuesta, sin dejar al equipo sin tanque, sin curación (si se exigen) ni sin otra necesidad que solo él cubra.
+  const total = chosen.reduce((a, c) => a + c.score, 0)
+  const covers = (team: Candidate[], n: Need) => team.some(c => c.fit.matched.includes(n))
+  const active = (opts.skills?.needs ?? []).filter(n => !n.avoid && n.id !== 'amplify')
+  const swaps: Swap[] = []
+  for (const need of active.filter(n => !covers(chosen, n))) {
+    let best: Swap | null = null
+    for (const cand of pool.filter(c => !chosen.includes(c) && c.fit.matched.includes(need) && !c.fit.avoided.length).slice(0, 6)) {
+      for (const out of chosen) {
+        if ((opts.include ?? []).includes(out.hero.id)) continue
+        const team = [...chosen.filter(c => c !== out), cand]
+        if ((opts.needTank ?? true) && !team.some(c => c.role === 'tank') && chosen.some(c => c.role === 'tank')) continue
+        if ((opts.needSustain ?? true) && !team.some(sustains) && chosen.some(sustains)) continue
+        const loses = active.filter(n => covers(chosen, n) && !covers(team, n))
+        if (loses.length) continue
+        const gains = active.filter(n => !covers(chosen, n) && covers(team, n))
+        const delta = cand.score - out.score
+        if (!best || delta > best.delta) best = { need, out, in: cand, gains, loses, delta, pct: total ? delta / total : 0 }
+      }
+    }
+    if (best && !swaps.some(x => x.in === best!.in && x.out === best!.out)) swaps.push(best)
+  }
+  const bySkill = pool.filter(c => c.fit.matched.length && !c.fit.avoided.length).slice(0, 10)
   const rec = box.teams.find(t => t.mode === 'dungeon' && t.key === boss.slug)
   const recordIds = rec?.levels[0]?.slots.map(s => s.heroId) ?? []
   const pickedCodes = new Set(picks.map(p => p.hero.code))
   const recordCodes = new Set(recordIds.map(id => box.heroes.find(h => h.id === id)?.code).filter(Boolean) as string[])
-  return { picks, gaps, pool: pool.length, record: rec ? { heroIds: recordIds, highest: rec.highestLevel } : null, overlap: [...recordCodes].filter(c => pickedCodes.has(c)).length, needs, bySkill }
+  return { picks, gaps, pool: pool.length, record: rec ? { heroIds: recordIds, highest: rec.highestLevel } : null, overlap: [...recordCodes].filter(c => pickedCodes.has(c)).length, needs, bySkill, swaps, total }
 }

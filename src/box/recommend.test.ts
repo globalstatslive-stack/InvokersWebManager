@@ -3,6 +3,7 @@ import type { Box, Hero, Titan } from './model'
 import type { Boss, BossStage } from './goal'
 import type { Profile } from './combat'
 import { bestCopies, recommendTeam, scoreCandidates } from './recommend'
+import type { Need } from './bossNeeds'
 
 const ELEMENTS = { names: ['Fire', 'Earth', 'Wind', 'Water', 'Light', 'Dark', 'Neutral'], sign: [[0, 1, 0, -1, 0, 0, 0], [-1, 0, 1, 0, 0, 0, 0], [0, -1, 0, 1, 0, 0, 0], [1, 0, -1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0]] }
 const hero = (id: number, code: string, cls: string, element: string, power: number, stats: Record<string, number> = {}): Hero =>
@@ -76,5 +77,21 @@ describe('equipo recomendado para un jefe', () => {
     const r = recommendTeam(box, boss(all), stage, profiles, ELEMENTS, new Map())
     expect(r.record?.highest).toBe(4)
     expect(r.overlap).toBeGreaterThanOrEqual(1)
+  })
+  it('propone cambios que cubren una habilidad que falta, sin perder tanque ni curación', () => {
+    const cleanse: Need = { id: 'cleanse', label: 'Limpiar o evitar perjuicios', why: 'test', effects: ['block:RemoveStatusEffect:PurgeDebuffs'] }
+    const byCode = new Map([['WEAK', { effects: ['block:RemoveStatusEffect:PurgeDebuffs'], aoe: false }]])
+    const r = recommendTeam(box, boss(all), stage, profiles, ELEMENTS, new Map(), { skills: { needs: [cleanse], byCode } })
+    expect(r.picks.some(p => p.hero.code === 'WEAK')).toBe(false)
+    expect(r.needs[0].coveredBy).toHaveLength(0)
+    const swap = r.swaps[0]
+    expect(swap.in.hero.code).toBe('WEAK')
+    expect(['tank', 'sustain']).not.toContain(swap.out.role)
+    expect(swap.delta).toBeLessThan(0)
+    // Aplicar el cambio: entra el elegido y sale el sustituido.
+    const after = recommendTeam(box, boss(all), stage, profiles, ELEMENTS, new Map(), { skills: { needs: [cleanse], byCode }, include: [swap.in.hero.id], exclude: new Set([swap.out.hero.id]) })
+    expect(after.picks.map(p => p.hero.id)).toContain(swap.in.hero.id)
+    expect(after.picks.map(p => p.hero.id)).not.toContain(swap.out.hero.id)
+    expect(after.needs[0].coveredBy.map(h => h.code)).toEqual(['WEAK'])
   })
 })
