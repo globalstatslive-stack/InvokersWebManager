@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { AlertTriangle, ArrowRight, ArrowRightLeft, Check, ExternalLink, RotateCcw, Target, X } from 'lucide-react'
 import { useAccount } from './account'
 import { GameCard, GameImg } from './Art'
-import { ELEMENT_LABEL, fmtInt, t } from '../box/i18n'
+import { ELEMENT_LABEL, t } from '../box/i18n'
 import { loadBosses } from '../box/goal'
 import { loadKits, profileOf, skillLevels, type Profile } from '../box/combat'
 import { DEFAULT_WEIGHTS, recommendTeam, roleLabel, type Candidate, type TeamPick } from '../box/recommend'
@@ -15,7 +15,7 @@ const STORE = 'nexo.teamfinder'
 const read = (): { boss?: string; stage?: number } => { try { return JSON.parse(localStorage.getItem(STORE) ?? '{}') } catch { return {} } }
 const LOW = new Set(['C', 'D', 'E'])
 const tierClass = (tier: string) => `tier-tag t-${tier.replace('+', 'p')}`
-const pct = (x: number) => `${x > 0 ? '+' : x < 0 ? '−' : ''}${Math.abs(Math.round(100 * x))} %`
+const pct = (x: number) => Math.abs(x) < 0.005 ? '≈ igual' : `${x > 0 ? '+' : '−'}${new Intl.NumberFormat('es-ES', { maximumFractionDigits: 1 }).format(Math.abs(100 * x))} %`
 
 /** Asesor · Equipo para un jefe: tus 5 mejores Invokers y Titanes para un jefe y fase, lo que le falta y cómo cubrirlo. */
 export function TeamFinder() {
@@ -24,7 +24,7 @@ export function TeamFinder() {
   const saved = read()
   const [bossSlug, setBossSlug] = useState(saved.boss ?? 'ulgorim')
   const [stageNum, setStageNum] = useState<number>(saved.stage ?? 0)
-  const [needTank, setNeedTank] = useState(true), [needSustain, setNeedSustain] = useState(true)
+  const [needTank, setNeedTank] = useState(true), [needSustain, setNeedSustain] = useState(true), [useGear, setUseGear] = useState(false)
   const [exclude, setExclude] = useState<Set<number>>(new Set())
   const [include, setInclude] = useState<number[]>([])
   const box = account!.box
@@ -36,14 +36,14 @@ export function TeamFinder() {
     if (kits.data) for (const h of box.heroes) m.set(h.id, kits.data[h.code] ? profileOf(h, kits.data[h.code], skillLevels(h)) : null)
     return m
   }, [kits.data, box])
-  const byCode = useMemo(() => new Map<string, HeroSkills>((wiki.data?.invokers ?? []).map(s => [s.code, { effects: s.effects, aoe: s.aoe }])), [wiki.data])
+  const byCode = useMemo(() => new Map<string, HeroSkills>((wiki.data?.invokers ?? []).map(s => [s.code, { effects: s.effects, aoe: s.aoe, tolerances: s.tolerances }])), [wiki.data])
   const needs = useMemo(() => boss ? deriveNeeds(boss) : [], [boss])
   const result = useMemo(() => {
     if (!boss || !stage || !tools.data || !kits.data || !wiki.data) return null
     const titanTier = new Map<string, string>()
     for (const r of tiers.data?.titans.rows ?? []) for (const e of r.entries) if (e.code) titanTier.set(e.code, r.label)
-    return recommendTeam(box, boss, stage, profiles, { names: tools.data.elements, sign: tools.data.elementMatchupSign }, titanTier, { needTank, needSustain, exclude, include, skills: { needs, byCode } })
-  }, [box, boss, stage, profiles, tools.data, kits.data, tiers.data, wiki.data, needs, byCode, needTank, needSustain, exclude, include])
+    return recommendTeam(box, boss, stage, profiles, { names: tools.data.elements, sign: tools.data.elementMatchupSign }, titanTier, { needTank, needSustain, exclude, include, useGear, skills: { needs, byCode } })
+  }, [box, boss, stage, profiles, tools.data, kits.data, tiers.data, wiki.data, needs, byCode, needTank, needSustain, useGear, exclude, include])
   const save = (p: { boss?: string; stage?: number }) => { try { localStorage.setItem(STORE, JSON.stringify({ boss: bossSlug, stage: stage?.stage, ...p })) } catch { /* sin almacenamiento */ } }
   if (bosses.error || kits.error || tools.error || wiki.error) return <div className="state-card bad" role="alert"><AlertTriangle size={18} /> No se pudieron cargar los datos oficiales.</div>
   if (!boss || !stage || !result) return <div className="state-card" role="status">Cargando jefes, kits y tablas oficiales…</div>
@@ -63,7 +63,7 @@ export function TeamFinder() {
   const uncovered = result.needs.filter(n => !n.coveredBy.length && n.need.id !== 'amplify')
 
   return <section className="advisor team-finder">
-    <p className="lead">Elige un jefe y una fase: Nexo propone tus 5 mejores Invokers y te dice qué le falta al equipo y cómo cubrirlo. No estima probabilidades de victoria.</p>
+    <p className="lead">Elige un jefe y una fase: Nexo propone los 5 Invokers de tu caja que mejor encajan contra él por nota oficial, habilidades, elemento y tolerancia innata, sin depender de cómo los tengas equipados ahora; lo que falte de equipamiento lo arreglas después en Objetivo. No estima probabilidades de victoria.</p>
 
     {/* 1 · Jefe y fase */}
     <div className="panel tf-controls">
@@ -81,6 +81,7 @@ export function TeamFinder() {
       <div className="chip-row">
         <label className="check"><input type="checkbox" checked={needTank} onChange={e => setNeedTank(e.target.checked)} /> Con tanque</label>
         <label className="check"><input type="checkbox" checked={needSustain} onChange={e => setNeedSustain(e.target.checked)} /> Con curación o escudos</label>
+        <label className="check"><input type="checkbox" checked={useGear} onChange={e => { setUseGear(e.target.checked); reset() }} /> Priorizar a los que ya tengo equipados</label>
         {changed && <button className="btn small" onClick={reset}><RotateCcw size={14} /> Volver a la recomendación</button>}
       </div>
     </div>
@@ -95,10 +96,11 @@ export function TeamFinder() {
       <div className="tf-team">{result.picks.map(p => <article key={p.hero.id} className={`tf-member ${include.includes(p.hero.id) ? 'swapped' : ''}`}>
         <GameCard c={p.hero} level={p.hero.level} rank={p.hero.rank} power={fmtPower(p.hero)} onClick={() => go(`/invoker/${p.hero.id}`)}
           corner={p.tier ? <span className={tierClass(p.tier.tier)}>{p.tier.tier}</span> : undefined} label={`${p.hero.name}, ${roleLabel(p.role)}`} />
-        <span className="tf-role">{roleLabel(p.role)}{p.warnings.length > 0 && <span className="tf-warn" title={p.warnings.join(' · ')}><AlertTriangle size={12} aria-hidden /> {p.warnings.length}</span>}</span>
+        <span className="tf-role">{roleLabel(p.role)}{p.warnings.length > 0 && <span className="tf-warn" title={p.warnings.join(' · ')}><AlertTriangle size={12} aria-hidden /> {p.warnings.length}</span>}{p.gear.length > 0 && <span className="tf-gear" title={`A mejorar con equipamiento: ${p.gear.join(' · ')}`}>⚙ {p.gear.length}</span>}</span>
         {p.titan && <p className="tf-titan" title={p.titan.why}><GameImg path={p.titan.titan.portrait} alt="" className="mini-icon" /><b>{p.titan.titan.name}</b>{p.titan.tier && <span className={tierClass(p.titan.tier)}>{p.titan.tier}</span>}</p>}
         <details className="tf-detail"><summary>Por qué</summary>
           <ul className="tf-why">{p.reasons.map(r => <li key={r} className="ok"><Check size={13} aria-hidden /> {r}</li>)}{p.warnings.map(w => <li key={w} className="warn"><AlertTriangle size={13} aria-hidden /> {w}</li>)}</ul>
+          {p.gear.length > 0 && <><p className="tf-small tf-gear-title">A mejorar con equipamiento</p><ul className="tf-why">{p.gear.map(g => <li key={g} className="gear">⚙ {g}</li>)}</ul></>}
           {p.titan && <p className="muted tf-small">Titán: {p.titan.why}.</p>}
           {p.alternatives.length > 0 && <p className="muted tf-small">Alternativas del mismo rol: {p.alternatives.map(a => `${a.hero.name}${a.tier ? ` (${a.tier.tier})` : ''}`).join(', ')}.</p>}
           <button className="btn small" onClick={() => discard(p)}><X size={13} /> Descartar y buscar otro</button>
@@ -111,10 +113,11 @@ export function TeamFinder() {
       <h2>Qué le falta</h2>
       <div className="tf-cols">
         <div>
-          <h3>Estadísticas frente a la guía</h3>
-          {result.gaps.length === 0 ? <p className="ok-line"><Check size={15} /> Cumple los objetivos publicados para esta fase.</p>
+          <h3>A mejorar con equipamiento</h3>
+          {result.gaps.length === 0 ? <p className="ok-line"><Check size={15} /> Ya cumple los objetivos de estadísticas de la guía para esta fase.</p>
             : <ul className="tf-list">{result.gaps.map(g => <li key={g} className="warn"><AlertTriangle size={13} aria-hidden /> {g}</li>)}</ul>}
-          {boss.corruptions.length > 0 && <p className="muted tf-small">Piezas libres: {boss.corruptions.map(c => { const set = c.key === 'Bloodrot' ? 'BloodRotTolerance' : c.key === 'Mindfog' ? 'MindFogTolerance' : c.key === 'Manaburn' ? 'ManaBurnTolerance' : `${c.key}Tolerance`; return `${box.relics.filter(g => g.set === set && g.equippedHeroId === null).length} de ${TOL_LABEL[c.key] ?? c.key}` }).join(' · ')}. Con 3 piezas del conjunto se activa su tolerancia; Objetivo puede exigirla en el plan.</p>}
+          {boss.corruptions.length > 0 && <p className="muted tf-small">Piezas libres: {boss.corruptions.map(c => { const set = c.key === 'Bloodrot' ? 'BloodRotTolerance' : c.key === 'Mindfog' ? 'MindFogTolerance' : c.key === 'Manaburn' ? 'ManaBurnTolerance' : `${c.key}Tolerance`; return `${box.relics.filter(g => g.set === set && g.equippedHeroId === null).length} de ${TOL_LABEL[c.key] ?? c.key}` }).join(' · ')}. Con 3 piezas del conjunto se activa su tolerancia.</p>}
+          <button className="btn small" onClick={toGoal}><Target size={14} /> Arreglarlo en Objetivo</button>
         </div>
         <div>
           <h3>Habilidades que pide {boss.name}</h3>
@@ -141,17 +144,17 @@ export function TeamFinder() {
           <ul className="tf-list">
             <li className="ok"><Check size={13} aria-hidden /><span>Ganas: {s.gains.map(n => n.label.toLowerCase()).join(', ')}</span></li>
             <li className={s.delta < 0 ? 'warn' : 'ok'}>{s.delta < 0 ? <AlertTriangle size={13} aria-hidden /> : <Check size={13} aria-hidden />}
-              <span>Puntuación del equipo {pct(s.pct)}{s.delta < 0 ? `: ${s.in.hero.name} tiene ${s.in.tier ? `nota ${s.in.tier.tier}` : 'sin nota'} y ${fmtInt(s.in.hero.power)} de poder frente a ${s.out.tier ? `${s.out.tier.tier}` : 'sin nota'} y ${fmtInt(s.out.hero.power)}` : ''}</span></li>
+              <span>Encaje del equipo: {pct(s.pct)} · {s.in.hero.name} {s.in.tier ? `nota ${s.in.tier.tier}` : 'sin nota'}, {s.in.hero.rank}★ nv. {s.in.hero.level} · {s.out.hero.name} {s.out.tier ? `nota ${s.out.tier.tier}` : 'sin nota'}, {s.out.hero.rank}★ nv. {s.out.hero.level}</span></li>
           </ul>
           <button className="btn small" onClick={() => applySwap(s.out.hero.id, s.in.hero.id)}>Probar este cambio</button>
         </div>)}</div>}
-      <p className="muted tf-small">Nexo no sabe si el cambio gana más combates: muestra qué cubre y qué cuesta según la nota oficial y tu inversión. Decides tú.</p>
+      <p className="muted tf-small">Nexo no sabe si el cambio gana más combates: muestra qué cubre y qué cuesta según la nota oficial y el desarrollo de cada uno (estrellas, nivel, despertar, habilidades). Decides tú.</p>
     </div>}
 
     {/* 5 · Tus mejores por habilidades */}
     {result.bySkill.length > 0 && <div className="panel">
       <h2>Tus mejores por habilidades contra {boss.name}</h2>
-      <p className="muted tf-small">Ordenados por la puntuación completa (nota oficial, inversión y habilidades). Atenuados: nota baja en {boss.name}, aunque sus habilidades encajen.</p>
+      <p className="muted tf-small">Ordenados por encaje completo (nota oficial, habilidades, elemento, tolerancia innata y desarrollo). Atenuados: nota baja en {boss.name}, aunque sus habilidades encajen.</p>
       <div className="mini-roster">{result.bySkill.map(c => { const low = !c.tier || LOW.has(c.tier.tier)
         return <button key={c.hero.id} className={`mini-card ${low ? 'missing' : ''}`} onClick={() => go(`/invoker/${c.hero.id}`)} title={`${c.fit.matched.map(n => n.label).join(' · ')}${low ? ' · nota baja en este jefe' : ''}`}>
           <span className={`portrait sm r-${c.hero.rarity.toLowerCase()}`}><GameImg path={c.hero.portrait} alt={c.hero.name} className="portrait-img" /></span>
@@ -164,7 +167,8 @@ export function TeamFinder() {
       <summary>Cómo elige Nexo</summary>
       <ul className="dashes">
         <li>Una copia por personaje (la de más poder), entre {result.pool} personajes de tu caja{exclude.size ? `, sin los ${exclude.size} descartados` : ''}.</li>
-        <li>Puntuación = {Math.round(100 * DEFAULT_WEIGHTS.official)} % nota oficial en {boss.name} + {Math.round(100 * DEFAULT_WEIGHTS.power)} % poder relativo ({fmtInt(Math.max(...box.heroes.map(h => h.power)))} = 100 %); × {1 + DEFAULT_WEIGHTS.element} con ventaja de elemento o × {1 - DEFAULT_WEIGHTS.element} con desventaja; hasta −{Math.round(100 * DEFAULT_WEIGHTS.tolerance)} % sin la tolerancia de la guía; −{Math.round(100 * DEFAULT_WEIGHTS.accuracy)} % si sus perjuicios necesitan PREC y no la tiene; +{Math.round(100 * DEFAULT_WEIGHTS.skill)} % por cada habilidad que pide el jefe (hasta 3) y −{Math.round(100 * DEFAULT_WEIGHTS.avoid)} % si usa un efecto contraindicado. Pesos de Nexo, no oficiales.</li>
+        <li>Encaje = {Math.round(100 * DEFAULT_WEIGHTS.official)} % nota oficial en {boss.name} + {Math.round(100 * DEFAULT_WEIGHTS.readiness)} % desarrollo que el equipamiento no cambia (estrellas, nivel, despertar y nivel de habilidades){useGear ? ` + ${Math.round(100 * DEFAULT_WEIGHTS.power)} % poder actual` : ''}; × {1 + DEFAULT_WEIGHTS.element} con ventaja de elemento o × {1 - DEFAULT_WEIGHTS.element} con desventaja; +{Math.round(100 * DEFAULT_WEIGHTS.nativeTol)} % por cada corrupción del jefe que tolera de forma innata; +{Math.round(100 * DEFAULT_WEIGHTS.skill)} % por cada habilidad que pide el jefe (hasta 3) y −{Math.round(100 * DEFAULT_WEIGHTS.avoid)} % si usa un efecto contraindicado. Pesos de Nexo, no oficiales.</li>
+        <li>{useGear ? 'Con «Priorizar a los que ya tengo equipados» también resta la tolerancia y la PREC que no alcanzan con sus piezas actuales.' : 'El poder actual, la tolerancia de los conjuntos y la PREC dependen de las piezas: no cuentan para elegir y aparecen en «A mejorar con equipamiento».'}</li>
         <li>La tier list oficial de cada jefe sale de millones de combates y ya refleja cómo rinden las habilidades: por eso pesa más que el análisis de habilidades.</li>
         <li>Habilidades que pide el jefe: deducidas de sus habilidades en la guía oficial y cruzadas con los efectos de las fichas oficiales de tus Invokers.</li>
         <li>Titanes: los de mejor nota en la tier list oficial de Titanes, cada uno con el miembro que más aprovecha su bonificación vinculada.</li>

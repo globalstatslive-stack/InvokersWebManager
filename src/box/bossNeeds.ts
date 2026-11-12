@@ -18,7 +18,7 @@ export type Need = {
   /** Contraindicación: estos efectos perjudican contra este jefe. */
   avoid?: boolean
 }
-export type HeroSkills = { effects: string[]; aoe: boolean }
+export type HeroSkills = { effects: string[]; aoe: boolean; /** Tolerancias innatas del kit (ficha oficial), no de piezas. */ tolerances?: string[] }
 export type SkillFit = { matched: Need[]; avoided: Need[] }
 
 const HEALS = ['block:HealWithFormula', 'effect:ContinuousHealing']
