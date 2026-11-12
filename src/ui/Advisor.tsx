@@ -8,15 +8,17 @@ import { diagnose, gearRating, sellCandidates, teamHeroIds, upgradeQueue } from 
 import { whoBenefits } from '../box/usefulness'
 import { reservedBy, usePlan } from './plan'
 import { useActiveTeams } from './activeTeams'
+import { TeamFinder } from './TeamFinder'
 
-type Tab = 'venta' | 'mejoras' | 'revision' | 'tolerancias'
+type Tab = 'equipo' | 'venta' | 'mejoras' | 'revision' | 'tolerancias'
 export function Advisor({ tab }: { tab?: string }) {
   const { account, go } = useAccount()
-  const current: Tab = (['venta', 'mejoras', 'revision', 'tolerancias'] as Tab[]).includes(tab as Tab) ? tab as Tab : 'revision'
+  const current: Tab = (['equipo', 'venta', 'mejoras', 'revision', 'tolerancias'] as Tab[]).includes(tab as Tab) ? tab as Tab : 'equipo'
   if (!account) return <NeedsAccount />
   return <>
     <PageHead kicker="Herramientas" title="Asesor">Recomendaciones calculadas con tu inventario. Nada se ejecuta en el juego.</PageHead>
-    <Chips label="Sección" value={current} onChange={v => go(`/asesor/${v}`)} options={[{ id: 'revision', label: 'Revisión de builds' }, { id: 'mejoras', label: 'Qué subir' }, { id: 'venta', label: 'Qué vender' }, { id: 'tolerancias', label: 'Tolerancias' }]} />
+    <Chips label="Sección" value={current} onChange={v => go(`/asesor/${v}`)} options={[{ id: 'equipo', label: 'Equipo para un jefe' }, { id: 'revision', label: 'Revisión de builds' }, { id: 'mejoras', label: 'Qué subir' }, { id: 'venta', label: 'Qué vender' }, { id: 'tolerancias', label: 'Tolerancias' }]} />
+    {current === 'equipo' && <TeamFinder />}
     {current === 'venta' && <Sell />}
     {current === 'mejoras' && <Upgrades />}
     {current === 'revision' && <Review />}

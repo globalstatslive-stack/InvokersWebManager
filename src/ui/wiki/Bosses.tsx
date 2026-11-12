@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowLeft, ExternalLink, Target } from 'lucide-react'
+import { ArrowLeft, ExternalLink, Target, Users } from 'lucide-react'
 import { useAccount } from '../account'
 import { PageHead } from '../common'
 import { ElementIcon } from '../Art'
@@ -61,7 +61,7 @@ export function BossPage({ slug }: { slug: string }) {
         <span className="kicker">{BOSS_CATEGORY[boss.category] ?? boss.category}</span>
         <h1>{boss.name}</h1><p className="muted">{boss.epithet}</p>
         <p className="chip-row">{boss.corruptions.length ? boss.corruptions.map(c => <span key={c.key} className="chip">Corrupción: {tolEs(c.key)}</span>) : <span className="chip">Sin corrupción</span>}</p>
-        <p className="chip-row"><button className="btn small primary" onClick={prepare}><Target size={14} /> Preparar este objetivo</button><a className="btn small" href={boss.guide} target="_blank" rel="noreferrer">Guía oficial (inglés) <ExternalLink size={13} /></a></p>
+        <p className="chip-row"><button className="btn small primary" onClick={prepare}><Target size={14} /> Preparar este objetivo</button>{account && <button className="btn small" onClick={() => { try { localStorage.setItem('nexo.teamfinder', JSON.stringify({ boss: boss.slug, stage: s.stage })) } catch { /* sin almacenamiento */ } go('/asesor/equipo') }}><Users size={14} /> Mi mejor equipo</button>}<a className="btn small" href={boss.guide} target="_blank" rel="noreferrer">Guía oficial (inglés) <ExternalLink size={13} /></a></p>
       </div>
     </header>
 
