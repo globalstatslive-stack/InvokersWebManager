@@ -14,18 +14,20 @@ import { ELEMENT_LABEL, STAT_LABEL, t } from './i18n'
 import { TOL_LABEL } from '../wiki/labels'
 import { skillFit, type HeroSkills, type Need, type SkillFit } from './bossNeeds'
 
-export type Weights = { official: number; power: number; element: number; tolerance: number; accuracy: number; skill: number; avoid: number }
-/** Pesos por defecto: 60 % nota oficial del jefe, 40 % inversión; ±10 % por elemento; hasta −15 % sin tolerancia; −10 % sin PREC. */
-export const DEFAULT_WEIGHTS: Weights = { official: 0.6, power: 0.4, element: 0.1, tolerance: 0.15, accuracy: 0.1, skill: 0.05, avoid: 0.15 }
+export type Weights = { official: number; readiness: number; power: number; element: number; nativeTol: number; tolerance: number; accuracy: number; skill: number; avoid: number }
+/** Pesos por defecto: deciden lo que encaja contra el jefe (nota oficial, habilidades, elemento, tolerancia innata) y la
+ * progresión que el equipamiento no arregla (estrellas, nivel, despertar, habilidades). El poder y las estadísticas con
+ * piezas solo cuentan si se pide («usar mi equipamiento actual»); si no, pasan a «a mejorar con equipamiento». */
+export const DEFAULT_WEIGHTS: Weights = { official: 0.6, readiness: 0.25, power: 0.25, element: 0.1, nativeTol: 0.06, tolerance: 0.15, accuracy: 0.1, skill: 0.08, avoid: 0.15 }
 /** Habilidades de tus Invokers frente a lo que pide el jefe. */
 export type SkillContext = { needs: Need[]; byCode: Map<string, HeroSkills> }
 
 export type Role = 'tank' | 'sustain' | 'support' | 'damage'
 export type Candidate = {
   hero: Hero; profile: Profile | null; role: Role; tier: { tier: string; score: number | null } | null
-  elementSign: number; tolCover: number; accOk: boolean | null; score: number; parts: Record<string, number>; fit: SkillFit
+  elementSign: number; tolCover: number; accOk: boolean | null; native: number; score: number; parts: Record<string, number>; fit: SkillFit
 }
-export type TeamPick = Candidate & { reasons: string[]; warnings: string[]; alternatives: Candidate[]; titan: TitanPick | null }
+export type TeamPick = Candidate & { reasons: string[]; warnings: string[]; /** Lo que se arregla con piezas (tolerancia, PREC). */ gear: string[]; alternatives: Candidate[]; titan: TitanPick | null }
 export type TitanPick = { titan: Titan; tier: string | null; why: string }
 export type Swap = { need: Need; out: Candidate; in: Candidate; gains: Need[]; loses: Need[]; delta: number; pct: number }
 export type Recommendation = { picks: TeamPick[]; gaps: string[]; pool: number; record: { heroIds: number[]; highest: number } | null; overlap: number
@@ -35,7 +37,7 @@ export type Recommendation = { picks: TeamPick[]; gaps: string[]; pool: number; 
   bySkill: Candidate[]
   /** Cambios de un miembro que cubren una necesidad sin cubrir, con lo que se gana y se pierde. */
   swaps: Swap[]; total: number }
-export type Options = { size?: number; needTank?: boolean; needSustain?: boolean; exclude?: Set<number>; include?: number[]; weights?: Weights; skills?: SkillContext }
+export type Options = { size?: number; needTank?: boolean; needSustain?: boolean; exclude?: Set<number>; include?: number[]; weights?: Weights; skills?: SkillContext; /** Tener en cuenta el poder y las estadísticas con el equipamiento actual. */ useGear?: boolean }
 
 const ROLE_ES: Record<Role, string> = { tank: 'tanque', sustain: 'curación o escudos', support: 'apoyo', damage: 'daño' }
 export const roleLabel = (r: Role) => ROLE_ES[r]
@@ -61,25 +63,33 @@ export function bestCopies(heroes: Hero[]): Hero[] {
   return [...best.values()]
 }
 
-export function scoreCandidates(box: Box, boss: Boss, stage: BossStage, profiles: Map<number, Profile | null>, elements: { names: string[]; sign: number[][] }, weights: Weights = DEFAULT_WEIGHTS, exclude = new Set<number>(), skills?: SkillContext): Candidate[] {
+export function scoreCandidates(box: Box, boss: Boss, stage: BossStage, profiles: Map<number, Profile | null>, elements: { names: string[]; sign: number[][] }, weights: Weights = DEFAULT_WEIGHTS, exclude = new Set<number>(), skills?: SkillContext, useGear = false): Candidate[] {
   const heroes = bestCopies(box.heroes.filter(h => !exclude.has(h.id)))
-  const maxPower = Math.max(1, ...heroes.map(h => h.power))
+  const max = (f: (h: Hero) => number) => Math.max(1, ...box.heroes.map(f))
+  const maxPower = max(h => h.power || 0), maxRank = max(h => h.rank || 0), maxLevel = max(h => h.level || 0), maxAwake = max(h => h.awakeLevel || 0)
+  const avgSkill = (h: Hero) => h.skills?.length ? h.skills.reduce((a, s) => a + (s.level || 1), 0) / h.skills.length : 1
+  const maxSkill = max(avgSkill)
   return heroes.map(hero => {
     const profile = profiles.get(hero.id) ?? null
     const tier = boss.tier[hero.code] ?? null
     const official = tier?.score != null ? Math.min(1, tier.score / 5) : 0
-    const power = hero.power / maxPower
+    // Progresión que el equipamiento no cambia: estrellas, nivel, despertar y nivel de habilidades.
+    const readiness = ((hero.rank || 0) / maxRank + (hero.level || 0) / maxLevel + (hero.awakeLevel || 0) / maxAwake + avgSkill(hero) / maxSkill) / 4
+    const power = (hero.power || 0) / maxPower
     const sign = elementSign(elements.names, elements.sign, hero.element, stage.element)
+    const kit = skills?.byCode.get(hero.code)
+    const native = boss.corruptions.filter(c => kit?.tolerances?.includes(c.key)).length
     const covers = boss.corruptions.map(c => Math.min(1, (hero.stats[toleranceKey(c.key)] ?? 0) / Math.max(0.01, stage.tolGoal / 100)))
     const tolCover = covers.length ? covers.reduce((a, b) => a + b, 0) / covers.length : 1
     const accOk = profile ? (profile.needsAccuracy ? (hero.stats.accuracy ?? 0) >= stage.accGoal : null) : null
-    const base = weights.official * official + weights.power * power
+    const base = weights.official * official + weights.readiness * readiness + (useGear ? weights.power * power : 0)
     const fElement = 1 + weights.element * sign
-    const fTol = 1 - weights.tolerance * (1 - tolCover)
-    const fAcc = accOk === false ? 1 - weights.accuracy : 1
-    const fit = skills ? skillFit(skills.byCode.get(hero.code), skills.needs) : { matched: [], avoided: [] }
+    const fNative = 1 + weights.nativeTol * native
+    const fTol = useGear ? 1 - weights.tolerance * (1 - tolCover) : 1
+    const fAcc = useGear && accOk === false ? 1 - weights.accuracy : 1
+    const fit = skills ? skillFit(kit, skills.needs) : { matched: [], avoided: [] }
     const fSkill = 1 + weights.skill * Math.min(3, fit.matched.length) - (fit.avoided.length ? weights.avoid : 0)
-    return { hero, profile, role: roleOf(hero, profile), tier, elementSign: sign, tolCover, accOk, score: base * fElement * fTol * fAcc * fSkill, parts: { official, power, fElement, fTol, fAcc, fSkill }, fit }
+    return { hero, profile, role: roleOf(hero, profile), tier, elementSign: sign, tolCover, accOk, native, score: base * fElement * fNative * fTol * fAcc * fSkill, parts: { official, readiness, power, fElement, fNative, fTol, fAcc, fSkill }, fit }
   }).sort((a, b) => b.score - a.score)
 }
 
@@ -114,7 +124,7 @@ export function assignTitans(picks: Candidate[], titans: Titan[], titanTier: Map
 
 export function recommendTeam(box: Box, boss: Boss, stage: BossStage, profiles: Map<number, Profile | null>, elements: { names: string[]; sign: number[][] }, titanTier: Map<string, string>, opts: Options = {}): Recommendation {
   const size = opts.size ?? 5
-  const pool = scoreCandidates(box, boss, stage, profiles, elements, opts.weights ?? DEFAULT_WEIGHTS, opts.exclude, opts.skills)
+  const pool = scoreCandidates(box, boss, stage, profiles, elements, opts.weights ?? DEFAULT_WEIGHTS, opts.exclude, opts.skills, opts.useGear)
   const chosen: Candidate[] = []
   const take = (c?: Candidate) => { if (c && !chosen.includes(c) && chosen.length < size) chosen.push(c) }
   // Elegidos a mano (p. ej. al aplicar un cambio): entran primero, con la misma copia que puntúa el resto.
@@ -126,20 +136,23 @@ export function recommendTeam(box: Box, boss: Boss, stage: BossStage, profiles: 
   chosen.sort((a, b) => b.score - a.score)
   const titans = assignTitans(chosen, box.titans, titanTier)
   const picks: TeamPick[] = chosen.map((c, i) => {
-    const reasons: string[] = [], warnings: string[] = []
+    const reasons: string[] = [], warnings: string[] = [], gear: string[] = []
     if (c.tier) reasons.push(`${c.tier.tier} en la tier list oficial de ${boss.name}${c.tier.score != null ? ` (${c.tier.score.toFixed(2)})` : ''}`)
     else warnings.push(`Sin nota oficial en ${boss.name}`)
     reasons.push(`Cubre ${ROLE_ES[c.role]}`)
+    if (c.fit.matched.length) reasons.push(`Aporta: ${c.fit.matched.map(n => n.label.toLowerCase()).join(', ')}`)
+    if (c.native) reasons.push(`Tolerancia innata a ${boss.corruptions.filter(k => opts.skills?.byCode.get(c.hero.code)?.tolerances?.includes(k.key)).map(k => TOL_LABEL[k.key] ?? k.key).join(' y ')}`)
     if (c.elementSign > 0) reasons.push(`Ventaja de elemento contra ${t(ELEMENT_LABEL, stage.element)}`)
     if (c.elementSign < 0) warnings.push(`Desventaja de elemento contra ${t(ELEMENT_LABEL, stage.element)}`)
-    if (boss.corruptions.length && c.tolCover >= 1) reasons.push('Alcanza la tolerancia de la guía')
-    if (boss.corruptions.length && c.tolCover < 1) warnings.push(`Tolerancia al ${Math.round(100 * c.tolCover)} % del objetivo de la guía`)
-    if (c.accOk === false) warnings.push(`PREC ${Math.round(c.hero.stats.accuracy ?? 0)} < ${stage.accGoal}: algunos perjuicios no entrarán`)
-    if (c.accOk === true) reasons.push(`PREC ${Math.round(c.hero.stats.accuracy ?? 0)} ≥ ${stage.accGoal}`)
-    if (c.fit.matched.length) reasons.push(`Aporta: ${c.fit.matched.map(n => n.label.toLowerCase()).join(', ')}`)
     for (const n of c.fit.avoided) warnings.push(`${n.label}: ${n.why}`)
+    if (c.parts.readiness < 0.6) warnings.push(`Poco desarrollado: ${c.hero.rank}★, nivel ${c.hero.level}, despertar ${c.hero.awakeLevel}`)
+    if (boss.corruptions.length && c.tolCover < 1) gear.push(`Tolerancia al ${Math.round(100 * c.tolCover)} % de los ${stage.tolGoal} % de la guía: conjuntos de tolerancia`)
+    if (boss.corruptions.length && c.tolCover >= 1) reasons.push('Ya alcanza la tolerancia de la guía')
+    if (c.accOk === false) gear.push(`PREC ${Math.round(c.hero.stats.accuracy ?? 0)} de ${stage.accGoal}: sus perjuicios necesitan más precisión`)
+    if (c.accOk === true) reasons.push(`PREC ${Math.round(c.hero.stats.accuracy ?? 0)} ≥ ${stage.accGoal}`)
+    if ((c.hero.stats.resistance ?? 0) < stage.resGoal) gear.push(`RES ${Math.round(c.hero.stats.resistance ?? 0)} de ${stage.resGoal}`)
     const alternatives = pool.filter(o => !chosen.includes(o) && o.role === c.role).slice(0, 2)
-    return { ...c, reasons, warnings, alternatives, titan: titans[i] }
+    return { ...c, reasons, warnings, gear, alternatives, titan: titans[i] }
   })
   const gaps: string[] = []
   if ((opts.needTank ?? true) && !picks.some(p => p.role === 'tank')) gaps.push('No tienes ningún tanque disponible.')

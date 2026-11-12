@@ -66,6 +66,10 @@
 
 - Asesor › Equipo para un jefe reorganizado: jefe y fase → equipo (lo esencial a la vista, «Por qué» plegado) → qué le falta (estadísticas y habilidades en un solo panel) → cambios que cubren lo que falta (quién sale, quién entra, qué ganas y cuánto cuesta en nota e inversión; «Probar este cambio» y volver) → tus mejores por habilidades, ordenados por la puntuación completa y con los de nota baja atenuados.
 
+## Versión 0.14
+
+- Equipo para un jefe elige por encaje con el jefe, no por el equipamiento actual: nota oficial, habilidades que pide, elemento y tolerancia innata del kit, más el desarrollo que las piezas no cambian (estrellas, nivel, despertar, habilidades). El poder actual, la tolerancia de conjuntos, la PREC y la RES pasan a «A mejorar con equipamiento», con acceso a Objetivo. Opción «Priorizar a los que ya tengo equipados» para el criterio anterior.
+
 ## Pendiente
 
 - Validar en el juego los supuestos de tiempos y maná (contar definitivas en 3 min).

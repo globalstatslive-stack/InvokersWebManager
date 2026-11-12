@@ -7,7 +7,7 @@ import type { Need } from './bossNeeds'
 
 const ELEMENTS = { names: ['Fire', 'Earth', 'Wind', 'Water', 'Light', 'Dark', 'Neutral'], sign: [[0, 1, 0, -1, 0, 0, 0], [-1, 0, 1, 0, 0, 0, 0], [0, -1, 0, 1, 0, 0, 0], [1, 0, -1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0]] }
 const hero = (id: number, code: string, cls: string, element: string, power: number, stats: Record<string, number> = {}): Hero =>
-  ({ id, code, name: code, fullName: code, cls, element, power, rank: 5, level: 50, stats: { accuracy: 0, resistance: 0, ...stats }, skills: [], relics: {}, accessories: {} }) as unknown as Hero
+  ({ id, code, name: code, fullName: code, cls, element, power, rank: 5, level: 50, awakeLevel: 3, stats: { accuracy: 0, resistance: 0, ...stats }, skills: [], relics: {}, accessories: {} }) as unknown as Hero
 const titan = (id: number, code: string, stat: string): Titan => ({ id, code, name: code, power: 100, bound: { stat, mode: 'percent', specialization: 'General', general: 0.1, specialized: 0 } }) as unknown as Titan
 const prof = (p: Partial<Profile>): Profile => ({ scaling: { attack: 1, defense: 0, health: 0 }, needsAccuracy: false, accuracySkills: [], debuffs: [], buffs: [], control: [], heals: false, shields: false, mix: { damage: 1, control: 0, sustain: 0, tough: 0 }, ...p })
 
@@ -21,7 +21,7 @@ const heroes = [
   hero(3, 'FIRE', 'MeleeAttacker', 'Fire', 6000, { dazeTolerance: 2 }),
   hero(4, 'WIND', 'RangedAttacker', 'Wind', 6000, { dazeTolerance: 2 }),
   hero(5, 'DEB', 'Support', 'Dark', 5000, { dazeTolerance: 2, accuracy: 150 }),
-  hero(6, 'WEAK', 'MeleeAttacker', 'Dark', 1000),
+  { ...hero(6, 'WEAK', 'MeleeAttacker', 'Dark', 1000), rank: 2, level: 20, awakeLevel: 0 } as Hero,
   hero(7, 'FIRE', 'MeleeAttacker', 'Fire', 2000),
   hero(8, 'DPS2', 'RangedAttacker', 'Dark', 5500, { dazeTolerance: 2 }),
 ]
@@ -39,6 +39,15 @@ describe('equipo recomendado para un jefe', () => {
     expect(r.picks.some(p => p.profile?.heals)).toBe(true)
     expect(r.picks.some(p => p.hero.id === 7)).toBe(false)
   })
+  it('sin «usar mi equipamiento», el poder actual no decide; con él, sí', () => {
+    const lowPower = { ...all, WIND: 'B', DPS2: 'B' }
+    const free = scoreCandidates(box, boss(lowPower), stage, profiles, ELEMENTS)
+    expect(free.find(c => c.hero.code === 'TANK')!.parts.power).toBeDefined()
+    const a = free.find(c => c.hero.code === 'HEAL')!, b = free.find(c => c.hero.code === 'DEB')!
+    expect(a.parts.official).toBe(b.parts.official)
+    const geared = scoreCandidates(box, boss(lowPower), stage, profiles, ELEMENTS, undefined, undefined, undefined, true)
+    expect(geared.find(c => c.hero.code === 'DPS2')!.score).toBeGreaterThan(free.find(c => c.hero.code === 'DPS2')!.score)
+  })
   it('la nota oficial del jefe pesa más que un poco más de poder', () => {
     const r = scoreCandidates(box, boss({ ...all, WIND: 'S+', DPS2: 'E' }), stage, profiles, ELEMENTS)
     expect(r.findIndex(c => c.hero.code === 'WIND')).toBeLessThan(r.findIndex(c => c.hero.code === 'DPS2'))
@@ -53,9 +62,9 @@ describe('equipo recomendado para un jefe', () => {
     const r = recommendTeam(box, boss({ ...all, DEB: 'S+', WEAK: 'S+' }), stage, profiles, ELEMENTS, new Map(), { needTank: false, needSustain: false })
     const deb = r.picks.find(p => p.hero.code === 'DEB')!
     expect(deb.accOk).toBe(false)
-    expect(deb.warnings.join(' ')).toMatch(/PREC 150 < 200/)
+    expect(deb.gear.join(' ')).toMatch(/PREC 150 de 200/)
     const weak = r.picks.find(p => p.hero.code === 'WEAK')
-    if (weak) expect(weak.warnings.join(' ')).toMatch(/Tolerancia al 0 %/)
+    if (weak) expect(weak.gear.join(' ')).toMatch(/Tolerancia al 0 %/)
     expect(r.gaps.join(' ')).toMatch(/PREC 200/)
   })
   it('descartar quita al Invoker y lo sustituye', () => {
@@ -87,7 +96,7 @@ describe('equipo recomendado para un jefe', () => {
     const swap = r.swaps[0]
     expect(swap.in.hero.code).toBe('WEAK')
     expect(['tank', 'sustain']).not.toContain(swap.out.role)
-    expect(swap.delta).toBeLessThan(0)
+    expect(swap.delta).toBeLessThan(0) // WEAK está poco desarrollado (2★, nv. 20)
     // Aplicar el cambio: entra el elegido y sale el sustituido.
     const after = recommendTeam(box, boss(all), stage, profiles, ELEMENTS, new Map(), { skills: { needs: [cleanse], byCode }, include: [swap.in.hero.id], exclude: new Set([swap.out.hero.id]) })
     expect(after.picks.map(p => p.hero.id)).toContain(swap.in.hero.id)

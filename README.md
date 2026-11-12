@@ -4,7 +4,7 @@
 
 Herramienta de fans independiente para gestionar tu cuenta de **Invokers: Titan Legacy** con los retratos, Titanes y objetos reales del juego. La idea central: **elige qué quieres superar, descubre qué cambiar, cuánto cuesta y cómo afecta a tus otros equipos**. El código y el diseño son propios; no incorpora código ni recursos de GGNoLuck. Las ilustraciones se publican conforme a la política oficial de contenido de fans.
 
-## Versión 0.13: qué incluye
+## Versión 0.14: qué incluye
 
 | Sección | Qué hace |
 |---|---|
