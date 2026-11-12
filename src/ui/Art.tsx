@@ -69,3 +69,23 @@ export function StatIcon({ stat, className = 'stat-icon' }: { stat: string; clas
   const known = ['resistance', 'attack', 'manaGeneration', 'skillRecovery', 'comboSpeed', 'instinct', 'runSpeed', 'criticalRate', 'accuracy', 'skillSpeed', 'criticalDamage', 'defense', 'health']
   return known.includes(stat) ? <GameImg path={`game/assets/gear/stats/${stat}.webp`} alt="" className={className} /> : <span className={className} />
 }
+
+/** Carta de personaje: marco por rareza, elemento y clase, nivel, estrellas y poder. */
+export function GameCard({ c, level, rank, power, badge, corner, dim, onClick, label, children }: {
+  c: { name: string; portrait: string | null; rarity: string; element?: string | null; cls?: string | null }
+  level?: number; rank?: number; power?: string; badge?: React.ReactNode; corner?: React.ReactNode; dim?: boolean; onClick?: () => void; label?: string; children?: React.ReactNode
+}) {
+  return <button className={`gcard ${rarityClass(c.rarity)} ${dim ? 'dim' : ''}`} onClick={onClick} aria-label={label}>
+    <span className="gcard-frame">
+      <GameImg path={c.portrait} alt="" className="gcard-img" />
+      <span className="gcard-icons">{c.element && <ElementIcon element={c.element} />}{c.cls && <ClassIcon cls={c.cls} />}</span>
+      {level !== undefined && <span className="gcard-lv" aria-label={`Nivel ${level}`}>{level}</span>}
+      {corner && <span className="gcard-corner">{corner}</span>}
+      {rank !== undefined && rank > 0 && <span className="gcard-stars" aria-label={`${rank} estrellas`}>{'★'.repeat(Math.min(rank, 7))}</span>}
+      {badge && <span className="gcard-badge">{badge}</span>}
+    </span>
+    <span className="gcard-name">{c.name}</span>
+    {power && <span className="gcard-power"><svg width="11" height="11" viewBox="0 0 24 24" aria-hidden><path fill="currentColor" d="M13 2 3 14h7l-1 8 10-12h-7z" /></svg>{power}</span>}
+    {children}
+  </button>
+}

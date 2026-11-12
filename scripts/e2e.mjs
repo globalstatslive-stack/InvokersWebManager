@@ -29,7 +29,7 @@ try {
   assert.ok((await page.locator('.account-strip h1').innerText()).includes(name))
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'desbordamiento horizontal en el inicio')
   // 2) Navegación por las secciones principales, sin desbordamiento horizontal.
-  for (const [hash, selector] of [['#/coleccion', '.h-card'], ['#/coleccion/piezas', '.gear-list li'], ['#/titanes', '.titan-card'], ['#/equipos', '.team-card'], ['#/codice', '.h-card'], ['#/asesor/revision', '.review-row'], ['#/objetivo', '.boss-card']]) {
+  for (const [hash, selector] of [['#/coleccion', '.gcard'], ['#/coleccion/piezas', '.gear-list li'], ['#/titanes', '.titan-card'], ['#/equipos', '.team-card'], ['#/codice', '.gcard'], ['#/asesor/revision', '.review-row'], ['#/objetivo', '.boss-card']]) {
     await page.evaluate(h => { location.hash = h }, hash)
     await page.locator(selector).first().waitFor({ timeout: 20000 })
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `desbordamiento horizontal en ${hash}`)
@@ -46,7 +46,7 @@ try {
   await page.getByRole('heading', { name: '¿A quién le sirve?' }).waitFor()
   // 3) Ficha y optimizador (cálculo en Web Worker).
   await page.evaluate(() => { location.hash = '#/coleccion' })
-  await page.locator('.h-card').first().click()
+  await page.locator('.gcard').first().click()
   await page.getByRole('button', { name: 'Optimizar equipo' }).click()
   await page.locator('.combat').waitFor({ timeout: 30000 })
   await page.locator('.stat-table.compare tr').first().waitFor()
@@ -62,7 +62,7 @@ try {
   }
   await page.evaluate(() => { location.hash = '#/wiki/invokers' })
   await page.getByLabel('Buscar Invoker').fill('Aethis')
-  await page.locator('.h-card').filter({ hasText: 'Aethis' }).first().click()
+  await page.locator('.gcard').filter({ hasText: 'Aethis' }).first().click()
   await page.getByRole('heading', { name: 'Aethis the Sorrow' }).waitFor()
   const skill = page.locator('.skill-card').nth(1).locator('p').first()
   const atMax = await skill.innerText()

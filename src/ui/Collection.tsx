@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { ChevronDown, LayoutGrid, List, Lock, SlidersHorizontal, X } from 'lucide-react'
 import { useAccount } from './account'
 import { fmtPower, NeedsAccount, SearchBox } from './common'
-import { ClassIcon, ElementIcon, FactionIcon, GearIcon, Portrait, Stars } from './Art'
+import { FactionIcon, GameCard, GearIcon, Portrait, Stars } from './Art'
 import { ACCESSORY_SLOTS, bonusName, CLASS_LABEL, CORE_STATS, ELEMENT_LABEL, fmtBonus, fmtStat, RARITIES, RARITY_LABEL, RELIC_SLOTS, SET_LABEL, SLOT_LABEL, STAT_LABEL, STAT_SHORT, t } from '../box/i18n'
 import { gearRating } from '../box/advisor'
 import { usePlan, reservedBy } from './plan'
@@ -75,17 +75,14 @@ function InvokersTab() {
       <p className="toolbar-count">{list.length} {mode === 'characters' ? `personajes de ${copies.size}` : `ejemplares de ${heroes.length}`}</p>
     </div>
     {list.length === 0 ? <div className="empty small"><h3>Nada coincide</h3><p>Ningún Invoker cumple estos filtros.</p>{active > 0 && <button className="btn" onClick={() => setValues({})}>Quitar filtros</button>}</div> :
-    view === 'cards' ? <div className="card-grid">{list.slice(0, limit).map(h => {
+    view === 'cards' ? <div className="gcard-grid">{list.slice(0, limit).map(h => {
       const n = copies.get(h.code)!.length, idx = copies.get(h.code)!.indexOf(h) + 1, gc = gearCount(h)
-      return <button key={h.id} className="h-card" onClick={() => go(`/invoker/${h.id}`)} aria-label={`${h.fullName}, ${h.rank} estrellas, nivel ${h.level}`}>
-        <Portrait c={h} badge={mode === 'characters' && n > 1 ? `×${n}` : mode === 'copies' && n > 1 ? `${idx}/${n}` : undefined}>
-          <span className="portrait-icons"><ElementIcon element={h.element} /><ClassIcon cls={h.cls} /></span>
-        </Portrait>
-        <span className="h-name">{h.name}</span>
-        <span className="h-meta"><Stars n={h.rank} /> <span>Nv. {h.level}</span></span>
-        <span className="h-meta"><b>{statCol ? `${STAT_SHORT[statCol] ?? statCol} ${fmtStat(statCol, h.stats[statCol] ?? 0)}` : fmtPower(h)}</b></span>
-        <span className="h-state">{h.locked && <span className="state lock"><Lock size={11} /> Bloqueado</span>}<span className={`state ${gc ? 'geared' : 'bare'}`}>{gc ? `Equipo ${gc}/13` : 'Sin equipo'}</span></span>
-      </button>
+      return <GameCard key={h.id} c={h} level={h.level} rank={h.rank} label={`${h.fullName}, ${h.rank} estrellas, nivel ${h.level}`} onClick={() => go(`/invoker/${h.id}`)}
+        power={statCol ? `${STAT_SHORT[statCol] ?? statCol} ${fmtStat(statCol, h.stats[statCol] ?? 0)}` : fmtPower(h)}
+        badge={mode === 'characters' && n > 1 ? `×${n}` : mode === 'copies' && n > 1 ? `${idx}/${n}` : undefined}
+        corner={h.locked ? <Lock size={12} aria-label="Bloqueado" /> : undefined}>
+        <span className={`gcard-state ${gc ? 'geared' : 'bare'}`}>{gc ? `Equipo ${gc}/13` : 'Sin equipo'}</span>
+      </GameCard>
     })}</div> :
       <ul className="row-list">{list.slice(0, limit).map(h => { const n = copies.get(h.code)!.length, gc = gearCount(h)
         return <li key={h.id}><button onClick={() => go(`/invoker/${h.id}`)}>
@@ -152,15 +149,25 @@ function GearTab() {
   </>
 }
 
-export function Collection({ tab }: { tab?: string }) {
+/** Pestañas de la colección: también las usan Titanes y Equipos. */
+export function CollectionTabs({ current }: { current: 'invokers' | 'titanes' | 'piezas' | 'equipos' }) {
   const { account, go } = useAccount()
+  if (!account) return null
+  const tabs = [
+    { id: 'invokers', label: 'Invokers', n: account.box.heroes.length, to: '/coleccion' },
+    { id: 'titanes', label: 'Titanes', n: account.box.titans.length, to: '/titanes' },
+    { id: 'piezas', label: 'Piezas', n: account.box.relics.length + account.box.accessories.length, to: '/coleccion/piezas' },
+    { id: 'equipos', label: 'Equipos', n: account.box.teams.length, to: '/equipos' },
+  ] as const
+  return <div className="tabs" role="tablist" aria-label="Colección">{tabs.map(t => <button key={t.id} role="tab" aria-selected={current === t.id} className={current === t.id ? 'on' : ''} onClick={() => go(t.to)}>{t.label} <small>{t.n}</small></button>)}</div>
+}
+
+export function Collection({ tab }: { tab?: string }) {
+  const { account } = useAccount()
   if (!account) return <NeedsAccount />
   const current = tab === 'piezas' ? 'piezas' : 'invokers'
   return <div className="collection">
-    <div className="tabs" role="tablist" aria-label="Colección">
-      <button role="tab" aria-selected={current === 'invokers'} className={current === 'invokers' ? 'on' : ''} onClick={() => go('/coleccion')}>Invokers <small>{account.box.heroes.length}</small></button>
-      <button role="tab" aria-selected={current === 'piezas'} className={current === 'piezas' ? 'on' : ''} onClick={() => go('/coleccion/piezas')}>Piezas <small>{account.box.relics.length + account.box.accessories.length}</small></button>
-    </div>
+    <CollectionTabs current={current} />
     {current === 'invokers' ? <InvokersTab /> : <GearTab />}
   </div>
 }

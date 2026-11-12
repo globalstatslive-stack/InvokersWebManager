@@ -2,12 +2,12 @@ import { useMemo, useState } from 'react'
 import { ArrowLeft, ExternalLink, Sparkles, Wand2 } from 'lucide-react'
 import { useAccount } from '../account'
 import { Chips, PageHead, SearchBox, Select } from '../common'
-import { ClassIcon, ElementIcon, FactionIcon } from '../Art'
+import { ClassIcon, ElementIcon, FactionIcon, GameCard } from '../Art'
 import { CLASS_LABEL, ELEMENT_LABEL, fmtInt, RARITIES, RARITY_LABEL, STAT_LABEL, t } from '../../box/i18n'
 import { loadBosses } from '../../box/goal'
 import { loadDetail, loadIndex, loadTiers, useLoad, type Detail, type Kind, type Skill, type Summary } from '../../wiki/data'
 import { EFFECT_LABEL, SKILL_TYPE, TOL_LABEL } from '../../wiki/labels'
-import { esNum, Failed, Loading, NotFound, OfficialImg, RichText, Source, Thumb } from './kit'
+import { esNum, Failed, Loading, NotFound, OfficialImg, portraitPath, RichText, Source } from './kit'
 
 const KIND_ES = { invokers: 'Invokers', titans: 'Titanes' } as const
 const ROUTE = { invokers: 'invokers', titans: 'titanes' } as const
@@ -46,6 +46,7 @@ export function CharacterList({ kind }: { kind: Kind }) {
   return <>
     <PageHead kicker="Enciclopedia" title={`Todos los ${KIND_ES[kind]}`}>{all.length} {KIND_ES[kind]} publicados{owned ? ` · tienes ${have} (${Math.round(100 * have / all.length)} %)` : ''}. Fichas con estadísticas, habilidades por nivel, tolerancias y nota oficial en cada jefe.</PageHead>
     <Source href={`${idx.data.source}/${kind}/`} version={idx.data.version} date={idx.data.fetchedAt} />
+    <Chips label="Tipo" value={kind} onChange={v => go(`/wiki/${ROUTE[v]}`)} options={[{ id: 'invokers', label: `Invokers (${idx.data.invokers.length})` }, { id: 'titans', label: `Titanes (${idx.data.titans.length})` }]} />
     <div className="toolbar sticky">
       <SearchBox value={q} onChange={setQ} placeholder={`Buscar ${kind === 'invokers' ? 'Invoker' : 'Titán'}`} />
       {kind === 'invokers' && <Chips label="Elemento" value={element} onChange={setElement} options={[{ id: 'all', label: 'Todos' }, ...uniq(c => c.element).map(e => ({ id: e, label: <><ElementIcon element={e} /><span className="hide-sm">{t(ELEMENT_LABEL, e)}</span></> }))]} />}
@@ -65,12 +66,13 @@ export function CharacterList({ kind }: { kind: Kind }) {
     </div>
     <p className="muted count-line" aria-live="polite">{list.length} de {all.length}</p>
     {list.length === 0 ? <div className="state-card">Ningún {kind === 'invokers' ? 'Invoker' : 'Titán'} cumple estos filtros.</div> :
-      <div className="card-grid wiki-grid">{list.map(c => {
+      <div className="gcard-grid">{list.map(c => {
         const o = owned?.get(c.code), tier = tierOf.get(c.code)
-        return <button key={c.slug} className={`h-card ${owned && !o ? 'missing' : ''}`} onClick={() => go(`/wiki/${ROUTE[kind]}/${c.slug}`)}>
-          <span className="h-card-art"><Thumb s={c} />{tier && <span className={`tier-tag t-${tier.replace('+', 'p')}`} title="Tier list oficial (global)">{tier}</span>}{o && <span className="own-tag">{o.n > 1 ? `×${o.n}` : 'Tuyo'}</span>}</span>
-          <span className="h-card-body"><b>{c.short}</b><small>{kind === 'invokers' ? <><ElementIcon element={c.element} /><ClassIcon cls={c.cls} /> {t(RARITY_LABEL, c.rarity)}</> : <><FactionIcon faction={c.faction} /> {ROLE_ES[c.role ?? ''] ?? c.role} · {t(RARITY_LABEL, c.rarity)}</>}</small></span>
-        </button>
+        return <GameCard key={c.slug} c={{ name: c.short, portrait: portraitPath(c), rarity: c.rarity, element: c.element, cls: c.cls }} dim={!!owned && !o}
+          corner={tier ? <span className={`tier-tag t-${tier.replace('+', 'p')}`} title="Tier list oficial (global)">{tier}</span> : undefined}
+          badge={o ? (o.n > 1 ? `×${o.n}` : 'Tuyo') : undefined} onClick={() => go(`/wiki/${ROUTE[kind]}/${c.slug}`)} label={`${c.name}${tier ? `, ${tier} en la tier list` : ''}${o ? ', lo tienes' : ''}`}>
+          <span className="gcard-sub">{kind === 'invokers' ? t(RARITY_LABEL, c.rarity) : <><FactionIcon faction={c.faction} /> {ROLE_ES[c.role ?? ''] ?? c.role}</>}</span>
+        </GameCard>
       })}</div>}
   </>
 }

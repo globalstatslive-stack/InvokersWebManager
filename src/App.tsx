@@ -1,5 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { BookOpen, Calculator, CalendarDays, Database, Download, Gem, Home, Lightbulb, LayoutGrid, ListChecks, ListOrdered, Menu, Mountain, RefreshCw, Shield, Skull, Sparkles, Swords, Target, Users, Wand2, X } from 'lucide-react'
+import { BookOpen, Calculator, CalendarDays, ChevronDown, Database, Download, Gem, Home, Lightbulb, LayoutGrid, ListChecks, ListOrdered, Menu, Mountain, RefreshCw, Skull, Target, Users, Wand2, X, Zap } from 'lucide-react'
 import { clearSharedFiles, listImports, prepareFiles, readSharedFiles, saveImport, type ImportRecord } from './data'
 import { AccountContext, accountFrom, type Account } from './ui/account'
 import { GameImg } from './ui/Art'
@@ -32,31 +32,26 @@ import { folderPreference, readFolder } from './folderSync'
 import { DataPage } from './ui/DataPage'
 import { fmtInt } from './box/i18n'
 
+/** Lateral reducido a lo que se usa a diario. Titanes y récords viven como pestañas de Colección;
+ * la enciclopedia es un grupo plegable; importar e historial, accesos discretos al pie. */
 const NAV = [
   { path: '/', label: 'Inicio', icon: Home },
   { path: '/coleccion', label: 'Colección', icon: LayoutGrid },
   { path: '/objetivo', label: 'Objetivo', icon: Target },
   { path: '/plan', label: 'Plan', icon: ListChecks },
   { path: '/optimizador', label: 'Optimizador', icon: Wand2 },
-  { path: '/titanes', label: 'Mis Titanes', icon: Shield },
-  { path: '/equipos', label: 'Récords', icon: Swords },
   { path: '/asesor', label: 'Asesor', icon: Lightbulb },
-  { path: '/importar', label: 'Importar', icon: Download },
-  { path: '/datos', label: 'Historial', icon: Database },
 ]
 const WIKI_NAV = [
-  { path: '/wiki', label: 'Enciclopedia', icon: BookOpen },
-  { path: '/wiki/invokers', label: 'Invokers', icon: Users },
-  { path: '/wiki/titanes', label: 'Titanes', icon: Shield },
+  { path: '/wiki/invokers', label: 'Invokers y Titanes', icon: Users },
   { path: '/wiki/jefes', label: 'Jefes', icon: Skull },
   { path: '/wiki/agujas', label: 'Agujas', icon: Mountain },
   { path: '/wiki/eventos', label: 'Eventos', icon: CalendarDays },
   { path: '/wiki/tier-list', label: 'Tier lists', icon: ListOrdered },
   { path: '/wiki/equipamiento', label: 'Equipamiento', icon: Gem },
-  { path: '/wiki/efectos', label: 'Efectos', icon: Sparkles },
   { path: '/wiki/herramientas', label: 'Calculadoras', icon: Calculator },
-  { path: '/wiki/guias', label: 'Guías oficiales', icon: BookOpen },
 ]
+const WIKI_HOME = { path: '/wiki', label: 'Enciclopedia', icon: BookOpen }
 const MOBILE = ['/', '/coleccion', '/objetivo', '/wiki']
 const OFFICIAL_ORIGINS = ['https://invokers.com', 'https://www.invokers.com']
 const readRoute = () => (location.hash.replace(/^#/, '') || '/').split('?')[0]
@@ -71,6 +66,7 @@ export default function App() {
   const [toast, setToast] = useState<{ text: string; bad?: boolean }>()
   const [menu, setMenu] = useState(false)
   const [syncing, setSyncing] = useState(false)
+  const [wikiPinned, setWikiPinned] = useState<boolean | null>(null)
   const started = useRef(false)
 
   useEffect(() => { if (!toast || toast.bad) return; const id = setTimeout(() => setToast(undefined), 7000); return () => clearTimeout(id) }, [toast])
@@ -180,16 +176,34 @@ export default function App() {
       default: return <Dashboard />
     }
   })()
-  const active = (path: string) => path === '/' ? route === '/' : path === '/wiki' ? route.startsWith('/wiki') : route.startsWith(path) || (path === '/coleccion' && (route.startsWith('/invoker') || route.startsWith('/pieza') || route === '/equipo'))
-  const activeWiki = (path: string) => path === '/wiki' ? route === '/wiki' : route.startsWith(path)
+  const active = (path: string) => path === '/' ? route === '/' : path === '/wiki' ? route.startsWith('/wiki') : route.startsWith(path) || (path === '/coleccion' && (route.startsWith('/invoker') || route.startsWith('/pieza') || route === '/equipo' || route.startsWith('/titanes') || route.startsWith('/equipos')))
+  const activeWiki = (path: string) => path === '/wiki/invokers' ? route.startsWith('/wiki/invokers') || route.startsWith('/wiki/titanes') : route.startsWith(path)
+  const inWiki = route.startsWith('/wiki') || route === '/codice'
+  const wikiOpen = wikiPinned ?? inWiki
+  const days = account?.box.expiresAt ? Math.ceil((Date.parse(account.box.expiresAt) - Date.now()) / 86400000) : null
   const profile = account?.box.profile
   return <AccountContext.Provider value={ctx}>
     <div className="shell">
       <aside className={`side ${menu ? 'open' : ''}`}>
         <a className="brand" href="#/"><span className="brand-mark">N</span><span><b>NEXO</b><small>Invokers · Titan Legacy</small></span></a>
-        <nav aria-label="Mi cuenta"><span className="nav-group">Mi cuenta</span>{NAV.map(n => <a key={n.path} href={`#${n.path}`} className={active(n.path) ? 'on' : ''}><n.icon size={18} />{n.label}</a>)}</nav>
-        <nav aria-label="Enciclopedia"><span className="nav-group">Enciclopedia</span>{WIKI_NAV.map(n => <a key={n.path} href={`#${n.path}`} className={activeWiki(n.path) ? 'on' : ''}><n.icon size={18} />{n.label}</a>)}</nav>
-        <div className="side-foot">Proyecto de fans independiente. Ilustraciones © Hitzone, usadas conforme a su política de contenido de fans.</div>
+        {profile ? <a className="side-profile" href="#/">
+          <span className="avatar-ring">{profile.avatar ? <GameImg path={profile.avatar} alt="" className="avatar" /> : <span className="avatar" />}<span className="lv">{profile.level}</span></span>
+          <span className="side-profile-text"><b>{profile.clan && <small>{profile.clan} </small>}{profile.name}</b><span className="side-power"><Zap size={12} aria-hidden />{fmtInt(profile.totalPower || account!.box.heroes.reduce((s, h) => s + h.power, 0))}</span>
+            {days !== null && <span className={`live-pill ${days <= 2 ? 'warn' : ''}`}><i />{days > 0 ? `Enlace: ${days} d` : 'Enlace caducado'}</span>}</span>
+        </a> : <a className="btn primary side-cta" href="#/importar"><Download size={16} /> Importar mi caja</a>}
+        <nav aria-label="Principal">{NAV.map(n => <a key={n.path} href={`#${n.path}`} className={active(n.path) ? 'on' : ''}><n.icon size={18} />{n.label}</a>)}</nav>
+        <nav aria-label="Enciclopedia" className={`side-group ${wikiOpen ? 'open' : ''}`}>
+          <div className="side-group-head">
+            <a href={`#${WIKI_HOME.path}`} className={route === '/wiki' ? 'on' : ''}><WIKI_HOME.icon size={18} />{WIKI_HOME.label}</a>
+            <button className="icon-btn" aria-expanded={wikiOpen} aria-label={wikiOpen ? 'Plegar la enciclopedia' : 'Desplegar la enciclopedia'} onClick={() => setWikiPinned(!wikiOpen)}><ChevronDown size={16} className={wikiOpen ? 'rot' : ''} /></button>
+          </div>
+          {wikiOpen && <div className="side-sub">{WIKI_NAV.map(n => <a key={n.path} href={`#${n.path}`} className={activeWiki(n.path) ? 'on' : ''}><n.icon size={16} />{n.label}</a>)}</div>}
+        </nav>
+        <div className="side-utils">
+          <a href="#/importar" className={route.startsWith('/importar') ? 'on' : ''}><Download size={15} /> Importar</a>
+          <a href="#/datos" className={route.startsWith('/datos') ? 'on' : ''}><Database size={15} /> Historial</a>
+        </div>
+        <div className="side-foot">Proyecto de fans independiente, no afiliado a Hitzone. Ilustraciones © Hitzone, usadas conforme a su política de contenido de fans.</div>
       </aside>
       {menu && <button className="scrim" aria-label="Cerrar menú" onClick={() => setMenu(false)} />}
       <div className="main">
@@ -197,7 +211,7 @@ export default function App() {
           <button className="icon-btn only-mobile" aria-label="Menú" onClick={() => setMenu(true)}><Menu size={21} /></button>
           <a className="brand only-mobile" href="#/"><span className="brand-mark">N</span><b>NEXO</b></a>
           <div className="top-spacer" />
-          {profile && <div className="account-chip">
+          {profile && <div className="account-chip only-mobile-chip">
             {profile.avatar && <GameImg path={profile.avatar} alt="" className="avatar" />}
             <span><b>{profile.name}</b><small>Nv. {profile.level} · {fmtInt(profile.totalPower || account!.box.heroes.reduce((s, h) => s + h.power, 0))}</small></span>
           </div>}
@@ -206,9 +220,9 @@ export default function App() {
         </header>
         {toast && <div className={`toast ${toast.bad ? 'bad' : ''}`} role="status"><span>{toast.text}</span><button className="icon-btn" aria-label="Cerrar" onClick={() => setToast(undefined)}><X size={16} /></button></div>}
         <main className="content">{loading ? <div className="loading">Cargando tu cuenta…</div> : <Suspense fallback={<div className="loading" role="status">Cargando…</div>}>{page}</Suspense>}</main>
-        <footer className="foot">Nexo · versión 0.9 · No afiliado a Hitzone. Tus importaciones se guardan solo en este navegador.</footer>
+        <footer className="foot">Nexo · versión 0.10 · No afiliado a Hitzone. Tus importaciones se guardan solo en este navegador.</footer>
       </div>
-      <nav className="bottom-nav">{[...NAV, WIKI_NAV[0]].filter(n => MOBILE.includes(n.path)).map(n => <a key={n.path} href={`#${n.path}`} className={active(n.path) ? 'on' : ''}><n.icon size={20} /><span>{n.label}</span></a>)}
+      <nav className="bottom-nav">{[...NAV, WIKI_HOME].filter(n => MOBILE.includes(n.path)).map(n => <a key={n.path} href={`#${n.path}`} className={active(n.path) ? 'on' : ''}><n.icon size={20} /><span>{n.label}</span></a>)}
         <button onClick={() => setMenu(true)}><Menu size={20} /><span>Más</span></button></nav>
     </div>
   </AccountContext.Provider>

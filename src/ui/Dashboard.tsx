@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
-import { AlertTriangle, ArrowRight, Clock, Gem, LayoutGrid, Lightbulb, ListChecks, Target, Trophy, Wand2 } from 'lucide-react'
+import { AlertTriangle, ArrowRight, Clock, Gem, LayoutGrid, Lightbulb, ListChecks, Target, Wand2, Zap } from 'lucide-react'
 import { useAccount } from './account'
 import { fmtPower, StalePowerNote } from './common'
-import { ElementIcon, Portrait, Stars } from './Art'
-import { CLASS_LABEL, ELEMENT_LABEL, fmtInt, t } from '../box/i18n'
+import { GameCard, GameImg } from './Art'
+import { fmtInt } from '../box/i18n'
 import { sellCandidates, upgradeQueue } from '../box/advisor'
 import { ImportPage } from './ImportPage'
 import { progressOf, usePlan } from './plan'
@@ -28,13 +28,15 @@ export function Dashboard() {
   const days = box.expiresAt ? Math.ceil((Date.parse(box.expiresAt) - Date.now()) / 86400000) : null
   const official = account.record.source === 'official-link'
   return <div className="dash v2">
-    <section className="account-strip">
-      <div>
-        <h1>{box.profile.name}{box.profile.clan && <small> [{box.profile.clan}]</small>}</h1>
-        <p><Trophy size={14} aria-hidden /> <b>{fmtInt(box.profile.totalPower || box.heroes.reduce((s, h) => s + h.power, 0))}</b> de poder · nivel {box.profile.level}</p>
+    <section className="account-strip hero-profile">
+      <span className="avatar-ring big">{box.profile.avatar ? <GameImg path={box.profile.avatar} alt="" className="avatar" /> : <span className="avatar" />}<span className="lv">{box.profile.level}</span></span>
+      <div className="hero-profile-text">
+        <span className="kicker">{box.profile.clan ? `Clan ${box.profile.clan}` : 'Tu cuenta'}</span>
+        <h1>{box.profile.name}</h1>
+        <p className="power-line"><Zap size={18} aria-hidden /><b>{fmtInt(box.profile.totalPower || box.heroes.reduce((s, h) => s + h.power, 0))}</b><span>de poder · {box.heroes.length} Invokers · {box.titans.length} Titanes</span></p>
         <p className="muted"><Clock size={13} aria-hidden /> {official ? `Instantánea del ${date(box.snapshotAt ?? account.record.importedAt)}` : `Carpeta del juego leída el ${date(account.record.importedAt)}`}</p>
       </div>
-      {days !== null && <span className={`expiry ${days <= 2 ? 'warn' : ''}`}>{days > 0 ? `El enlace caduca en ${days} día${days > 1 ? 's' : ''}` : 'El enlace ha caducado'}</span>}
+      {days !== null && <span className={`live-pill ${days <= 2 ? 'warn' : ''}`}><i />{days > 0 ? `Enlace activo · ${days} día${days > 1 ? 's' : ''}` : 'Enlace caducado'}</span>}
     </section>
     {days !== null && days <= 2 && <p className="note warn"><AlertTriangle size={15} /> Pulsa «Refresh link» en invokers.com para renovar el enlace otra semana y vuelve a importarlo.</p>}
 
@@ -59,11 +61,7 @@ export function Dashboard() {
 
     <section className="panel">
       <div className="panel-title"><h2>Tus más fuertes</h2><button className="link" onClick={() => go('/coleccion')}>Ver todos <ArrowRight size={15} /></button></div>
-      <div className="top-list">{data.heroes.slice(0, 6).map((h, i) => <button key={h.id} className="top-row" onClick={() => go(`/invoker/${h.id}`)}>
-        <span className="rank-n">{i + 1}</span><Portrait c={h} size="sm" />
-        <span className="top-name"><b>{h.name}</b><small><ElementIcon element={h.element} /> {t(ELEMENT_LABEL, h.element)} · {t(CLASS_LABEL, h.cls)}</small></span>
-        <span className="top-power"><Stars n={h.rank} /><b>{fmtPower(h)}</b></span>
-      </button>)}</div>
+      <div className="gcard-grid six">{data.heroes.slice(0, 6).map(h => <GameCard key={h.id} c={h} level={h.level} rank={h.rank} power={fmtPower(h)} onClick={() => go(`/invoker/${h.id}`)} label={`${h.fullName}: ${fmtPower(h)} de poder`} />)}</div>
       <StalePowerNote />
     </section>
   </div>
