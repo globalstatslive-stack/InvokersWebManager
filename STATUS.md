@@ -47,6 +47,12 @@
 - Actualización semanal automática con comprobaciones (`update-data.yml`).
 - Pruebas: integridad de los datos, marcado seguro de textos, calculadoras contra los ejemplos publicados; e2e de la enciclopedia a 360/390/412/1440 px.
 
+## Versión 0.10
+
+- Lateral compacto: 6 entradas principales, Enciclopedia como grupo plegable (abierto solo dentro), Importar e Historial al pie; tarjeta de perfil con avatar, nivel, poder y estado del enlace. Titanes y Equipos pasan a pestañas de Colección.
+- Carta de personaje (marco por rareza, elemento y clase, nivel, estrellas, poder) en Colección, Inicio y enciclopedia; Inicio con perfil destacado; cabeceras, paneles, pestañas y botones con la identidad dorada de Nexo.
+- Eventos: calendario de torneos por días con la línea de hoy y las coronas que puedes saltarte.
+
 ## Pendiente
 
 - Validar en el juego los supuestos de tiempos y maná (contar definitivas en 3 min).

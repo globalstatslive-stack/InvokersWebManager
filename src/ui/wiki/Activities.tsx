@@ -4,7 +4,7 @@ import { useAccount } from '../account'
 import { Chips, PageHead } from '../common'
 import { ElementIcon } from '../Art'
 import { ELEMENT_LABEL, t } from '../../box/i18n'
-import { loadEvents, loadIndex, loadSpires, useLoad, type Floor } from '../../wiki/data'
+import { loadEvents, loadIndex, loadSpires, useLoad, type Chase, type Floor } from '../../wiki/data'
 import { matchupEs, REWARD, SPIRE_ELEMENT, SPIRE_ES } from '../../wiki/labels'
 import { esNum, Failed, fmtDate, fmtDateTime, Loading, NotFound, OfficialImg, Source, Thumb } from './kit'
 
@@ -96,7 +96,8 @@ export function EventsPage() {
             <p className="muted">{fmtDate(c.start)} – {fmtDate(c.end)}</p>
             <p><Crown size={14} aria-hidden /> {c.crownsNeeded} coronas para el Invoker · {c.crownsOnOffer} en juego en torneos · {c.leaderboardCrowns} en la clasificación</p></div>
         </div>
-        <details open={st === 'live'}><summary>Torneos ({c.runs.length})</summary>
+        {st !== 'done' && <ChaseTimeline c={c} />}
+        <details><summary>Lista de torneos ({c.runs.length})</summary>
           <ul className="run-list">{c.runs.map((r, i) => { const rs = status(r.start, r.end); return <li key={i} className={rs}><OfficialImg src={r.icon} alt="" className="mini-icon" /><b>{r.name}</b><span className="muted">{fmtDateTime(r.start)} – {fmtDateTime(r.end)}</span><span>{r.crowns} coronas</span>{rs === 'live' && <span className="tag good">Ahora</span>}</li> })}</ul>
         </details>
         {c.official && <a className="link" href={c.official} target="_blank" rel="noreferrer">Planificador oficial <ExternalLink size={12} /></a>}
@@ -104,4 +105,31 @@ export function EventsPage() {
     })}
     <p className="muted">Divisiones de los torneos: {ev.data.divisions.map(d => `${d.name.replace('Beginner', 'Principiante').replace('Intermediate', 'Intermedia').replace('Veteran', 'Veterana')} (${d.levels.replace('Lv', 'nv.')})`).join(' · ')}.</p>
   </>
+}
+
+/** Calendario de una caza: una fila por torneo, una barra por cada vez que se juega y la línea de hoy. */
+function ChaseTimeline({ c }: { c: Chase }) {
+  const start = Date.parse(c.start), end = Date.parse(c.end), span = end - start
+  const day = 86400000
+  const days = Array.from({ length: Math.ceil(span / day) }, (_, i) => new Date(start + i * day))
+  const rows = [...new Map(c.runs.map(r => [r.name, { name: r.name, icon: r.icon, crowns: r.crowns, runs: c.runs.filter(x => x.name === r.name) }])).values()]
+  const now = Date.now()
+  const pos = (t: number) => `${Math.min(100, Math.max(0, 100 * (t - start) / span))}%`
+  const total = c.runs.reduce((a, r) => a + r.crowns, 0)
+  return <div className="timeline" role="group" aria-label={`Calendario de torneos de ${c.name}`}>
+    <p className="muted">{c.runs.length} torneos · {total} coronas posibles · necesitas {c.crownsNeeded}: puedes saltarte {Math.max(0, total - c.crownsNeeded)} coronas.</p>
+    <div className="timeline-scroll"><div className="timeline-grid" style={{ ['--days' as string]: days.length }}>
+      <div className="tl-corner">Torneo</div>
+      <div className="tl-days">{days.map(d => <span key={+d} className={d.toDateString() === new Date(now).toDateString() ? 'today' : ''}>{d.toLocaleDateString('es-ES', { weekday: 'short' })}<b>{d.getDate()}</b></span>)}</div>
+      {rows.map(r => <div key={r.name} className="tl-row">
+        <div className="tl-name"><OfficialImg src={r.icon} alt="" className="mini-icon" /><span><b>{r.name}</b><small>{r.crowns ? `${r.crowns} coronas` : 'sin coronas'}</small></span></div>
+        <div className="tl-track">
+          {r.runs.map((x, i) => { const a = Date.parse(x.start), b = Date.parse(x.end), st = b < now ? 'done' : a > now ? 'next' : 'live'
+            return <span key={i} className={`tl-bar ${st}`} style={{ left: pos(a), width: `calc(${pos(b)} - ${pos(a)})` }} title={`${x.name}: ${fmtDateTime(x.start)} – ${fmtDateTime(x.end)}${x.crowns ? ` · ${x.crowns} coronas` : ''}`}>{x.crowns || ''}</span> })}
+          {now > start && now < end && <i className="tl-now" style={{ left: pos(now) }} aria-hidden />}
+        </div>
+      </div>)}
+    </div></div>
+    <p className="tl-legend"><span className="tl-bar live" /> en curso <span className="tl-bar next" /> próximo <span className="tl-bar done" /> terminado <i className="tl-now-key" /> ahora</p>
+  </div>
 }

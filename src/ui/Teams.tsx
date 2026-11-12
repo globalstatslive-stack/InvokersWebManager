@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAccount } from './account'
+import { CollectionTabs } from './Collection'
 import { Chips, Empty, NeedsAccount, PageHead } from './common'
 import { ElementIcon, GameImg, Portrait } from './Art'
 import { MODE_LABEL, t } from '../box/i18n'
@@ -16,6 +17,7 @@ export function Teams({ mode }: { mode?: string }) {
   const list = teams.filter(x => x.mode === current)
   const wins = list.reduce((s, x) => s + x.levels.reduce((a, l) => a + l.victories, 0), 0), losses = list.reduce((s, x) => s + x.levels.reduce((a, l) => a + l.defeats, 0), 0)
   return <>
+    <CollectionTabs current="equipos" />
     <PageHead kicker="Combate" title="Equipos y récords">Los equipos con los que lograste tu mejor tiempo en cada modo, tal y como los guarda el juego.</PageHead>
     <Chips label="Modo" value={current} onChange={m => go(`/equipos/${m}`)} options={modes.map(m => ({ id: m, label: t(MODE_LABEL, m) }))} />
     <p className="lead">{list.length} registros · {wins} victorias · {losses} derrotas{wins + losses ? ` · ${Math.round(100 * wins / (wins + losses))} % de éxito` : ''}</p>

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Lock } from 'lucide-react'
 import { useAccount } from './account'
+import { CollectionTabs } from './Collection'
 import { NeedsAccount, PageHead, SearchBox, Select } from './common'
 import { FactionIcon, GameImg, Portrait, Stars } from './Art'
 import { bonusName, CLASS_LABEL, fmtBonus, fmtInt, STAT_LABEL, t } from '../box/i18n'
@@ -16,6 +17,7 @@ export function Titans() {
   const usage = new Map<number, number>()
   for (const tm of account.box.teams) for (const l of tm.levels) for (const s of l.slots) if (s.titanId !== null) usage.set(s.titanId, (usage.get(s.titanId) ?? 0) + 1)
   return <>
+    <CollectionTabs current="titanes" />
     <PageHead kicker="Colección" title="Titanes">{titans.length} Titanes · su efecto vinculado potencia al Invoker que acompañan</PageHead>
     <div className="filters">
       <SearchBox value={q} onChange={setQ} placeholder="Buscar Titán" />

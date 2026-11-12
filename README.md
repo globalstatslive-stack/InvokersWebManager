@@ -4,7 +4,7 @@
 
 Herramienta de fans independiente para gestionar tu cuenta de **Invokers: Titan Legacy** con los retratos, Titanes y objetos reales del juego. La idea central: **elige qué quieres superar, descubre qué cambiar, cuánto cuesta y cómo afecta a tus otros equipos**. El código y el diseño son propios; no incorpora código ni recursos de GGNoLuck. Las ilustraciones se publican conforme a la política oficial de contenido de fans.
 
-## Versión 0.9: qué incluye
+## Versión 0.10: qué incluye
 
 | Sección | Qué hace |
 |---|---|
@@ -14,7 +14,7 @@ Herramienta de fans independiente para gestionar tu cuenta de **Invokers: Titan 
 | **Plan** | Cambios guardados por Invoker, sin piezas repetidas entre Invokers. Al reimportar marca qué se aplicó y separa lo **estimado** de lo **observado**. Se puede enviar como preset al portal (extensión opcional). |
 | **Optimizador** | Un Invoker: simulación de combate con sus habilidades, daño efectivo o pesos; esfuerzo (mínimo coste / equilibrio / máximo), mínimos, conjunto obligatorio y protección de equipos activos. Se calcula en un Web Worker con progreso y cancelación; si no hay solución válida lo dice. |
 | **Asesor** | Revisión de builds, qué subir y candidatas a venta que excluyen las reservadas en el plan, las útiles para tus Invokers y las escasas de su conjunto. Nunca vende nada. |
-| **Mis Titanes, Récords, Historial** | Tus Titanes, récords por modo y comparación entre importaciones. |
+| **Colección: Titanes y Equipos** | Tus Titanes y los récords por modo, como pestañas de Colección. **Historial** compara importaciones. |
 | **Enciclopedia** | Contenido del juego con datos oficiales de invokers.com, sin cuenta y, si la importas, con lo que tienes: **Invokers** y **Titanes** (estadísticas de nivel 1 y máximas, habilidades nivel a nivel, tolerancias, efectos y nota oficial en cada jefe), **Jefes** (todas las fases, corrupciones, objetivos de la guía y tier list; «Preparar este objetivo»), **Agujas** (120 pisos por elemento: enemigos, nivel, PREC, RES, recompensas), **Eventos** de caza y torneos, **Tier lists** oficiales, **Equipamiento** (principales y secundarias por ranura, notas de tirada, conjuntos y dónde conseguirlos, accesorios), **Efectos**, **Calculadoras** (precisión contra resistencia, recuperación, ticks) y un índice en español de las **guías oficiales**. |
 
 ### Enciclopedia: datos oficiales y actualización
