@@ -12,20 +12,25 @@ import type { Boss, BossStage } from './goal'
 import { toleranceKey } from './goal'
 import { ELEMENT_LABEL, STAT_LABEL, t } from './i18n'
 import { TOL_LABEL } from '../wiki/labels'
+import { skillFit, type HeroSkills, type Need, type SkillFit } from './bossNeeds'
 
-export type Weights = { official: number; power: number; element: number; tolerance: number; accuracy: number }
+export type Weights = { official: number; power: number; element: number; tolerance: number; accuracy: number; skill: number; avoid: number }
 /** Pesos por defecto: 60 % nota oficial del jefe, 40 % inversión; ±10 % por elemento; hasta −15 % sin tolerancia; −10 % sin PREC. */
-export const DEFAULT_WEIGHTS: Weights = { official: 0.6, power: 0.4, element: 0.1, tolerance: 0.15, accuracy: 0.1 }
+export const DEFAULT_WEIGHTS: Weights = { official: 0.6, power: 0.4, element: 0.1, tolerance: 0.15, accuracy: 0.1, skill: 0.05, avoid: 0.15 }
+/** Habilidades de tus Invokers frente a lo que pide el jefe. */
+export type SkillContext = { needs: Need[]; byCode: Map<string, HeroSkills> }
 
 export type Role = 'tank' | 'sustain' | 'support' | 'damage'
 export type Candidate = {
   hero: Hero; profile: Profile | null; role: Role; tier: { tier: string; score: number | null } | null
-  elementSign: number; tolCover: number; accOk: boolean | null; score: number; parts: Record<string, number>
+  elementSign: number; tolCover: number; accOk: boolean | null; score: number; parts: Record<string, number>; fit: SkillFit
 }
 export type TeamPick = Candidate & { reasons: string[]; warnings: string[]; alternatives: Candidate[]; titan: TitanPick | null }
 export type TitanPick = { titan: Titan; tier: string | null; why: string }
-export type Recommendation = { picks: TeamPick[]; gaps: string[]; pool: number; record: { heroIds: number[]; highest: number } | null; overlap: number }
-export type Options = { size?: number; needTank?: boolean; needSustain?: boolean; exclude?: Set<number>; weights?: Weights }
+export type Recommendation = { picks: TeamPick[]; gaps: string[]; pool: number; record: { heroIds: number[]; highest: number } | null; overlap: number
+  /** Necesidades del jefe: quién del equipo las cubre y, si nadie, quién de tu caja podría. */
+  needs: { need: Need; coveredBy: Hero[]; options: Hero[] }[]; bySkill: Candidate[] }
+export type Options = { size?: number; needTank?: boolean; needSustain?: boolean; exclude?: Set<number>; weights?: Weights; skills?: SkillContext }
 
 const ROLE_ES: Record<Role, string> = { tank: 'tanque', sustain: 'curación o escudos', support: 'apoyo', damage: 'daño' }
 export const roleLabel = (r: Role) => ROLE_ES[r]
@@ -51,7 +56,7 @@ export function bestCopies(heroes: Hero[]): Hero[] {
   return [...best.values()]
 }
 
-export function scoreCandidates(box: Box, boss: Boss, stage: BossStage, profiles: Map<number, Profile | null>, elements: { names: string[]; sign: number[][] }, weights: Weights = DEFAULT_WEIGHTS, exclude = new Set<number>()): Candidate[] {
+export function scoreCandidates(box: Box, boss: Boss, stage: BossStage, profiles: Map<number, Profile | null>, elements: { names: string[]; sign: number[][] }, weights: Weights = DEFAULT_WEIGHTS, exclude = new Set<number>(), skills?: SkillContext): Candidate[] {
   const heroes = bestCopies(box.heroes.filter(h => !exclude.has(h.id)))
   const maxPower = Math.max(1, ...heroes.map(h => h.power))
   return heroes.map(hero => {
@@ -67,7 +72,9 @@ export function scoreCandidates(box: Box, boss: Boss, stage: BossStage, profiles
     const fElement = 1 + weights.element * sign
     const fTol = 1 - weights.tolerance * (1 - tolCover)
     const fAcc = accOk === false ? 1 - weights.accuracy : 1
-    return { hero, profile, role: roleOf(hero, profile), tier, elementSign: sign, tolCover, accOk, score: base * fElement * fTol * fAcc, parts: { official, power, fElement, fTol, fAcc } }
+    const fit = skills ? skillFit(skills.byCode.get(hero.code), skills.needs) : { matched: [], avoided: [] }
+    const fSkill = 1 + weights.skill * Math.min(3, fit.matched.length) - (fit.avoided.length ? weights.avoid : 0)
+    return { hero, profile, role: roleOf(hero, profile), tier, elementSign: sign, tolCover, accOk, score: base * fElement * fTol * fAcc * fSkill, parts: { official, power, fElement, fTol, fAcc, fSkill }, fit }
   }).sort((a, b) => b.score - a.score)
 }
 
@@ -102,7 +109,7 @@ export function assignTitans(picks: Candidate[], titans: Titan[], titanTier: Map
 
 export function recommendTeam(box: Box, boss: Boss, stage: BossStage, profiles: Map<number, Profile | null>, elements: { names: string[]; sign: number[][] }, titanTier: Map<string, string>, opts: Options = {}): Recommendation {
   const size = opts.size ?? 5
-  const pool = scoreCandidates(box, boss, stage, profiles, elements, opts.weights ?? DEFAULT_WEIGHTS, opts.exclude)
+  const pool = scoreCandidates(box, boss, stage, profiles, elements, opts.weights ?? DEFAULT_WEIGHTS, opts.exclude, opts.skills)
   const chosen: Candidate[] = []
   const take = (c?: Candidate) => { if (c && !chosen.includes(c) && chosen.length < size) chosen.push(c) }
   if (opts.needTank ?? true) take(pool.find(c => c.role === 'tank'))
@@ -122,6 +129,8 @@ export function recommendTeam(box: Box, boss: Boss, stage: BossStage, profiles: 
     if (boss.corruptions.length && c.tolCover < 1) warnings.push(`Tolerancia al ${Math.round(100 * c.tolCover)} % del objetivo de la guía`)
     if (c.accOk === false) warnings.push(`PREC ${Math.round(c.hero.stats.accuracy ?? 0)} < ${stage.accGoal}: algunos perjuicios no entrarán`)
     if (c.accOk === true) reasons.push(`PREC ${Math.round(c.hero.stats.accuracy ?? 0)} ≥ ${stage.accGoal}`)
+    if (c.fit.matched.length) reasons.push(`Aporta: ${c.fit.matched.map(n => n.label.toLowerCase()).join(', ')}`)
+    for (const n of c.fit.avoided) warnings.push(`${n.label}: ${n.why}`)
     const alternatives = pool.filter(o => !chosen.includes(o) && o.role === c.role).slice(0, 2)
     return { ...c, reasons, warnings, alternatives, titan: titans[i] }
   })
@@ -137,9 +146,16 @@ export function recommendTeam(box: Box, boss: Boss, stage: BossStage, profiles: 
   if (lowAcc) gaps.push(`${lowAcc} con perjuicios que necesitan PREC ${stage.accGoal} y no la tienen.`)
   const lowRes = picks.filter(p => (p.hero.stats.resistance ?? 0) < stage.resGoal).length
   if (lowRes) gaps.push(`${lowRes} por debajo de RES ${stage.resGoal}: sufrirán los perjuicios del jefe.`)
+  const needs = (opts.skills?.needs ?? []).filter(n => !n.avoid).map(need => ({
+    need,
+    coveredBy: picks.filter(p => p.fit.matched.includes(need)).map(p => p.hero),
+    options: pool.filter(c => !chosen.includes(c) && c.fit.matched.includes(need)).slice(0, 3).map(c => c.hero),
+  }))
+  for (const n of needs) if (!n.coveredBy.length && n.need.id !== 'amplify') gaps.push(`Nadie aporta ${n.need.label.toLowerCase()}: ${n.need.why}${n.options.length ? ` En tu caja: ${n.options.map(h => h.name).join(', ')}.` : ' No tienes a nadie que lo aporte.'}`)
+  const bySkill = pool.filter(c => c.fit.matched.length && !c.fit.avoided.length).sort((a, b) => b.fit.matched.length - a.fit.matched.length || b.score - a.score).slice(0, 8)
   const rec = box.teams.find(t => t.mode === 'dungeon' && t.key === boss.slug)
   const recordIds = rec?.levels[0]?.slots.map(s => s.heroId) ?? []
   const pickedCodes = new Set(picks.map(p => p.hero.code))
   const recordCodes = new Set(recordIds.map(id => box.heroes.find(h => h.id === id)?.code).filter(Boolean) as string[])
-  return { picks, gaps, pool: pool.length, record: rec ? { heroIds: recordIds, highest: rec.highestLevel } : null, overlap: [...recordCodes].filter(c => pickedCodes.has(c)).length }
+  return { picks, gaps, pool: pool.length, record: rec ? { heroIds: recordIds, highest: rec.highestLevel } : null, overlap: [...recordCodes].filter(c => pickedCodes.has(c)).length, needs, bySkill }
 }

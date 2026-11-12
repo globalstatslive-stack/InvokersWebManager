@@ -23,6 +23,9 @@ describe('datos oficiales de la enciclopedia', () => {
       expect(files.size).toBe(index[kind].length)
     }
   })
+  it('los efectos de cada Invoker cuadran con los recuentos oficiales', () => {
+    for (const e of index.effects) expect(index.invokers.filter(s => s.effects.includes(e.key)).length, e.key).toBe(e.count)
+  })
   it('el catálogo base coincide con el índice (nuevos personajes incluidos)', () => {
     const chars = JSON.parse(readFileSync(new URL('../catalog/characters.json', import.meta.url), 'utf8')) as { code: string }[]
     expect(new Set(chars.map(c => c.code))).toEqual(new Set([...index.invokers, ...index.titans].map(s => s.code)))

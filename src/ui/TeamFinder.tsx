@@ -6,7 +6,8 @@ import { ELEMENT_LABEL, fmtInt, t } from '../box/i18n'
 import { loadBosses } from '../box/goal'
 import { loadKits, profileOf, skillLevels, type Profile } from '../box/combat'
 import { DEFAULT_WEIGHTS, recommendTeam, roleLabel, type TeamPick } from '../box/recommend'
-import { loadTiers, loadTools, useLoad } from '../wiki/data'
+import { loadIndex, loadTiers, loadTools, useLoad } from '../wiki/data'
+import { deriveNeeds, type HeroSkills } from '../box/bossNeeds'
 import { BOSS_CATEGORY, TOL_LABEL } from '../wiki/labels'
 import { fmtPower } from './common'
 
@@ -16,7 +17,7 @@ const read = (): { boss?: string; stage?: number } => { try { return JSON.parse(
 /** Asesor · Equipo para un jefe: tus 5 mejores Invokers y Titanes para un jefe y fase, con el porqué y lo que falta. */
 export function TeamFinder() {
   const { account, go } = useAccount()
-  const bosses = useLoad(loadBosses), kits = useLoad(loadKits), tiers = useLoad(loadTiers), tools = useLoad(loadTools)
+  const bosses = useLoad(loadBosses), kits = useLoad(loadKits), tiers = useLoad(loadTiers), tools = useLoad(loadTools), wiki = useLoad(loadIndex)
   const saved = read()
   const [bossSlug, setBossSlug] = useState(saved.boss ?? 'ulgorim')
   const [stageNum, setStageNum] = useState<number>(saved.stage ?? 0)
@@ -31,14 +32,16 @@ export function TeamFinder() {
     if (kits.data) for (const h of box.heroes) m.set(h.id, kits.data[h.code] ? profileOf(h, kits.data[h.code], skillLevels(h)) : null)
     return m
   }, [kits.data, box])
+  const byCode = useMemo(() => new Map<string, HeroSkills>((wiki.data?.invokers ?? []).map(s => [s.code, { effects: s.effects, aoe: s.aoe }])), [wiki.data])
+  const needs = useMemo(() => boss ? deriveNeeds(boss) : [], [boss])
   const result = useMemo(() => {
-    if (!boss || !stage || !tools.data || !kits.data) return null
+    if (!boss || !stage || !tools.data || !kits.data || !wiki.data) return null
     const titanTier = new Map<string, string>()
     for (const r of tiers.data?.titans.rows ?? []) for (const e of r.entries) if (e.code) titanTier.set(e.code, r.label)
-    return recommendTeam(box, boss, stage, profiles, { names: tools.data.elements, sign: tools.data.elementMatchupSign }, titanTier, { needTank, needSustain, exclude })
-  }, [box, boss, stage, profiles, tools.data, kits.data, tiers.data, needTank, needSustain, exclude])
+    return recommendTeam(box, boss, stage, profiles, { names: tools.data.elements, sign: tools.data.elementMatchupSign }, titanTier, { needTank, needSustain, exclude, skills: { needs, byCode } })
+  }, [box, boss, stage, profiles, tools.data, kits.data, tiers.data, wiki.data, needs, byCode, needTank, needSustain, exclude])
   const save = (p: { boss?: string; stage?: number }) => { try { localStorage.setItem(STORE, JSON.stringify({ boss: bossSlug, stage: stage?.stage, ...p })) } catch { /* sin almacenamiento */ } }
-  if (bosses.error || kits.error || tools.error) return <div className="state-card bad" role="alert"><AlertTriangle size={18} /> No se pudieron cargar los datos oficiales.</div>
+  if (bosses.error || kits.error || tools.error || wiki.error) return <div className="state-card bad" role="alert"><AlertTriangle size={18} /> No se pudieron cargar los datos oficiales.</div>
   if (!boss || !stage || !result) return <div className="state-card" role="status">Cargando jefes, kits y tablas oficiales…</div>
 
   const toGoal = () => {
@@ -88,6 +91,26 @@ export function TeamFinder() {
     </div>
 
     <div className="panel">
+      <h2>Qué pide {boss.name} a tus habilidades</h2>
+      <p className="muted">Deducido de las habilidades publicadas en la guía oficial y cruzado con los efectos de las habilidades de tus Invokers.</p>
+      <ul className="needs">{needs.map(n => { const c = result.needs.find(x => x.need.id === n.id)
+        return <li key={n.id} className={n.avoid ? 'avoid' : c?.coveredBy.length ? 'ok' : 'miss'}>
+          <b>{n.avoid ? <AlertTriangle size={14} aria-hidden /> : c?.coveredBy.length ? <Check size={14} aria-hidden /> : <X size={14} aria-hidden />} {n.label}</b>
+          <span className="muted">{n.why}</span>
+          {!n.avoid && <span>{c?.coveredBy.length ? <>En el equipo: {c.coveredBy.map(h => h.name).join(', ')}</> : c?.options.length ? <>Nadie del equipo. En tu caja: {c.options.map(h => h.name).join(', ')}</> : 'Nadie en tu caja lo aporta.'}</span>}
+          {n.avoid && <span>{result.picks.filter(p => p.fit.avoided.includes(n)).map(p => p.hero.name).join(', ') || 'Nadie del equipo lo usa.'}</span>}
+        </li> })}</ul>
+      {result.bySkill.length > 0 && <>
+        <h3>Tus mejores por habilidades contra {boss.name}</h3>
+        <div className="mini-roster">{result.bySkill.map(c => <button key={c.hero.id} className="mini-card" onClick={() => go(`/invoker/${c.hero.id}`)} title={c.fit.matched.map(n => n.label).join(' · ')}>
+          <span className={`portrait sm r-${c.hero.rarity.toLowerCase()}`}><GameImg path={c.hero.portrait} alt={c.hero.name} className="portrait-img" /></span>
+          {c.tier && <span className={`tier-tag t-${c.tier.tier.replace('+', 'p')}`}>{c.tier.tier}</span>}
+          <small>{c.hero.name}</small><small className="muted">{c.fit.matched.length} de {needs.filter(n => !n.avoid).length}</small>
+        </button>)}</div>
+      </>}
+    </div>
+
+    <div className="panel">
       <h2>Lo que le falta</h2>
       {result.gaps.length === 0 ? <p className="ok-line"><Check size={15} /> Cumple todos los objetivos publicados de la guía para esta fase.</p>
         : <ul className="dashes">{result.gaps.map(g => <li key={g}>{g}</li>)}</ul>}
@@ -99,7 +122,7 @@ export function TeamFinder() {
       <summary>Cómo elige Nexo</summary>
       <ul className="dashes">
         <li>Una copia por personaje (la de más poder), entre {result.pool} personajes de tu caja{exclude.size ? `, sin los ${exclude.size} descartados` : ''}.</li>
-        <li>Puntuación = {Math.round(100 * DEFAULT_WEIGHTS.official)} % nota oficial en {boss.name} + {Math.round(100 * DEFAULT_WEIGHTS.power)} % poder relativo ({fmtInt(Math.max(...box.heroes.map(h => h.power)))} = 100 %), × {1 + DEFAULT_WEIGHTS.element} con ventaja de elemento o × {1 - DEFAULT_WEIGHTS.element} con desventaja, hasta −{Math.round(100 * DEFAULT_WEIGHTS.tolerance)} % sin la tolerancia de la guía y −{Math.round(100 * DEFAULT_WEIGHTS.accuracy)} % si sus perjuicios necesitan PREC y no la tiene. Estos pesos son de Nexo, no oficiales.</li>
+        <li>Puntuación = {Math.round(100 * DEFAULT_WEIGHTS.official)} % nota oficial en {boss.name} + {Math.round(100 * DEFAULT_WEIGHTS.power)} % poder relativo ({fmtInt(Math.max(...box.heroes.map(h => h.power)))} = 100 %), × {1 + DEFAULT_WEIGHTS.element} con ventaja de elemento o × {1 - DEFAULT_WEIGHTS.element} con desventaja, hasta −{Math.round(100 * DEFAULT_WEIGHTS.tolerance)} % sin la tolerancia de la guía y −{Math.round(100 * DEFAULT_WEIGHTS.accuracy)} % si sus perjuicios necesitan PREC y no la tiene. Por habilidades: +{Math.round(100 * DEFAULT_WEIGHTS.skill)} % por cada necesidad del jefe que cubre (hasta 3) y −{Math.round(100 * DEFAULT_WEIGHTS.avoid)} % si usa un efecto contraindicado. Estos pesos son de Nexo, no oficiales.</li>
         <li>Si lo marcas, primero entra el mejor tanque y el mejor con curación o escudos; después, los de mayor puntuación.</li>
         <li>Titanes: los de mejor nota en la tier list oficial de Titanes, cada uno con el miembro que más aprovecha su bonificación vinculada.</li>
         <li>Rol: clase oficial y kit de habilidades (curación y escudos salen de las fórmulas de sus habilidades). Sin kit conocido, solo la clase.</li>

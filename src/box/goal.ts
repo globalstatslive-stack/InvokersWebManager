@@ -13,7 +13,8 @@ import type { BoxIndex } from './stats'
 import { optimize, type BuildResult, type OptimizeOptions } from './optimizer'
 
 export type BossStage = { stage: number; label: string; element: string; hp: number; atk: number; def: number; acc: number; res: number; tolerance: number; accGoal: number; resGoal: number; tolGoal: number }
-export type Boss = { slug: string; name: string; epithet: string; category: string; guide: string; portrait: string; corruptions: { key: string; kind: string }[]; tierListUrl: string | null; tier: Record<string, { tier: string; score: number | null }>; stages: BossStage[] }
+export type BossSkill = { name: string; kind: string; role: string; aoe: boolean; cd: string | null; effects: { label: string; group: string }[]; text: string }
+export type Boss = { slug: string; name: string; epithet: string; category: string; guide: string; portrait: string; corruptions: { key: string; kind: string }[]; tierListUrl: string | null; tier: Record<string, { tier: string; score: number | null }>; stages: BossStage[]; skills?: BossSkill[] }
 export type BossCatalog = { source: string; fetchedAt: string; bosses: Boss[] }
 let cache: Promise<BossCatalog> | undefined
 export const loadBosses = () => cache ??= import('../catalog/bosses.json').then(m => m.default as unknown as BossCatalog)

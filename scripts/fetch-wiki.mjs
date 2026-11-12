@@ -194,7 +194,8 @@ async function main() {
     for (const it of list.items) {
       const d = (await get(`/api/explore/${kind}/${encodeURIComponent(it.slug)}`, 'json')).item ?? fail(`${it.slug}: sin ficha`)
       const det = detail(kind, d, it)
-      index[kind].push({ ...summary(kind, it), skills: det.skills.length, aoe: det.skills.some(s => s.aoe), effects: det.effects.map(e => e.key) })
+      // Efectos y área según la lista oficial: incluye los efectos instantáneos («block:…») que las fichas no detallan.
+      index[kind].push({ ...summary(kind, it), skills: det.skills.length, aoe: (it.aoeSkillCount ?? 0) > 0 || det.skills.some(s => s.aoe), effects: it.skillEffects?.length ? it.skillEffects.map(e => e.key) : det.effects.map(e => e.key) })
       writeFileSync(new URL(`${kind}/${it.slug}.json`, tmp), JSON.stringify(det))
       allDetails.push({ kind, det })
       await sleep(80)
