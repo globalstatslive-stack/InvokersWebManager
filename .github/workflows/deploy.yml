@@ -5,6 +5,12 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # La actualización semanal de datos la llama tras confirmar en main (un push con GITHUB_TOKEN no dispara workflows).
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        required: false
 
 permissions:
   contents: write
@@ -18,6 +24,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22

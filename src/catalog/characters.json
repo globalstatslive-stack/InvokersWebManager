@@ -10,7 +10,7 @@
     "faction": "Freeborn",
     "role": "Tank",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/admiral-gladstone/",
+    "source": "https://invokers.com/invokers/freeborn/admiral-gladstone/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -26,7 +26,7 @@
     "faction": "Lightseekers",
     "role": "MeleeAttacker",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/aethis-the-sorrow/",
+    "source": "https://invokers.com/invokers/lightseekers/aethis-the-sorrow/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -42,7 +42,7 @@
     "faction": "Ironbands",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/akara-the-cleaver/",
+    "source": "https://invokers.com/invokers/ironbands/akara-the-cleaver/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -58,7 +58,7 @@
     "faction": "Cambion",
     "role": "Support",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/akrila-the-oathpainter/",
+    "source": "https://invokers.com/invokers/cambion/akrila-the-oathpainter/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -74,7 +74,7 @@
     "faction": "Magi",
     "role": "RangedAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/alasinthe/",
+    "source": "https://invokers.com/invokers/magi/alasinthe/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -90,7 +90,7 @@
     "faction": "Magi",
     "role": "RangedAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/aldous-the-atomage/",
+    "source": "https://invokers.com/invokers/magi/aldous-the-atomage/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -106,7 +106,7 @@
     "faction": "Eldrin",
     "role": "MeleeAttacker",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/almea/",
+    "source": "https://invokers.com/invokers/eldrin/almea/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -122,7 +122,7 @@
     "faction": "Magi",
     "role": "Support",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/anarose/",
+    "source": "https://invokers.com/invokers/magi/anarose/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -138,7 +138,7 @@
     "faction": "Cambion",
     "role": "MeleeAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/arami/",
+    "source": "https://invokers.com/invokers/cambion/arami/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -154,7 +154,7 @@
     "faction": "Eldrin",
     "role": "MeleeAttacker",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/ardell-the-torrent/",
+    "source": "https://invokers.com/invokers/eldrin/ardell-the-torrent/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -170,7 +170,7 @@
     "faction": "Lightseekers",
     "role": "Support",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/arissa/",
+    "source": "https://invokers.com/invokers/lightseekers/arissa/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -186,7 +186,7 @@
     "faction": "Lightseekers",
     "role": "Support",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/asprill-the-enshrined/",
+    "source": "https://invokers.com/invokers/lightseekers/asprill-the-enshrined/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -202,7 +202,7 @@
     "faction": "Beastbloods",
     "role": "MeleeAttacker",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/astri/",
+    "source": "https://invokers.com/invokers/beastbloods/astri/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/BST/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -218,7 +218,7 @@
     "faction": "Nocturna",
     "role": "Tank",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/atanna-the-convincer/",
+    "source": "https://invokers.com/invokers/nocturna/atanna-the-convincer/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -234,7 +234,7 @@
     "faction": "Nocturna",
     "role": "RangedAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/atriu/",
+    "source": "https://invokers.com/invokers/nocturna/atriu/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -250,7 +250,7 @@
     "faction": "Eldrin",
     "role": "RangedAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/aumnis/",
+    "source": "https://invokers.com/invokers/eldrin/aumnis/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -266,7 +266,7 @@
     "faction": "Freeborn",
     "role": "RangedAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/avria-the-mirage/",
+    "source": "https://invokers.com/invokers/freeborn/avria-the-mirage/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -282,7 +282,7 @@
     "faction": "Cambion",
     "role": "MeleeAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/azuma-thunderclap/",
+    "source": "https://invokers.com/invokers/cambion/azuma-thunderclap/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -298,7 +298,7 @@
     "faction": "Lightseekers",
     "role": "Tank",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/ballus-the-bull/",
+    "source": "https://invokers.com/invokers/lightseekers/ballus-the-bull/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -314,7 +314,7 @@
     "faction": "Magi",
     "role": "Tank",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/bastrel-the-kineticist/",
+    "source": "https://invokers.com/invokers/magi/bastrel-the-kineticist/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -330,7 +330,7 @@
     "faction": "Ironbands",
     "role": "Tank",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/battarok/",
+    "source": "https://invokers.com/invokers/ironbands/battarok/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -346,7 +346,7 @@
     "faction": "Nocturna",
     "role": "RangedAttacker",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/bea-the-cleaner/",
+    "source": "https://invokers.com/invokers/nocturna/bea-the-cleaner/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -362,7 +362,7 @@
     "faction": "Stonehearts",
     "role": "Tank",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/belmor/",
+    "source": "https://invokers.com/invokers/stonehearts/belmor/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -378,7 +378,7 @@
     "faction": "Magi",
     "role": "MeleeAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/benierre-the-axle/",
+    "source": "https://invokers.com/invokers/magi/benierre-the-axle/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -394,7 +394,7 @@
     "faction": "Cambion",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/benkoro-the-void-wrangler/",
+    "source": "https://invokers.com/invokers/cambion/benkoro-the-void-wrangler/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -410,7 +410,7 @@
     "faction": "Cambion",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/bonetaker-kotsuga/",
+    "source": "https://invokers.com/invokers/cambion/bonetaker-kotsuga/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -426,7 +426,7 @@
     "faction": "Freeborn",
     "role": "RangedAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/bosko/",
+    "source": "https://invokers.com/invokers/freeborn/bosko/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -442,7 +442,7 @@
     "faction": "Cambion",
     "role": "MeleeAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/bowrai/",
+    "source": "https://invokers.com/invokers/cambion/bowrai/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -458,7 +458,7 @@
     "faction": "Eldrin",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/braith/",
+    "source": "https://invokers.com/invokers/eldrin/braith/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -474,7 +474,7 @@
     "faction": "Lightseekers",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/brandis/",
+    "source": "https://invokers.com/invokers/lightseekers/brandis/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -490,7 +490,7 @@
     "faction": "Freeborn",
     "role": "MeleeAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/bruk-the-hook/",
+    "source": "https://invokers.com/invokers/freeborn/bruk-the-hook/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -506,7 +506,7 @@
     "faction": "Lightseekers",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/brunna/",
+    "source": "https://invokers.com/invokers/lightseekers/brunna/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -522,7 +522,7 @@
     "faction": "Stonehearts",
     "role": "Tank",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/bryneth-the-ram/",
+    "source": "https://invokers.com/invokers/stonehearts/bryneth-the-ram/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -538,7 +538,7 @@
     "faction": "Eldrin",
     "role": "MeleeAttacker",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/caileth-the-last-rose/",
+    "source": "https://invokers.com/invokers/eldrin/caileth-the-last-rose/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -554,7 +554,7 @@
     "faction": "Ironbands",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/calamity-kottra/",
+    "source": "https://invokers.com/invokers/ironbands/calamity-kottra/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -570,7 +570,7 @@
     "faction": "Nocturna",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/cataphrax-the-grave/",
+    "source": "https://invokers.com/invokers/nocturna/cataphrax-the-grave/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -586,7 +586,7 @@
     "faction": "Lightseekers",
     "role": "Support",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/chaddeus/",
+    "source": "https://invokers.com/invokers/lightseekers/chaddeus/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -602,7 +602,7 @@
     "faction": "Freeborn",
     "role": "Tank",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/chainbreaker-annis/",
+    "source": "https://invokers.com/invokers/freeborn/chainbreaker-annis/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -618,7 +618,7 @@
     "faction": "Magi",
     "role": "Support",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/charvaine-the-hypnomancer/",
+    "source": "https://invokers.com/invokers/magi/charvaine-the-hypnomancer/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -634,7 +634,7 @@
     "faction": "Eldrin",
     "role": "Tank",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/confar-the-burnished/",
+    "source": "https://invokers.com/invokers/eldrin/confar-the-burnished/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -650,7 +650,7 @@
     "faction": "Lightseekers",
     "role": "MeleeAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/cordus-the-tempest/",
+    "source": "https://invokers.com/invokers/lightseekers/cordus-the-tempest/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -666,7 +666,7 @@
     "faction": "Eldrin",
     "role": "RangedAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/corvith/",
+    "source": "https://invokers.com/invokers/eldrin/corvith/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -682,7 +682,7 @@
     "faction": "Eldrin",
     "role": "Support",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/crestelle-moonveil/",
+    "source": "https://invokers.com/invokers/eldrin/crestelle-moonveil/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -698,7 +698,7 @@
     "faction": "Eldrin",
     "role": "Support",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/custodian-plumia/",
+    "source": "https://invokers.com/invokers/eldrin/custodian-plumia/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -714,7 +714,7 @@
     "faction": "Lightseekers",
     "role": "MeleeAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/dannos/",
+    "source": "https://invokers.com/invokers/lightseekers/dannos/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -730,7 +730,7 @@
     "faction": "Lightseekers",
     "role": "Support",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/darkseer-lumisa/",
+    "source": "https://invokers.com/invokers/lightseekers/darkseer-lumisa/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -746,7 +746,7 @@
     "faction": "Freeborn",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/deadlash-vakia/",
+    "source": "https://invokers.com/invokers/freeborn/deadlash-vakia/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -762,7 +762,7 @@
     "faction": "Stonehearts",
     "role": "MeleeAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/deepdrill-gemm/",
+    "source": "https://invokers.com/invokers/stonehearts/deepdrill-gemm/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -778,7 +778,7 @@
     "faction": "Magi",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/devi-of-the-six/",
+    "source": "https://invokers.com/invokers/magi/devi-of-the-six/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -794,7 +794,7 @@
     "faction": "Lightseekers",
     "role": "RangedAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/dimistia/",
+    "source": "https://invokers.com/invokers/lightseekers/dimistia/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -810,7 +810,7 @@
     "faction": "Nocturna",
     "role": "MeleeAttacker",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/dinea-the-nightwire/",
+    "source": "https://invokers.com/invokers/nocturna/dinea-the-nightwire/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -826,7 +826,7 @@
     "faction": "Beastbloods",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/don-hammon/",
+    "source": "https://invokers.com/invokers/beastbloods/don-hammon/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/BST/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -842,7 +842,7 @@
     "faction": "Cambion",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/dosoji/",
+    "source": "https://invokers.com/invokers/cambion/dosoji/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -858,7 +858,7 @@
     "faction": "Ironbands",
     "role": "Support",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/droviss-the-warbeater/",
+    "source": "https://invokers.com/invokers/ironbands/droviss-the-warbeater/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -874,7 +874,7 @@
     "faction": "Cambion",
     "role": "RangedAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/duchess-kanraku/",
+    "source": "https://invokers.com/invokers/cambion/duchess-kanraku/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -890,7 +890,7 @@
     "faction": "Ironbands",
     "role": "MeleeAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/durlag-the-kingsbane/",
+    "source": "https://invokers.com/invokers/ironbands/durlag-the-kingsbane/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -906,7 +906,7 @@
     "faction": "Stonehearts",
     "role": "MeleeAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/elder-king-thalbrennar/",
+    "source": "https://invokers.com/invokers/stonehearts/elder-king-thalbrennar/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -922,7 +922,7 @@
     "faction": "Eldrin",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/elinis/",
+    "source": "https://invokers.com/invokers/eldrin/elinis/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -938,7 +938,7 @@
     "faction": "Eldrin",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/erdix/",
+    "source": "https://invokers.com/invokers/eldrin/erdix/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -954,7 +954,7 @@
     "faction": "Magi",
     "role": "Support",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/evelise-the-tactician/",
+    "source": "https://invokers.com/invokers/magi/evelise-the-tactician/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -970,7 +970,7 @@
     "faction": "Eldrin",
     "role": "RangedAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/falrae/",
+    "source": "https://invokers.com/invokers/eldrin/falrae/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -986,7 +986,7 @@
     "faction": "Magi",
     "role": "Support",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/fatefinder-dylaine/",
+    "source": "https://invokers.com/invokers/magi/fatefinder-dylaine/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -1002,7 +1002,7 @@
     "faction": "Beastbloods",
     "role": "MeleeAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/fenrich-the-reaver/",
+    "source": "https://invokers.com/invokers/beastbloods/fenrich-the-reaver/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/BST/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1018,7 +1018,7 @@
     "faction": "Stonehearts",
     "role": "Support",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/fulrik-the-animator/",
+    "source": "https://invokers.com/invokers/stonehearts/fulrik-the-animator/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -1034,7 +1034,7 @@
     "faction": "Ironbands",
     "role": "Tank",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/furnos-the-iron-wall/",
+    "source": "https://invokers.com/invokers/ironbands/furnos-the-iron-wall/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -1050,7 +1050,7 @@
     "faction": "Cambion",
     "role": "Tank",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/ganbuku-of-the-mask/",
+    "source": "https://invokers.com/invokers/cambion/ganbuku-of-the-mask/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -1066,7 +1066,7 @@
     "faction": "Stonehearts",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/garnatt/",
+    "source": "https://invokers.com/invokers/stonehearts/garnatt/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1082,7 +1082,7 @@
     "faction": "Cambion",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/gawara-the-united/",
+    "source": "https://invokers.com/invokers/cambion/gawara-the-united/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1098,7 +1098,7 @@
     "faction": "Cambion",
     "role": "Support",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/giiya-the-peddler/",
+    "source": "https://invokers.com/invokers/cambion/giiya-the-peddler/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -1114,7 +1114,7 @@
     "faction": "Cambion",
     "role": "Tank",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/gohshu-the-faceless/",
+    "source": "https://invokers.com/invokers/cambion/gohshu-the-faceless/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -1130,7 +1130,7 @@
     "faction": "Cambion",
     "role": "Tank",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/gondo-the-watchman/",
+    "source": "https://invokers.com/invokers/cambion/gondo-the-watchman/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -1146,7 +1146,7 @@
     "faction": "Stonehearts",
     "role": "Support",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/gralmund-the-guidestone/",
+    "source": "https://invokers.com/invokers/stonehearts/gralmund-the-guidestone/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -1162,7 +1162,7 @@
     "faction": "Magi",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/grandmaster-vos/",
+    "source": "https://invokers.com/invokers/magi/grandmaster-vos/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1178,7 +1178,7 @@
     "faction": "Nocturna",
     "role": "Tank",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/granus-the-adamant/",
+    "source": "https://invokers.com/invokers/nocturna/granus-the-adamant/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -1194,7 +1194,7 @@
     "faction": "Stonehearts",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/granvil/",
+    "source": "https://invokers.com/invokers/stonehearts/granvil/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1210,7 +1210,7 @@
     "faction": "Nocturna",
     "role": "RangedAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/grimnall-the-hollowed/",
+    "source": "https://invokers.com/invokers/nocturna/grimnall-the-hollowed/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -1226,7 +1226,7 @@
     "faction": "Eldrin",
     "role": "MeleeAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/grovewarden-sethisal/",
+    "source": "https://invokers.com/invokers/eldrin/grovewarden-sethisal/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1242,7 +1242,7 @@
     "faction": "Stonehearts",
     "role": "RangedAttacker",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/grunid/",
+    "source": "https://invokers.com/invokers/stonehearts/grunid/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -1258,7 +1258,7 @@
     "faction": "Ironbands",
     "role": "MeleeAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/gurgos-ironchain/",
+    "source": "https://invokers.com/invokers/ironbands/gurgos-ironchain/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1274,7 +1274,7 @@
     "faction": "Eldrin",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/gyllad/",
+    "source": "https://invokers.com/invokers/eldrin/gyllad/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1290,7 +1290,7 @@
     "faction": "Lightseekers",
     "role": "Support",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/hallea/",
+    "source": "https://invokers.com/invokers/lightseekers/hallea/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -1306,7 +1306,7 @@
     "faction": "Beastbloods",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/hara/",
+    "source": "https://invokers.com/invokers/beastbloods/hara/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/BST/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1322,7 +1322,7 @@
     "faction": "Cambion",
     "role": "MeleeAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/hasuna/",
+    "source": "https://invokers.com/invokers/cambion/hasuna/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1338,7 +1338,7 @@
     "faction": "Lightseekers",
     "role": "MeleeAttacker",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/headsman-rano/",
+    "source": "https://invokers.com/invokers/lightseekers/headsman-rano/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1354,7 +1354,7 @@
     "faction": "Ironbands",
     "role": "RangedAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/heatstroke-stila/",
+    "source": "https://invokers.com/invokers/ironbands/heatstroke-stila/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -1370,7 +1370,7 @@
     "faction": "Stonehearts",
     "role": "MeleeAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/highguard-hundrik/",
+    "source": "https://invokers.com/invokers/stonehearts/highguard-hundrik/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1386,7 +1386,7 @@
     "faction": "Beastbloods",
     "role": "RangedAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/humi/",
+    "source": "https://invokers.com/invokers/beastbloods/humi/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/BST/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -1402,7 +1402,7 @@
     "faction": "Ironbands",
     "role": "Tank",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/icehound-torann/",
+    "source": "https://invokers.com/invokers/ironbands/icehound-torann/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -1418,7 +1418,7 @@
     "faction": "Ironbands",
     "role": "RangedAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/ignar/",
+    "source": "https://invokers.com/invokers/ironbands/ignar/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -1434,7 +1434,7 @@
     "faction": "Freeborn",
     "role": "MeleeAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/incizza-inkbroth/",
+    "source": "https://invokers.com/invokers/freeborn/incizza-inkbroth/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1450,7 +1450,7 @@
     "faction": "Lightseekers",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/ironblade-darus/",
+    "source": "https://invokers.com/invokers/lightseekers/ironblade-darus/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1466,7 +1466,7 @@
     "faction": "Freeborn",
     "role": "RangedAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/ivory-the-beastseeker/",
+    "source": "https://invokers.com/invokers/freeborn/ivory-the-beastseeker/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -1482,7 +1482,7 @@
     "faction": "Cambion",
     "role": "MeleeAttacker",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/jatoe/",
+    "source": "https://invokers.com/invokers/cambion/jatoe/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1498,7 +1498,7 @@
     "faction": "Lightseekers",
     "role": "Tank",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/judicator-kalistia/",
+    "source": "https://invokers.com/invokers/lightseekers/judicator-kalistia/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -1514,7 +1514,7 @@
     "faction": "Cambion",
     "role": "Support",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/jutsubo/",
+    "source": "https://invokers.com/invokers/cambion/jutsubo/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -1530,7 +1530,7 @@
     "faction": "Cambion",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/jyuka/",
+    "source": "https://invokers.com/invokers/cambion/jyuka/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1546,7 +1546,7 @@
     "faction": "Lightseekers",
     "role": "RangedAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/kalix/",
+    "source": "https://invokers.com/invokers/lightseekers/kalix/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -1562,7 +1562,7 @@
     "faction": "Ironbands",
     "role": "Tank",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/kandra/",
+    "source": "https://invokers.com/invokers/ironbands/kandra/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -1578,7 +1578,7 @@
     "faction": "Freeborn",
     "role": "Support",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/kegbeast-tonhaka/",
+    "source": "https://invokers.com/invokers/freeborn/kegbeast-tonhaka/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -1594,7 +1594,7 @@
     "faction": "Freeborn",
     "role": "RangedAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/kera-deathkiss/",
+    "source": "https://invokers.com/invokers/freeborn/kera-deathkiss/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -1610,7 +1610,7 @@
     "faction": "Magi",
     "role": "Support",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/khrono-the-timewinder/",
+    "source": "https://invokers.com/invokers/magi/khrono-the-timewinder/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -1626,7 +1626,7 @@
     "faction": "Cambion",
     "role": "MeleeAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/kimoku/",
+    "source": "https://invokers.com/invokers/cambion/kimoku/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1642,7 +1642,7 @@
     "faction": "Nocturna",
     "role": "Tank",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/kingpin-tatsulow/",
+    "source": "https://invokers.com/invokers/nocturna/kingpin-tatsulow/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -1658,7 +1658,7 @@
     "faction": "Cambion",
     "role": "RangedAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/kinslayer-sodama/",
+    "source": "https://invokers.com/invokers/cambion/kinslayer-sodama/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -1674,7 +1674,7 @@
     "faction": "Cambion",
     "role": "RangedAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/kisanka/",
+    "source": "https://invokers.com/invokers/cambion/kisanka/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -1690,7 +1690,7 @@
     "faction": "Ironbands",
     "role": "MeleeAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/klare-the-ravager/",
+    "source": "https://invokers.com/invokers/ironbands/klare-the-ravager/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1706,7 +1706,7 @@
     "faction": "Ironbands",
     "role": "MeleeAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/klissa/",
+    "source": "https://invokers.com/invokers/ironbands/klissa/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1722,7 +1722,7 @@
     "faction": "Freeborn",
     "role": "Tank",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/kolan-deepreef/",
+    "source": "https://invokers.com/invokers/freeborn/kolan-deepreef/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -1738,7 +1738,7 @@
     "faction": "Beastbloods",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/kollodon-the-summit/",
+    "source": "https://invokers.com/invokers/beastbloods/kollodon-the-summit/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/BST/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1754,7 +1754,7 @@
     "faction": "Stonehearts",
     "role": "MeleeAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/kosmi-the-voidsmith/",
+    "source": "https://invokers.com/invokers/stonehearts/kosmi-the-voidsmith/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1770,7 +1770,7 @@
     "faction": "Freeborn",
     "role": "MeleeAttacker",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/krakenblood-stonn/",
+    "source": "https://invokers.com/invokers/freeborn/krakenblood-stonn/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1786,7 +1786,7 @@
     "faction": "Ironbands",
     "role": "Support",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/kravul-the-iron-shaman/",
+    "source": "https://invokers.com/invokers/ironbands/kravul-the-iron-shaman/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -1802,7 +1802,7 @@
     "faction": "Lightseekers",
     "role": "RangedAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/kris-the-quill/",
+    "source": "https://invokers.com/invokers/lightseekers/kris-the-quill/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -1818,7 +1818,7 @@
     "faction": "Ironbands",
     "role": "Tank",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/kryxa-the-giantfeller/",
+    "source": "https://invokers.com/invokers/ironbands/kryxa-the-giantfeller/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -1834,7 +1834,7 @@
     "faction": "Cambion",
     "role": "Tank",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/kyoze-the-testament/",
+    "source": "https://invokers.com/invokers/cambion/kyoze-the-testament/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -1850,7 +1850,7 @@
     "faction": "Magi",
     "role": "Tank",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/lazenne/",
+    "source": "https://invokers.com/invokers/magi/lazenne/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -1866,7 +1866,7 @@
     "faction": "Freeborn",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/leander-the-searazor/",
+    "source": "https://invokers.com/invokers/freeborn/leander-the-searazor/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1882,7 +1882,7 @@
     "faction": "Magi",
     "role": "MeleeAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/lektrine-the-storm-witch/",
+    "source": "https://invokers.com/invokers/magi/lektrine-the-storm-witch/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1898,7 +1898,7 @@
     "faction": "Cambion",
     "role": "Support",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/life-blossom-kamiwa/",
+    "source": "https://invokers.com/invokers/cambion/life-blossom-kamiwa/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -1914,7 +1914,7 @@
     "faction": "Lightseekers",
     "role": "MeleeAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/lightwind-iristeia/",
+    "source": "https://invokers.com/invokers/lightseekers/lightwind-iristeia/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1930,7 +1930,7 @@
     "faction": "Nocturna",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/liruna/",
+    "source": "https://invokers.com/invokers/nocturna/liruna/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1946,7 +1946,7 @@
     "faction": "Lightseekers",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/lithat/",
+    "source": "https://invokers.com/invokers/lightseekers/lithat/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1962,7 +1962,7 @@
     "faction": "Ironbands",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/little-grakka/",
+    "source": "https://invokers.com/invokers/ironbands/little-grakka/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1978,7 +1978,7 @@
     "faction": "Eldrin",
     "role": "MeleeAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/lothac/",
+    "source": "https://invokers.com/invokers/eldrin/lothac/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -1994,7 +1994,7 @@
     "faction": "Lightseekers",
     "role": "RangedAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/lucentia/",
+    "source": "https://invokers.com/invokers/lightseekers/lucentia/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -2010,7 +2010,7 @@
     "faction": "Lightseekers",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/lukos-the-exile/",
+    "source": "https://invokers.com/invokers/lightseekers/lukos-the-exile/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2026,7 +2026,7 @@
     "faction": "Beastbloods",
     "role": "MeleeAttacker",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/lusis/",
+    "source": "https://invokers.com/invokers/beastbloods/lusis/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/BST/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2042,7 +2042,7 @@
     "faction": "Eldrin",
     "role": "Support",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/luxare-the-prismatic/",
+    "source": "https://invokers.com/invokers/eldrin/luxare-the-prismatic/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -2058,7 +2058,7 @@
     "faction": "Freeborn",
     "role": "Support",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/mad-mazzen/",
+    "source": "https://invokers.com/invokers/freeborn/mad-mazzen/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -2074,7 +2074,7 @@
     "faction": "Nocturna",
     "role": "RangedAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/madalea/",
+    "source": "https://invokers.com/invokers/nocturna/madalea/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -2090,7 +2090,7 @@
     "faction": "Ironbands",
     "role": "MeleeAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/mafis/",
+    "source": "https://invokers.com/invokers/ironbands/mafis/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2106,7 +2106,7 @@
     "faction": "Ironbands",
     "role": "MeleeAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/malgar/",
+    "source": "https://invokers.com/invokers/ironbands/malgar/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2122,7 +2122,7 @@
     "faction": "Nocturna",
     "role": "RangedAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/marilla-the-black-salvo/",
+    "source": "https://invokers.com/invokers/nocturna/marilla-the-black-salvo/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -2138,7 +2138,7 @@
     "faction": "Freeborn",
     "role": "RangedAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/mawzo-the-dreadbomb/",
+    "source": "https://invokers.com/invokers/freeborn/mawzo-the-dreadbomb/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -2154,7 +2154,7 @@
     "faction": "Stonehearts",
     "role": "Support",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/meldrun-the-mixer/",
+    "source": "https://invokers.com/invokers/stonehearts/meldrun-the-mixer/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -2170,7 +2170,7 @@
     "faction": "Nocturna",
     "role": "MeleeAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/mistress-dusca/",
+    "source": "https://invokers.com/invokers/nocturna/mistress-dusca/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2186,7 +2186,7 @@
     "faction": "Cambion",
     "role": "MeleeAttacker",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/misuke/",
+    "source": "https://invokers.com/invokers/cambion/misuke/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2202,7 +2202,7 @@
     "faction": "Ironbands",
     "role": "MeleeAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/moldak/",
+    "source": "https://invokers.com/invokers/ironbands/moldak/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2218,7 +2218,7 @@
     "faction": "Nocturna",
     "role": "RangedAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/moros/",
+    "source": "https://invokers.com/invokers/nocturna/moros/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -2234,7 +2234,7 @@
     "faction": "Eldrin",
     "role": "Support",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/morriga/",
+    "source": "https://invokers.com/invokers/eldrin/morriga/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -2250,7 +2250,7 @@
     "faction": "Stonehearts",
     "role": "Support",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/mulla/",
+    "source": "https://invokers.com/invokers/stonehearts/mulla/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -2266,7 +2266,7 @@
     "faction": "Freeborn",
     "role": "MeleeAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/nautila-the-unfathomable/",
+    "source": "https://invokers.com/invokers/freeborn/nautila-the-unfathomable/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2282,7 +2282,7 @@
     "faction": "Freeborn",
     "role": "Support",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/navigator-gillum/",
+    "source": "https://invokers.com/invokers/freeborn/navigator-gillum/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -2298,7 +2298,7 @@
     "faction": "Nocturna",
     "role": "MeleeAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/netherweb-sildrea/",
+    "source": "https://invokers.com/invokers/nocturna/netherweb-sildrea/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2314,7 +2314,7 @@
     "faction": "Nocturna",
     "role": "MeleeAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/nightcap-zirdel/",
+    "source": "https://invokers.com/invokers/nocturna/nightcap-zirdel/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2330,7 +2330,7 @@
     "faction": "Nocturna",
     "role": "RangedAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/nightguard-aleksu/",
+    "source": "https://invokers.com/invokers/nocturna/nightguard-aleksu/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -2346,7 +2346,7 @@
     "faction": "Freeborn",
     "role": "MeleeAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/nioko-glassfang/",
+    "source": "https://invokers.com/invokers/freeborn/nioko-glassfang/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2362,7 +2362,7 @@
     "faction": "Nocturna",
     "role": "Support",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/nirvelle-the-soulraiser/",
+    "source": "https://invokers.com/invokers/nocturna/nirvelle-the-soulraiser/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -2378,7 +2378,7 @@
     "faction": "Nocturna",
     "role": "MeleeAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/nistoru-the-bloodbought/",
+    "source": "https://invokers.com/invokers/nocturna/nistoru-the-bloodbought/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2394,7 +2394,7 @@
     "faction": "Nocturna",
     "role": "RangedAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/noltis-of-the-dark-passage/",
+    "source": "https://invokers.com/invokers/nocturna/noltis-of-the-dark-passage/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -2410,7 +2410,7 @@
     "faction": "Eldrin",
     "role": "RangedAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/orchira/",
+    "source": "https://invokers.com/invokers/eldrin/orchira/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -2426,7 +2426,7 @@
     "faction": "Ironbands",
     "role": "MeleeAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/ortak-stormhammer/",
+    "source": "https://invokers.com/invokers/ironbands/ortak-stormhammer/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2442,7 +2442,7 @@
     "faction": "Stonehearts",
     "role": "MeleeAttacker",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/orvadal-the-lost-king/",
+    "source": "https://invokers.com/invokers/stonehearts/orvadal-the-lost-king/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2458,7 +2458,7 @@
     "faction": "Ironbands",
     "role": "RangedAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/ozmol-the-vulcanist/",
+    "source": "https://invokers.com/invokers/ironbands/ozmol-the-vulcanist/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -2474,7 +2474,7 @@
     "faction": "Beastbloods",
     "role": "Support",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/panno-the-cadence/",
+    "source": "https://invokers.com/invokers/beastbloods/panno-the-cadence/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/BST/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -2490,7 +2490,7 @@
     "faction": "Eldrin",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/paralia/",
+    "source": "https://invokers.com/invokers/eldrin/paralia/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2506,7 +2506,7 @@
     "faction": "Stonehearts",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/pit-boss-durboll/",
+    "source": "https://invokers.com/invokers/stonehearts/pit-boss-durboll/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2522,7 +2522,7 @@
     "faction": "Eldrin",
     "role": "Support",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/plaxi-the-monarch/",
+    "source": "https://invokers.com/invokers/eldrin/plaxi-the-monarch/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -2538,7 +2538,7 @@
     "faction": "Cambion",
     "role": "RangedAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/prime-force-senhachi/",
+    "source": "https://invokers.com/invokers/cambion/prime-force-senhachi/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -2554,7 +2554,7 @@
     "faction": "Eldrin",
     "role": "RangedAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/princess-kaelis/",
+    "source": "https://invokers.com/invokers/eldrin/princess-kaelis/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -2570,7 +2570,7 @@
     "faction": "Nocturna",
     "role": "RangedAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/prisella-the-bloodmoon/",
+    "source": "https://invokers.com/invokers/nocturna/prisella-the-bloodmoon/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -2586,7 +2586,7 @@
     "faction": "Magi",
     "role": "Support",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/professor-orielle/",
+    "source": "https://invokers.com/invokers/magi/professor-orielle/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -2602,7 +2602,7 @@
     "faction": "Ironbands",
     "role": "Support",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/pyla-the-fumebanner/",
+    "source": "https://invokers.com/invokers/ironbands/pyla-the-fumebanner/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -2618,7 +2618,7 @@
     "faction": "Lightseekers",
     "role": "Support",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/quinnto-the-proclaimer/",
+    "source": "https://invokers.com/invokers/lightseekers/quinnto-the-proclaimer/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -2634,7 +2634,7 @@
     "faction": "Magi",
     "role": "RangedAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/railbolt-sarienne/",
+    "source": "https://invokers.com/invokers/magi/railbolt-sarienne/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -2650,7 +2650,7 @@
     "faction": "Eldrin",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/ranath/",
+    "source": "https://invokers.com/invokers/eldrin/ranath/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2666,7 +2666,7 @@
     "faction": "Cambion",
     "role": "Support",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/ranme-the-cloudshrike/",
+    "source": "https://invokers.com/invokers/cambion/ranme-the-cloudshrike/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -2682,7 +2682,7 @@
     "faction": "Nocturna",
     "role": "Support",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/ravizia/",
+    "source": "https://invokers.com/invokers/nocturna/ravizia/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -2698,7 +2698,7 @@
     "faction": "Nocturna",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/raziel/",
+    "source": "https://invokers.com/invokers/nocturna/raziel/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2714,7 +2714,7 @@
     "faction": "Cambion",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/realm-wanderer-sakamoji/",
+    "source": "https://invokers.com/invokers/cambion/realm-wanderer-sakamoji/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2730,7 +2730,7 @@
     "faction": "Freeborn",
     "role": "MeleeAttacker",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/red-mellia/",
+    "source": "https://invokers.com/invokers/freeborn/red-mellia/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2746,7 +2746,7 @@
     "faction": "Stonehearts",
     "role": "RangedAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/redd-riot/",
+    "source": "https://invokers.com/invokers/stonehearts/redd-riot/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -2762,7 +2762,7 @@
     "faction": "Beastbloods",
     "role": "MeleeAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/rekki/",
+    "source": "https://invokers.com/invokers/beastbloods/rekki/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/BST/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2778,7 +2778,7 @@
     "faction": "Lightseekers",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/renesse/",
+    "source": "https://invokers.com/invokers/lightseekers/renesse/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2794,7 +2794,7 @@
     "faction": "Eldrin",
     "role": "Tank",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/rikharel-the-seascale/",
+    "source": "https://invokers.com/invokers/eldrin/rikharel-the-seascale/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -2810,7 +2810,7 @@
     "faction": "Stonehearts",
     "role": "RangedAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/rilven/",
+    "source": "https://invokers.com/invokers/stonehearts/rilven/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -2826,7 +2826,7 @@
     "faction": "Stonehearts",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/roddin-the-spelunker/",
+    "source": "https://invokers.com/invokers/stonehearts/roddin-the-spelunker/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2842,7 +2842,7 @@
     "faction": "Nocturna",
     "role": "MeleeAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/roxxi-gumm/",
+    "source": "https://invokers.com/invokers/nocturna/roxxi-gumm/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2858,7 +2858,7 @@
     "faction": "Stonehearts",
     "role": "RangedAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/rudgar-maulshot/",
+    "source": "https://invokers.com/invokers/stonehearts/rudgar-maulshot/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -2874,7 +2874,7 @@
     "faction": "Nocturna",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/ruesca/",
+    "source": "https://invokers.com/invokers/nocturna/ruesca/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2890,7 +2890,7 @@
     "faction": "Stonehearts",
     "role": "Support",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/rufin/",
+    "source": "https://invokers.com/invokers/stonehearts/rufin/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -2906,7 +2906,7 @@
     "faction": "Stonehearts",
     "role": "Tank",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/runeshield-brotten/",
+    "source": "https://invokers.com/invokers/stonehearts/runeshield-brotten/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -2922,7 +2922,7 @@
     "faction": "Lightseekers",
     "role": "Tank",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/ruthos-the-enthralled/",
+    "source": "https://invokers.com/invokers/lightseekers/ruthos-the-enthralled/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -2938,7 +2938,7 @@
     "faction": "Lightseekers",
     "role": "MeleeAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/rynn/",
+    "source": "https://invokers.com/invokers/lightseekers/rynn/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2954,7 +2954,7 @@
     "faction": "Freeborn",
     "role": "RangedAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/sabado/",
+    "source": "https://invokers.com/invokers/freeborn/sabado/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -2970,7 +2970,7 @@
     "faction": "Nocturna",
     "role": "MeleeAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/sabi/",
+    "source": "https://invokers.com/invokers/nocturna/sabi/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -2986,7 +2986,7 @@
     "faction": "Freeborn",
     "role": "Support",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/saducine/",
+    "source": "https://invokers.com/invokers/freeborn/saducine/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -3002,7 +3002,7 @@
     "faction": "Lightseekers",
     "role": "MeleeAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/sanctus-the-valiant/",
+    "source": "https://invokers.com/invokers/lightseekers/sanctus-the-valiant/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3018,7 +3018,7 @@
     "faction": "Freeborn",
     "role": "RangedAttacker",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/sawtooth-veyna/",
+    "source": "https://invokers.com/invokers/freeborn/sawtooth-veyna/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -3034,7 +3034,7 @@
     "faction": "Freeborn",
     "role": "Support",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/sebastin-the-dreamweaver/",
+    "source": "https://invokers.com/invokers/freeborn/sebastin-the-dreamweaver/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -3050,7 +3050,7 @@
     "faction": "Eldrin",
     "role": "RangedAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/selisa/",
+    "source": "https://invokers.com/invokers/eldrin/selisa/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -3066,7 +3066,7 @@
     "faction": "Magi",
     "role": "Support",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/setira-of-the-coven/",
+    "source": "https://invokers.com/invokers/magi/setira-of-the-coven/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -3082,7 +3082,7 @@
     "faction": "Ironbands",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/sgt-slugg/",
+    "source": "https://invokers.com/invokers/ironbands/sgt-slugg/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3098,7 +3098,7 @@
     "faction": "Lightseekers",
     "role": "MeleeAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/shadek-the-soulreaper/",
+    "source": "https://invokers.com/invokers/lightseekers/shadek-the-soulreaper/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3114,7 +3114,7 @@
     "faction": "Ironbands",
     "role": "Support",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/shalla-the-remedy/",
+    "source": "https://invokers.com/invokers/ironbands/shalla-the-remedy/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -3130,7 +3130,7 @@
     "faction": "Cambion",
     "role": "RangedAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/shibami/",
+    "source": "https://invokers.com/invokers/cambion/shibami/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -3146,7 +3146,7 @@
     "faction": "Nocturna",
     "role": "MeleeAttacker",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/shredripper-matescu/",
+    "source": "https://invokers.com/invokers/nocturna/shredripper-matescu/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3162,7 +3162,7 @@
     "faction": "Nocturna",
     "role": "MeleeAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/silanth/",
+    "source": "https://invokers.com/invokers/nocturna/silanth/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3178,7 +3178,7 @@
     "faction": "Ironbands",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/sinndra/",
+    "source": "https://invokers.com/invokers/ironbands/sinndra/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3194,7 +3194,7 @@
     "faction": "Beastbloods",
     "role": "MeleeAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/sitri/",
+    "source": "https://invokers.com/invokers/beastbloods/sitri/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/BST/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3210,7 +3210,7 @@
     "faction": "Nocturna",
     "role": "Support",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/sivuun/",
+    "source": "https://invokers.com/invokers/nocturna/sivuun/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -3226,7 +3226,7 @@
     "faction": "Nocturna",
     "role": "Tank",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/skoloss-the-tomb-baron/",
+    "source": "https://invokers.com/invokers/nocturna/skoloss-the-tomb-baron/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -3242,7 +3242,7 @@
     "faction": "Lightseekers",
     "role": "MeleeAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/skrimp/",
+    "source": "https://invokers.com/invokers/lightseekers/skrimp/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3258,7 +3258,7 @@
     "faction": "Eldrin",
     "role": "Support",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/solnor/",
+    "source": "https://invokers.com/invokers/eldrin/solnor/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -3274,7 +3274,7 @@
     "faction": "Stonehearts",
     "role": "RangedAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/specseeker-vunden/",
+    "source": "https://invokers.com/invokers/stonehearts/specseeker-vunden/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -3290,7 +3290,7 @@
     "faction": "Magi",
     "role": "MeleeAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/spellknife-remile/",
+    "source": "https://invokers.com/invokers/magi/spellknife-remile/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3306,7 +3306,7 @@
     "faction": "Lightseekers",
     "role": "MeleeAttacker",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/stade-the-shining/",
+    "source": "https://invokers.com/invokers/lightseekers/stade-the-shining/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3322,7 +3322,7 @@
     "faction": "Stonehearts",
     "role": "MeleeAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/stolkist/",
+    "source": "https://invokers.com/invokers/stonehearts/stolkist/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3338,7 +3338,7 @@
     "faction": "Magi",
     "role": "RangedAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/sunspot-ricklow/",
+    "source": "https://invokers.com/invokers/magi/sunspot-ricklow/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -3354,7 +3354,7 @@
     "faction": "Lightseekers",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/syrenna/",
+    "source": "https://invokers.com/invokers/lightseekers/syrenna/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3370,7 +3370,7 @@
     "faction": "Freeborn",
     "role": "Support",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/syzoa-shockbubble/",
+    "source": "https://invokers.com/invokers/freeborn/syzoa-shockbubble/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -3386,7 +3386,7 @@
     "faction": "Lightseekers",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/tamana/",
+    "source": "https://invokers.com/invokers/lightseekers/tamana/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3402,7 +3402,7 @@
     "faction": "Eldrin",
     "role": "RangedAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/taranis-the-bolt-regent/",
+    "source": "https://invokers.com/invokers/eldrin/taranis-the-bolt-regent/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -3418,7 +3418,7 @@
     "faction": "Freeborn",
     "role": "Support",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/tassia-the-lost/",
+    "source": "https://invokers.com/invokers/freeborn/tassia-the-lost/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -3434,7 +3434,7 @@
     "faction": "Nocturna",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/tenso-the-fixer/",
+    "source": "https://invokers.com/invokers/nocturna/tenso-the-fixer/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3450,7 +3450,7 @@
     "faction": "Lightseekers",
     "role": "Support",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/thiselle-the-highseer/",
+    "source": "https://invokers.com/invokers/lightseekers/thiselle-the-highseer/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -3466,7 +3466,7 @@
     "faction": "Eldrin",
     "role": "Support",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/thylsa-the-rootwalker/",
+    "source": "https://invokers.com/invokers/eldrin/thylsa-the-rootwalker/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -3482,7 +3482,7 @@
     "faction": "Lightseekers",
     "role": "MeleeAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/tomeseeker-clarus/",
+    "source": "https://invokers.com/invokers/lightseekers/tomeseeker-clarus/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3498,7 +3498,7 @@
     "faction": "Freeborn",
     "role": "MeleeAttacker",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/trench-horror-cezal/",
+    "source": "https://invokers.com/invokers/freeborn/trench-horror-cezal/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3514,7 +3514,7 @@
     "faction": "Ironbands",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/tuskax-the-rampage/",
+    "source": "https://invokers.com/invokers/ironbands/tuskax-the-rampage/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3530,7 +3530,7 @@
     "faction": "Eldrin",
     "role": "MeleeAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/tyxil-the-adder/",
+    "source": "https://invokers.com/invokers/eldrin/tyxil-the-adder/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3546,7 +3546,7 @@
     "faction": "Nocturna",
     "role": "Tank",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/ulsos-the-dark-star/",
+    "source": "https://invokers.com/invokers/nocturna/ulsos-the-dark-star/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -3562,7 +3562,7 @@
     "faction": "Eldrin",
     "role": "RangedAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/vaelith/",
+    "source": "https://invokers.com/invokers/eldrin/vaelith/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -3578,7 +3578,7 @@
     "faction": "Nocturna",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/vagur-the-tethered/",
+    "source": "https://invokers.com/invokers/nocturna/vagur-the-tethered/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3594,7 +3594,7 @@
     "faction": "Nocturna",
     "role": "Tank",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/valentu-the-devoted/",
+    "source": "https://invokers.com/invokers/nocturna/valentu-the-devoted/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -3610,7 +3610,7 @@
     "faction": "Nocturna",
     "role": "RangedAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/vanato-the-fiend/",
+    "source": "https://invokers.com/invokers/nocturna/vanato-the-fiend/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -3626,7 +3626,7 @@
     "faction": "Stonehearts",
     "role": "MeleeAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/vaultkeeper-stullda/",
+    "source": "https://invokers.com/invokers/stonehearts/vaultkeeper-stullda/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3642,7 +3642,7 @@
     "faction": "Lightseekers",
     "role": "MeleeAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/veilstalker-nyctra/",
+    "source": "https://invokers.com/invokers/lightseekers/veilstalker-nyctra/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3658,7 +3658,7 @@
     "faction": "Eldrin",
     "role": "RangedAttacker",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/vinris/",
+    "source": "https://invokers.com/invokers/eldrin/vinris/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -3674,7 +3674,7 @@
     "faction": "Lightseekers",
     "role": "Tank",
     "element": "Light",
-    "source": "https://www.invokers.com/invokers/virtus-the-heavensent/",
+    "source": "https://invokers.com/invokers/lightseekers/virtus-the-heavensent/",
     "elementIcon": "game/elements/light.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -3690,7 +3690,7 @@
     "faction": "Nocturna",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/volgang/",
+    "source": "https://invokers.com/invokers/nocturna/volgang/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3706,7 +3706,7 @@
     "faction": "Ironbands",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/volkam-scorchblood/",
+    "source": "https://invokers.com/invokers/ironbands/volkam-scorchblood/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3722,7 +3722,7 @@
     "faction": "Ironbands",
     "role": "MeleeAttacker",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/vorak-the-soulguard/",
+    "source": "https://invokers.com/invokers/ironbands/vorak-the-soulguard/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3738,7 +3738,7 @@
     "faction": "Eldrin",
     "role": "Tank",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/wild-king-caladras/",
+    "source": "https://invokers.com/invokers/eldrin/wild-king-caladras/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/classes/tank.webp"
@@ -3754,7 +3754,7 @@
     "faction": "Ironbands",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/willbreaker-vixara/",
+    "source": "https://invokers.com/invokers/ironbands/willbreaker-vixara/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3770,7 +3770,7 @@
     "faction": "Magi",
     "role": "RangedAttacker",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/winterpage-desmara/",
+    "source": "https://invokers.com/invokers/magi/winterpage-desmara/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -3786,7 +3786,7 @@
     "faction": "Stonehearts",
     "role": "RangedAttacker",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/wrakk-the-harvester/",
+    "source": "https://invokers.com/invokers/stonehearts/wrakk-the-harvester/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/classes/ranged_attacker.webp"
@@ -3802,7 +3802,7 @@
     "faction": "Cambion",
     "role": "Support",
     "element": "Earth",
-    "source": "https://www.invokers.com/invokers/yusasa/",
+    "source": "https://invokers.com/invokers/cambion/yusasa/",
     "elementIcon": "game/elements/earth.webp",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -3818,7 +3818,7 @@
     "faction": "Freeborn",
     "role": "MeleeAttacker",
     "element": "Fire",
-    "source": "https://www.invokers.com/invokers/zalasi-bloodthorne/",
+    "source": "https://invokers.com/invokers/freeborn/zalasi-bloodthorne/",
     "elementIcon": "game/elements/fire.webp",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/classes/melee_attacker.webp"
@@ -3834,7 +3834,7 @@
     "faction": "Ironbands",
     "role": "Support",
     "element": "Water",
-    "source": "https://www.invokers.com/invokers/zenneris/",
+    "source": "https://invokers.com/invokers/ironbands/zenneris/",
     "elementIcon": "game/elements/water.webp",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -3850,7 +3850,7 @@
     "faction": "Magi",
     "role": "Support",
     "element": "Dark",
-    "source": "https://www.invokers.com/invokers/zhine-the-spark/",
+    "source": "https://invokers.com/invokers/magi/zhine-the-spark/",
     "elementIcon": "game/elements/dark.webp",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -3866,7 +3866,7 @@
     "faction": "Lightseekers",
     "role": "Support",
     "element": "Wind",
-    "source": "https://www.invokers.com/invokers/zirthia-the-witness/",
+    "source": "https://invokers.com/invokers/lightseekers/zirthia-the-witness/",
     "elementIcon": "game/elements/wind.webp",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/classes/support.webp"
@@ -3882,7 +3882,7 @@
     "faction": "Nocturna",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/amprix/",
+    "source": "https://invokers.com/titans/nocturna/amprix/",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -3897,7 +3897,7 @@
     "faction": "Nocturna",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/araknia/",
+    "source": "https://invokers.com/titans/nocturna/araknia/",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -3912,7 +3912,7 @@
     "faction": "Ironbands",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/aratax/",
+    "source": "https://invokers.com/titans/ironbands/aratax/",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -3927,7 +3927,7 @@
     "faction": "Eldrin",
     "role": "Tank",
     "element": "",
-    "source": "https://www.invokers.com/titans/arbarion/",
+    "source": "https://invokers.com/titans/eldrin/arbarion/",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/anima_roles/tank.webp"
   },
@@ -3942,7 +3942,7 @@
     "faction": "Beastbloods",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/baggodal/",
+    "source": "https://invokers.com/titans/beastbloods/baggodal/",
     "factionIcon": "game/factions/BST/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -3957,7 +3957,7 @@
     "faction": "Stonehearts",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/bragnott/",
+    "source": "https://invokers.com/titans/stonehearts/bragnott/",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -3972,7 +3972,7 @@
     "faction": "Eldrin",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/cairnai/",
+    "source": "https://invokers.com/titans/eldrin/cairnai/",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -3987,7 +3987,7 @@
     "faction": "Freeborn",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/carchus/",
+    "source": "https://invokers.com/titans/freeborn/carchus/",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4002,7 +4002,7 @@
     "faction": "Ironbands",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/cindrake/",
+    "source": "https://invokers.com/titans/ironbands/cindrake/",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4017,7 +4017,7 @@
     "faction": "Ironbands",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/dathokal/",
+    "source": "https://invokers.com/titans/ironbands/dathokal/",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4032,7 +4032,7 @@
     "faction": "Eldrin",
     "role": "Tank",
     "element": "",
-    "source": "https://www.invokers.com/titans/eldathir/",
+    "source": "https://invokers.com/titans/eldrin/eldathir/",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/anima_roles/tank.webp"
   },
@@ -4047,7 +4047,7 @@
     "faction": "Stonehearts",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/ferrogar/",
+    "source": "https://invokers.com/titans/stonehearts/ferrogar/",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4062,7 +4062,7 @@
     "faction": "Nocturna",
     "role": "Tank",
     "element": "",
-    "source": "https://www.invokers.com/titans/gargoth/",
+    "source": "https://invokers.com/titans/nocturna/gargoth/",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/anima_roles/tank.webp"
   },
@@ -4077,7 +4077,7 @@
     "faction": "Stonehearts",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/geodoz/",
+    "source": "https://invokers.com/titans/stonehearts/geodoz/",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4092,7 +4092,7 @@
     "faction": "Ironbands",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/goros/",
+    "source": "https://invokers.com/titans/ironbands/goros/",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4107,7 +4107,7 @@
     "faction": "Eldrin",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/hain/",
+    "source": "https://invokers.com/titans/eldrin/hain/",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4122,7 +4122,7 @@
     "faction": "Cambion",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/hamaga/",
+    "source": "https://invokers.com/titans/cambion/hamaga/",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4137,7 +4137,7 @@
     "faction": "Cambion",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/honoshi/",
+    "source": "https://invokers.com/titans/cambion/honoshi/",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4152,7 +4152,7 @@
     "faction": "Eldrin",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/keltaur/",
+    "source": "https://invokers.com/titans/eldrin/keltaur/",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4167,7 +4167,7 @@
     "faction": "Ironbands",
     "role": "Tank",
     "element": "",
-    "source": "https://www.invokers.com/titans/komodyre/",
+    "source": "https://invokers.com/titans/ironbands/komodyre/",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/anima_roles/tank.webp"
   },
@@ -4182,7 +4182,7 @@
     "faction": "Magi",
     "role": "Tank",
     "element": "",
-    "source": "https://www.invokers.com/titans/kordyne/",
+    "source": "https://invokers.com/titans/magi/kordyne/",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/anima_roles/tank.webp"
   },
@@ -4197,7 +4197,7 @@
     "faction": "Cambion",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/kuramitsuga/",
+    "source": "https://invokers.com/titans/cambion/kuramitsuga/",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4212,7 +4212,7 @@
     "faction": "Dragons",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/litria/",
+    "source": "https://invokers.com/titans/dragons/litria/",
     "factionIcon": "game/factions/DRAGON/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4227,7 +4227,7 @@
     "faction": "Beastbloods",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/lortan/",
+    "source": "https://invokers.com/titans/beastbloods/lortan/",
     "factionIcon": "game/factions/BST/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4242,7 +4242,7 @@
     "faction": "Cambion",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/mekiddo/",
+    "source": "https://invokers.com/titans/cambion/mekiddo/",
     "factionIcon": "game/factions/CAM/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4257,7 +4257,7 @@
     "faction": "Stonehearts",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/minarth/",
+    "source": "https://invokers.com/titans/stonehearts/minarth/",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4272,7 +4272,7 @@
     "faction": "Freeborn",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/myrmadir/",
+    "source": "https://invokers.com/titans/freeborn/myrmadir/",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4287,7 +4287,7 @@
     "faction": "Magi",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/quadrax/",
+    "source": "https://invokers.com/titans/magi/quadrax/",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4302,7 +4302,7 @@
     "faction": "Freeborn",
     "role": "Tank",
     "element": "",
-    "source": "https://www.invokers.com/titans/quelron/",
+    "source": "https://invokers.com/titans/freeborn/quelron/",
     "factionIcon": "game/factions/FRB/small.webp",
     "roleIcon": "game/anima_roles/tank.webp"
   },
@@ -4317,7 +4317,7 @@
     "faction": "Nocturna",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/radlath/",
+    "source": "https://invokers.com/titans/nocturna/radlath/",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4332,7 +4332,7 @@
     "faction": "Lightseekers",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/reltalis/",
+    "source": "https://invokers.com/titans/lightseekers/reltalis/",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4347,7 +4347,7 @@
     "faction": "Eldrin",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/sionach/",
+    "source": "https://invokers.com/titans/eldrin/sionach/",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4362,7 +4362,7 @@
     "faction": "Stonehearts",
     "role": "Tank",
     "element": "",
-    "source": "https://www.invokers.com/titans/terravun/",
+    "source": "https://invokers.com/titans/stonehearts/terravun/",
     "factionIcon": "game/factions/STO/small.webp",
     "roleIcon": "game/anima_roles/tank.webp"
   },
@@ -4377,7 +4377,7 @@
     "faction": "Lightseekers",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/themista/",
+    "source": "https://invokers.com/titans/lightseekers/themista/",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4392,7 +4392,7 @@
     "faction": "Lightseekers",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/visciant/",
+    "source": "https://invokers.com/titans/lightseekers/visciant/",
     "factionIcon": "game/factions/LTS/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4407,7 +4407,7 @@
     "faction": "Magi",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/vollexos/",
+    "source": "https://invokers.com/titans/magi/vollexos/",
     "factionIcon": "game/factions/MAG/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4422,7 +4422,7 @@
     "faction": "Ironbands",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/vulkoz/",
+    "source": "https://invokers.com/titans/ironbands/vulkoz/",
     "factionIcon": "game/factions/IRN/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   },
@@ -4437,7 +4437,7 @@
     "faction": "Nocturna",
     "role": "Tank",
     "element": "",
-    "source": "https://www.invokers.com/titans/wolrath/",
+    "source": "https://invokers.com/titans/nocturna/wolrath/",
     "factionIcon": "game/factions/NOC/small.webp",
     "roleIcon": "game/anima_roles/tank.webp"
   },
@@ -4452,7 +4452,7 @@
     "faction": "Eldrin",
     "role": "Damage",
     "element": "",
-    "source": "https://www.invokers.com/titans/wyvold/",
+    "source": "https://invokers.com/titans/eldrin/wyvold/",
     "factionIcon": "game/factions/ELD/small.webp",
     "roleIcon": "game/anima_roles/damage.webp"
   }

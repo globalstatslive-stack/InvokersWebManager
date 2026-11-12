@@ -10,7 +10,9 @@ export function GameImg({ path, alt, className = '' }: { path?: string | null; a
   const base = account?.box.assetBase
   const [stage, setStage] = useState<{ path?: string | null; n: number }>({ path, n: 0 })
   const n = stage.path === path ? stage.n : 0
-  const remote = path?.startsWith('game/assets/') ? `https://www.invokers.com/${path.slice(5)}` : base && path ? `https://invokers.com${base}${path.replace(/^game\//, '')}` : null
+  const remote = path?.startsWith('game/assets/') ? `https://www.invokers.com/${path.slice(5)}`
+    : path?.startsWith('game/characters/') ? `https://www.invokers.com/portraits/${path.slice(5)}`
+    : base && path ? `https://invokers.com${base}${path.replace(/^game\//, '')}` : null
   if (!path || n >= 2 || (n === 1 && !remote)) return <span className={`img-missing ${className}`} role="img" aria-label={alt}>{alt.slice(0, 1)}</span>
   const src = n === 0 ? local(path) : remote!
   return <img className={className} src={src} alt={alt} loading="lazy" decoding="async" onError={() => setStage({ path, n: n + 1 })} />

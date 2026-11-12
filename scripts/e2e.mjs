@@ -29,7 +29,7 @@ try {
   assert.ok((await page.locator('.account-strip h1').innerText()).includes(name))
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'desbordamiento horizontal en el inicio')
   // 2) Navegación por las secciones principales, sin desbordamiento horizontal.
-  for (const [hash, selector] of [['#/coleccion', '.h-card'], ['#/coleccion/piezas', '.gear-list li'], ['#/titanes', '.titan-card'], ['#/equipos', '.team-card'], ['#/codice', '.hero-card'], ['#/asesor/revision', '.review-row'], ['#/objetivo', '.boss-card']]) {
+  for (const [hash, selector] of [['#/coleccion', '.h-card'], ['#/coleccion/piezas', '.gear-list li'], ['#/titanes', '.titan-card'], ['#/equipos', '.team-card'], ['#/codice', '.h-card'], ['#/asesor/revision', '.review-row'], ['#/objetivo', '.boss-card']]) {
     await page.evaluate(h => { location.hash = h }, hash)
     await page.locator(selector).first().waitFor({ timeout: 20000 })
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `desbordamiento horizontal en ${hash}`)
@@ -52,6 +52,30 @@ try {
   await page.locator('.stat-table.compare tr').first().waitFor()
   await page.getByRole('button', { name: /Añadir al plan/ }).click()
   await page.getByRole('status').getByText(/Añadido a tu plan|No se añadió/).waitFor()
+  // Enciclopedia: datos oficiales, búsqueda, ficha con habilidades por nivel, jefe → objetivo y calculadora.
+  for (const hash of ['#/wiki', '#/wiki/titanes', '#/wiki/jefes', '#/wiki/agujas/fire-spire', '#/wiki/eventos', '#/wiki/tier-list', '#/wiki/equipamiento', '#/wiki/efectos', '#/wiki/guias']) {
+    await page.evaluate(h => { location.hash = h }, hash)
+    await page.locator('h1').first().waitFor()
+    await page.waitForFunction(() => !document.querySelector('.loading, .state-card[role=status]'), null, { timeout: 20000 })
+    assert.equal(await page.locator('.state-card.bad').count(), 0, `error de datos en ${hash}`)
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `desbordamiento horizontal en ${hash}`)
+  }
+  await page.evaluate(() => { location.hash = '#/wiki/invokers' })
+  await page.getByLabel('Buscar Invoker').fill('Aethis')
+  await page.locator('.h-card').filter({ hasText: 'Aethis' }).first().click()
+  await page.getByRole('heading', { name: 'Aethis the Sorrow' }).waitFor()
+  const skill = page.locator('.skill-card').nth(1).locator('p').first()
+  const atMax = await skill.innerText()
+  await page.getByLabel('Nivel').selectOption('1')
+  assert.notEqual(await skill.innerText(), atMax, 'el texto de la habilidad no cambia con el nivel')
+  await page.evaluate(() => { location.hash = '#/wiki/jefes/ulgorim' })
+  await page.getByRole('button', { name: 'Preparar este objetivo' }).click()
+  await page.locator('.boss-card').waitFor()
+  assert.equal(await page.locator('label.select').filter({ has: page.locator('span', { hasText: /^Jefe$/ }) }).locator('select').inputValue(), 'ulgorim')
+  await page.evaluate(() => { location.hash = '#/wiki/herramientas' })
+  await page.getByLabel('Tu PREC').fill('400')
+  await page.getByLabel('RES del objetivo').fill('450')
+  await page.locator('.tool-result b').first().getByText('50 %', { exact: true }).waitFor()
   // Objetivo: jefe y fase oficiales → equipo → diagnóstico → planes → plan.
   await page.evaluate(() => { location.hash = '#/objetivo' })
   await page.locator('.boss-card').waitFor()
@@ -109,5 +133,5 @@ try {
   await received.getByRole('button', { name: 'Borrar todos los datos' }).click()
   await received.getByRole('heading', { name: 'Importar tu caja' }).waitFor()
   assert.deepEqual(errors, [])
-  console.log('E2E móvil: importar, secciones sin desbordamiento, filtros, pieza, optimizador en worker, objetivo → planes → plan, recarga, marcador (caja y preset) y borrado correctos.')
+  console.log('E2E móvil: importar, secciones sin desbordamiento, filtros, pieza, optimizador en worker, enciclopedia (ficha, jefe → objetivo, calculadora), objetivo → planes → plan, recarga, marcador (caja y preset) y borrado correctos.')
 } finally { await browser.close() }

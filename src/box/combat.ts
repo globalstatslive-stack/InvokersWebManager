@@ -7,12 +7,13 @@
  *   · enfriamiento efectivo = base / (1 + Recuperación %)
  *   · el maná ganado se multiplica por (1 + Gen. maná %)
  *   · Vel. combo y Vel. habilidad acortan las animaciones
- *   · resistir un perjuicio: RES − PREC, 1:1 hasta 50, rendimientos decrecientes hasta 120
+ *   · resistir un perjuicio: tabla oficial de la calculadora (RES − PREC → probabilidad de resistir)
  * Supuestos propios (no publicados), calibrados para un combate largo contra un jefe:
  *   duración de un golpe de combo, de una habilidad y de la definitiva, y la parte del maná
  *   del combo que da cada golpe. Están en ASSUMPTIONS y la interfaz los declara. */
 import type { Box, Hero } from './model'
 import { rating, type Stats } from './stats'
+import toolTables from '../catalog/wiki/tools.json'
 
 export type Term = [number, 'A' | 'D' | 'M']
 export type Formula = ['D' | 'T' | 'H' | 'S', Term[]]
@@ -34,13 +35,12 @@ let cache: Promise<Record<string, Kit>> | undefined
 export const loadKits = () => cache ??= import('../catalog/skills.json').then(m => m.default as unknown as Record<string, Kit>)
 
 /** Probabilidad de que un perjuicio entre, según la guía oficial de Precisión contra Resistencia. */
+/** Probabilidad de que entre un perjuicio (0–1) según la tabla oficial de la calculadora de invokers.com
+ * (probabilidad de resistir en función de RES − PREC), sin modificadores de elemento ni mejoras. */
 export function landChance(accuracy: number, resistance: number): number {
-  const d = resistance - accuracy
-  if (d <= 0) return 1
-  if (d <= 50) return 1 - d / 100
-  if (d <= 100) return 1 - (50 + (d - 50) * (89.6 - 50) / 50) / 100
-  if (d < 120) return 1 - (89.6 + (d - 100) * (100 - 89.6) / 20) / 100
-  return 0
+  const { min, max, values } = toolTables.resistChanceByDiff
+  const resist = values[Math.min(Math.max(Math.round(resistance - accuracy), min), max) - min]
+  return 1 - Math.min(Math.max(resist, 0), 100) / 100
 }
 
 export type SimSettings = { duration: number; targetRes: number }
