@@ -1,9 +1,0 @@
-
-  VITE v7.3.7  ready in 194 ms
-
-  ➜  Local:   http://127.0.0.1:5173/
-9:53:07 AM [vite] (client) hmr update /src/style.css
-9:53:07 AM [vite] (client) hmr update /src/App.tsx
-9:53:07 AM [vite] (client) hmr update /src/ui/wiki/Activities.tsx
-9:55:03 AM [vite] (client) hmr update /src/style.css
-9:55:03 AM [vite] (client) hmr update /src/App.tsx
