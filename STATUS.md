@@ -57,6 +57,11 @@
 
 - Asesor › Equipo para un jefe: tus 5 mejores Invokers y Titanes para un jefe y fase (tier list oficial del jefe, inversión, elemento, tolerancias y precisión de la guía), con el porqué de cada uno, alternativas, descartar, lo que le falta (y piezas libres de tolerancia) y paso directo a Objetivo. Pesos de Nexo a la vista; sin probabilidades de victoria.
 
+## Versión 0.12
+
+- Equipo para un jefe analiza las habilidades: de las habilidades publicadas en cada guía de jefe, Nexo deduce qué pide (reducir su curación, daño en área contra invocaciones, limpiar sus perjuicios, curación o escudos frente a corrupciones de daño, maná de definitiva, quitar sus mejoras, DEF − o Debilitar) y contraindicaciones (Sangrado contra Althar, curar contra la Garuda de Luz). Lo cruza con los efectos de tus Invokers, ajusta la recomendación, muestra quién cubre cada necesidad y tus mejores por habilidades.
+- Corregido: los efectos instantáneos («block:…», como purgar perjuicios o ganar maná) no se guardaban por Invoker; ahora salen de la lista oficial y una prueba compara con sus recuentos.
+
 ## Pendiente
 
 - Validar en el juego los supuestos de tiempos y maná (contar definitivas en 3 min).

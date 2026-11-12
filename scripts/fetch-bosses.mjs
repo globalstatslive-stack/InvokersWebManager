@@ -34,6 +34,9 @@ for (const r of first.roster) {
     slug: d.slug, name: d.name, epithet: r.epithet, category: r.badge, guide: BASE + path, portrait: r.portraitUrl,
     corruptions: (d.corruptions ?? []).map(c => ({ key: c.key, kind: c.kind })),
     tierListUrl: d.officialTierList?.href ? BASE + d.officialTierList.href : null, tier,
+    // Habilidades del jefe (datos estructurados de la guía): tipo, área, enfriamiento, efectos y su texto de juego,
+    // del que Nexo deduce qué necesita tu equipo (curación del jefe, invocaciones, inmunidades…).
+    skills: (d.skills ?? []).map(k => ({ name: k.name, kind: k.typeLabel, role: k.role, aoe: !!k.isAoe, cd: k.cooldown ?? null, effects: (k.effects ?? []).map(e => ({ label: e.label, group: e.group })), text: (k.text ?? []).join(' ') })),
     stages: (d.stages ?? []).map(s => ({ stage: s.stage, label: s.label, element: s.element, hp: s.hp, atk: s.atk, def: s.def, acc: s.accuracy, res: s.resistance, tolerance: s.tolerance, accGoal: s.accuracyGoal, resGoal: s.resistanceGoal, tolGoal: s.toleranceGoal })),
   })
   await new Promise(r => setTimeout(r, 150))
