@@ -62,6 +62,10 @@
 - Equipo para un jefe analiza las habilidades: de las habilidades publicadas en cada guía de jefe, Nexo deduce qué pide (reducir su curación, daño en área contra invocaciones, limpiar sus perjuicios, curación o escudos frente a corrupciones de daño, maná de definitiva, quitar sus mejoras, DEF − o Debilitar) y contraindicaciones (Sangrado contra Althar, curar contra la Garuda de Luz). Lo cruza con los efectos de tus Invokers, ajusta la recomendación, muestra quién cubre cada necesidad y tus mejores por habilidades.
 - Corregido: los efectos instantáneos («block:…», como purgar perjuicios o ganar maná) no se guardaban por Invoker; ahora salen de la lista oficial y una prueba compara con sus recuentos.
 
+## Versión 0.13
+
+- Asesor › Equipo para un jefe reorganizado: jefe y fase → equipo (lo esencial a la vista, «Por qué» plegado) → qué le falta (estadísticas y habilidades en un solo panel) → cambios que cubren lo que falta (quién sale, quién entra, qué ganas y cuánto cuesta en nota e inversión; «Probar este cambio» y volver) → tus mejores por habilidades, ordenados por la puntuación completa y con los de nota baja atenuados.
+
 ## Pendiente
 
 - Validar en el juego los supuestos de tiempos y maná (contar definitivas en 3 min).
