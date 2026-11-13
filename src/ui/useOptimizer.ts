@@ -7,7 +7,7 @@ import type { TeamResult, TeamVariant } from '../box/optimize.worker'
 export type OptimizerState<T> =
   | { status: 'idle' } | { status: 'running'; progress?: { done: number; total: number; label: string } }
   | { status: 'done'; result: T; ms: number } | { status: 'error'; message: string } | { status: 'cancelled' }
-type Reply = { id: number; result?: BuildResult; team?: TeamResult[]; error?: string; ms?: number; progress?: { done: number; total: number; label: string } }
+type Reply = { id: number; result?: BuildResult; team?: TeamResult[]; fills?: [number, BuildResult][]; error?: string; ms?: number; progress?: { done: number; total: number; label: string } }
 
 /** Worker del optimizador. Cada petición nueva o «Cancelar» termina el cálculo en curso (se recrea el worker),
  * así que la interfaz nunca se bloquea ni muestra un resultado obsoleto. */
@@ -57,5 +57,11 @@ export function useOptimizer(box: Box, heroId: number, opts: OptimizeOptions | n
 export function useTeamOptimizer(box: Box) {
   const { state, post, cancel } = useWorker<TeamResult[]>(box, r => r.team)
   const run = useCallback((members: TeamMember[], variants: TeamVariant[]) => post({ type: 'team', members, variants }), [post])
+  return { state, run, cancel }
+}
+/** Equipar en lote: huecos de varios Invokers por orden de prioridad, bajo demanda. */
+export function useFillOptimizer(box: Box) {
+  const { state, post, cancel } = useWorker<Map<number, BuildResult>>(box, r => new Map(r.fills ?? []))
+  const run = useCallback((members: TeamMember[]) => post({ type: 'fill', members }), [post])
   return { state, run, cancel }
 }

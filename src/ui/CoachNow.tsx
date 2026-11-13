@@ -72,8 +72,8 @@ export function useCoachActions(): { actions: CoachAction[]; ready: boolean } {
       const equip = byV('equip'), equipImp = equip.filter(imp)
       if (equip.length) out.push({ id: 'equip', icon: PackageCheck, title: `Equipa ${plural((equipImp.length ? equipImp : equip).length, 'pieza libre que ya mejora', 'piezas libres que ya mejoran')} a ${equipImp.length ? 'tus equipos' : 'tus Invokers'}`,
         why: 'Es la mejora más barata: las tienes en el inventario y ponerlas no gasta recursos de subida.',
-        learn: 'Equipar una pieza libre es gratis. Lo que cuesta oro es desequipar una pieza que ya lleva alguien. Nexo propone una pieza por Invoker y ranura: la que más le da.',
-        items: (equipImp.length ? equipImp : equip).slice(0, 3).map(a => pieceLine(a, gainText(a.best!))), cta: { label: 'Ver cuáles', to: '/asesor/piezas/equip' } })
+        learn: 'Equipar una pieza libre en un hueco es gratis. Lo que cuesta oro es desequipar una pieza que ya lleva alguien, así que conviene ponerlas solo en los Invokers que usas. Desde la lista puedes preparar un lote con todas y añadirlo al Plan.',
+        items: (equipImp.length ? equipImp : equip).slice(0, 3).map(a => pieceLine(a, gainText(a.best!))), cta: { label: 'Equipar todo de una vez', to: '/asesor/piezas/equip' } })
     }
     // Subir de estrellas al Invoker que más rinde.
     const top6 = ascend?.six[0], top5 = ascend?.five[0]

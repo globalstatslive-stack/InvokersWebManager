@@ -44,6 +44,22 @@ try {
   await page.locator('.lesson .anatomy').waitFor()
   await page.locator('.lesson .upath .node').nth(4).waitFor()
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'desbordamiento horizontal en la explicación de una pieza')
+  // Equipar en lote: prepara el lote en el worker y, si hay algo que equipar, lo añade al plan de una vez.
+  await page.evaluate(() => { location.hash = '#/asesor/piezas/equip' })
+  await page.getByRole('button', { name: /Preparar el lote/ }).click({ timeout: 20000 })
+  await page.locator('.batch-row, .batch p.muted').first().waitFor({ timeout: 60000 })
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'desbordamiento horizontal en el lote')
+  if (await page.locator('.batch-row').count()) {
+    const rows = await page.locator('.batch-row').count()
+    await page.getByRole('button', { name: /Añadir al plan/ }).click()
+    await page.locator('.batch.done').waitFor()
+    assert.match(await page.locator('.batch.done .lead').innerText(), new RegExp(`^${rows} Invoker`))
+    await page.evaluate(() => { location.hash = '#/plan' })
+    await page.locator('.plan-row').first().waitFor()
+    assert.ok(await page.locator('.plan-row').count() >= rows, 'el lote no llegó entero al plan')
+    page.once('dialog', d => d.accept())
+    await page.getByRole('button', { name: 'Vaciar plan' }).click()
+  }
   // Colección: filtros plegables con contador de filtros activos.
   await page.evaluate(() => { location.hash = '#/coleccion' })
   await page.getByRole('button', { name: /Filtros/ }).click()
@@ -151,5 +167,5 @@ try {
   await received.getByRole('button', { name: 'Borrar todos los datos' }).click()
   await received.getByRole('heading', { name: 'Importar tu caja' }).waitFor()
   assert.deepEqual(errors, [])
-  console.log('E2E móvil: importar, secciones sin desbordamiento, filtros, pieza, optimizador en worker, enciclopedia (ficha, jefe → objetivo, calculadora), objetivo → planes → plan, recarga, coach (hoy, personajes, piezas explicadas), marcador (caja, preset guardado y cargado) y borrado correctos.')
+  console.log('E2E móvil: importar, secciones sin desbordamiento, filtros, pieza, optimizador en worker, enciclopedia (ficha, jefe → objetivo, calculadora), objetivo → planes → plan, recarga, coach (hoy, personajes, piezas explicadas, equipar en lote), marcador (caja, preset guardado y cargado) y borrado correctos.')
 } finally { await browser.close() }

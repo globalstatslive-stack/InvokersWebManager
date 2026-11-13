@@ -34,6 +34,8 @@ export type OptimizeOptions = {
   reserved?: Set<string>
   /** Número de propuestas alternativas a devolver además de la mejor. */
   alternatives?: number
+  /** Solo rellena las ranuras vacías: las piezas que ya lleva se quedan donde están (sin oro de desequipar). */
+  onlyEmpty?: boolean
 }
 type Pick = { relics: Record<string, Gear | null>; accessories: Record<string, Gear | null> }
 const DAMAGE_STATS = new Set(['attack', 'criticalRate', 'criticalDamage', 'damage'])
@@ -107,8 +109,10 @@ export function optimize(index: BoxIndex, hero: Hero, opts: OptimizeOptions): Bu
   const up = (g: Gear): Gear => opts.maxLevel && g.mainAtMax ? { ...g, main: g.mainAtMax } : g
   const pieces = new Map([...index.box.relics, ...index.box.accessories].map(g => [gearKey(g), up(g)]))
   const piece = (kind: 'relic' | 'accessory', id: number | undefined) => id === undefined ? undefined : pieces.get(`${kind}${id}`)
-  const relics = index.box.relics.filter(allowed).map(g => pieces.get(gearKey(g))!)
-  const accessories = index.box.accessories.filter(g => allowed(g) && g.faction === hero.faction && hero.awakeLevel >= (index.box.accessorySlotAwake[g.slot] ?? 0)).map(g => pieces.get(gearKey(g))!)
+  // Con «solo huecos», cada ranura ocupada solo admite la pieza que ya lleva.
+  const fits = (g: Gear) => { if (!opts.onlyEmpty) return true; const own = (g.kind === 'relic' ? hero.relics : hero.accessories)[g.slot]; return own === undefined || own === g.id }
+  const relics = index.box.relics.filter(g => allowed(g) && fits(g)).map(g => pieces.get(gearKey(g))!)
+  const accessories = index.box.accessories.filter(g => allowed(g) && fits(g) && g.faction === hero.faction && hero.awakeLevel >= (index.box.accessorySlotAwake[g.slot] ?? 0)).map(g => pieces.get(gearKey(g))!)
   /** Equipo actual tal cual (referencia «antes»); con nivel máximo, las piezas candidatas se evalúan subidas. */
   const actual = index.equipped(hero)
   const minimums = Object.entries(opts.minimums ?? {}).filter(([, v]) => v > 0)

@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { Hero } from '../box/model'
 import { adviseAll, coachContext, type CoachContext, type GearAdvice, type Verdict } from '../box/gearCoach'
+import { usedHeroes } from '../box/equipBatch'
 import { useAccount, type Account } from './account'
 import { usePlan, type PlanEntry } from './plan'
 import { useActiveTeams } from './activeTeams'
@@ -9,7 +10,9 @@ import { useActiveTeams } from './activeTeams'
 export type GearCoach = { ctx: CoachContext; advice: GearAdvice[]; byKey: Map<string, GearAdvice>; counts: Record<Verdict, number> }
 const cache = new Map<string, GearCoach>()
 
-/** Candidatos: equipos activos, plan y los 25 más fuertes. Foco (subidas): equipos activos y plan. */
+/** Candidatos: los Invokers que usas (equipos activos y plan o, si no hay, los de tus equipos registrados con nivel
+ * 30 o más), para no proponer piezas a quien no juegas: una pieza puesta cuesta oro de desequipar si luego se mueve.
+ * Sin equipos registrados, los 25 más fuertes. Foco (subidas): equipos activos y plan. */
 export function coachFor(account: Account, plan: PlanEntry[], active: Set<number>): GearCoach {
   const sig = `${account.record.id}|${[...active].sort().join(',')}|${plan.map(e => `${e.heroId}:${JSON.stringify(e.target ?? e)}`).join(';')}`
   const hit = cache.get(sig)
@@ -17,8 +20,9 @@ export function coachFor(account: Account, plan: PlanEntry[], active: Set<number
   const { box, index } = account
   const planned = new Set(plan.map(e => e.heroId))
   const important = new Set([...active, ...planned])
+  const used = usedHeroes(box, important).used.map(u => u.hero)
   const top = [...box.heroes].filter(h => h.basis).sort((a, b) => b.power - a.power).slice(0, 25)
-  const candidates = [...new Map([...box.heroes.filter(h => important.has(h.id) && h.basis), ...top].map(h => [h.id, h] as [number, Hero])).values()]
+  const candidates = [...new Map([...box.heroes.filter(h => important.has(h.id) && h.basis), ...(used.length ? used : top)].map(h => [h.id, h] as [number, Hero])).values()]
   const reserved = new Map<string, string>()
   for (const e of plan) {
     for (const id of Object.values(e.target?.relics ?? e.relics)) if (id !== null) reserved.set(`relic${id}`, e.name)
@@ -46,5 +50,6 @@ export function useGearCoach(): GearCoach | null {
     const id = setTimeout(() => setState({ key, coach: coachFor(account, plan, active.heroes) }), 0)
     return () => clearTimeout(id)
   }, [key, account, plan, active.heroes])
-  return state && state.key === key ? state.coach : null
+  // Mientras se recalcula (p. ej., al cambiar el plan), se sigue mostrando el último resultado de esta misma caja.
+  return state && (state.key === key || state.coach.ctx.index === account?.index) ? state.coach : null
 }
