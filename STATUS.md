@@ -70,6 +70,18 @@
 
 - Equipo para un jefe elige por encaje con el jefe, no por el equipamiento actual: nota oficial, habilidades que pide, elemento y tolerancia innata del kit, más el desarrollo que las piezas no cambian (estrellas, nivel, despertar, habilidades). El poder actual, la tolerancia de conjuntos, la PREC y la RES pasan a «A mejorar con equipamiento», con acceso a Objetivo. Opción «Priorizar a los que ya tengo equipados» para el criterio anterior.
 
+## Versión 0.17
+
+- **Coach › Personajes: a quién subir** (`src/box/ascension.ts`): ranking de a quién subir a 6★ y a 5★, una entrada por personaje (su mejor copia).
+  - Oficial (guías «Invoker Ascension» y «Levelling Up Invokers», tablas publicadas como imagen): tope de nivel = estrellas × 10 (máximo 6★, nivel 60); ascender pide estar en el tope y entregar tantos Invokers o Ecos de esas estrellas como estrellas tiene; XP acumulada por tope (8.000, 50.000, 204.000, 646.800, 1.618.300 y 3.814.300); subir de nivel solo aumenta VIDA, ATQ y DEF; estrellas iniciales por rareza. Una prueba opcional con caja real comprueba que la XP de cada Invoker en su tope coincide con la tabla.
+  - De tu caja: estrellas, nivel, XP acumulada (se guarda `totalXp`), combates y equipos registrados de cada Invoker, despertar y piezas.
+  - Puntuación 0–100 con pesos a la vista: lo usas 45 %, tier oficial 35 % (general y tus tres mejores jefes con récord), ya invertido 10 %, listo 10 %. Cada puesto explica sus razones y avisos, lo que gana, lo que cuesta (XP que falta, material, XP del tramo nuevo) y el máximo oficial de su ficha frente a su base actual.
+  - No se estima cuánto sube cada estadística por nivel: el juego no lo publica y de la caja no sale una fórmula fiable (se comprobó).
+  - «¿Tienes con qué?»: Invokers sin usar por estrellas y cuántas ascensiones dan fusionándolos hacia arriba con la regla oficial, con la XP que habría que dar a las bases. Material prudente: sin bloquear, fuera de equipos y plan, sin piezas ni despertar, y copias repetidas o comunes, poco comunes y raros que no estén en S+, S o A+. Los Ecos y las pociones de XP no están en la caja.
+- **Coach simplificado**: pestañas Hoy · Personajes · Piezas · Jefes · Más (revisión de builds y tolerancias; las rutas antiguas siguen funcionando). «Hoy» muestra los tres frentes con datos de la caja y «Empieza por aquí»: tres pasos en lenguaje llano, cada uno con «Aprende por qué», y el resto plegado. Nuevo paso «Sube a X a 6★/5★».
+- La caja leída de la carpeta del juego usa el tope oficial (estrellas × 10) en vez de 50 fijo.
+- Pruebas: `ascension.test.ts` (tabla oficial, ranking, una entrada por personaje, equipos activos, material y fusión); e2e con las pantallas nuevas.
+
 ## Versión 0.16
 
 - El coach de piezas enseña en lugar de solo listar razones. Cada pieza (en Coach › Piezas con «Explícamelo» y en su ficha):

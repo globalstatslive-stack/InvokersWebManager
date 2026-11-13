@@ -29,7 +29,7 @@ try {
   assert.ok((await page.locator('.account-strip h1').innerText()).includes(name))
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'desbordamiento horizontal en el inicio')
   // 2) Navegación por las secciones principales, sin desbordamiento horizontal.
-  for (const [hash, selector] of [['#/coleccion', '.gcard'], ['#/coleccion/piezas', '.gear-list li'], ['#/titanes', '.titan-card'], ['#/equipos', '.team-card'], ['#/codice', '.gcard'], ['#/asesor/revision', '.review-row'], ['#/asesor', '.coach-now .action'], ['#/asesor/piezas/sell', '.verdict-card'], ['#/objetivo', '.boss-card']]) {
+  for (const [hash, selector] of [['#/coleccion', '.gcard'], ['#/coleccion/piezas', '.gear-list li'], ['#/titanes', '.titan-card'], ['#/equipos', '.team-card'], ['#/codice', '.gcard'], ['#/asesor/revision', '.review-row'], ['#/asesor', '.coach-now .action'], ['#/asesor', '.fronts .front'], ['#/asesor/invokers', '.asc-material'], ['#/asesor/mas/tolerancias', '.tol-picker'], ['#/asesor/piezas/sell', '.verdict-card'], ['#/objetivo', '.boss-card']]) {
     await page.evaluate(h => { location.hash = h }, hash)
     await page.locator(selector).first().waitFor({ timeout: 20000 })
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `desbordamiento horizontal en ${hash}`)
@@ -151,5 +151,5 @@ try {
   await received.getByRole('button', { name: 'Borrar todos los datos' }).click()
   await received.getByRole('heading', { name: 'Importar tu caja' }).waitFor()
   assert.deepEqual(errors, [])
-  console.log('E2E móvil: importar, secciones sin desbordamiento, filtros, pieza, optimizador en worker, enciclopedia (ficha, jefe → objetivo, calculadora), objetivo → planes → plan, recarga, coach de piezas explicado, marcador (caja, preset guardado y cargado) y borrado correctos.')
+  console.log('E2E móvil: importar, secciones sin desbordamiento, filtros, pieza, optimizador en worker, enciclopedia (ficha, jefe → objetivo, calculadora), objetivo → planes → plan, recarga, coach (hoy, personajes, piezas explicadas), marcador (caja, preset guardado y cargado) y borrado correctos.')
 } finally { await browser.close() }

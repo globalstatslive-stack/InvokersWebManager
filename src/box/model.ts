@@ -18,6 +18,8 @@ export type Character2 = {
 export type Hero = Character2 & {
   id: number; rank: number; level: number; maxLevel: number; awakeLevel: number; locked: boolean
   power: number; battles: number; skills: { kind: string; level: number }[]
+  /** Experiencia acumulada publicada por el portal (null si no se conoce, p. ej. con la carpeta del juego). */
+  totalXp?: number | null
   relics: Record<string, number>; accessories: Record<string, number>
   /** Estadísticas totales publicadas por el portal. */
   stats: Record<string, number>
@@ -146,6 +148,7 @@ export function parseOfficialBox(value: unknown): Box {
     return {
       ...character(r.character), id: int(r.heroId, 'heroId'), rank: num(r.rank), level: num(r.level), maxLevel: num(r.maxLevel),
       awakeLevel: num(r.awakeLevel), locked: r.locked === true, power: num(r.power), battles: num(r.battles),
+      totalXp: typeof r.totalExperience === 'number' && Number.isFinite(r.totalExperience) && r.totalExperience >= 0 ? r.totalExperience : null,
       skills: list(r.skillLevels).map(s => ({ kind: String(s.kind), level: num(s.level) })),
       relics: numbers(r.relicIdBySlot), accessories: numbers(r.accessoryIdBySlot), stats: numbers(r.stats),
       gearBonus: r.gearBonus ? numbers(r.gearBonus) : null,
@@ -232,7 +235,7 @@ export function boxFromCollection(c: Collection): Box {
   return {
     source: 'files', profile: { name: c.player?.name ?? 'Jugador', level: c.player?.level ?? 0, avatar: null, clan: null, totalPower: c.invokers.reduce((s, h) => s + (h.reportedPower ?? 0), 0) },
     heroes: c.invokers.map(h => ({
-      ...fromCatalog(characterFor(h), h.inventoryId), id: h.inventoryId, rank: h.rank, level: h.level, maxLevel: 50, awakeLevel: h.awakeLevel, locked: h.locked,
+      ...fromCatalog(characterFor(h), h.inventoryId), id: h.inventoryId, rank: h.rank, level: h.level, maxLevel: Math.min(60, Math.max(1, h.rank) * 10), awakeLevel: h.awakeLevel, locked: h.locked,
       power: h.reportedPower ?? 0, battles: 0, skills: [], relics: slots(h.relicIds, RELIC_KEYS), accessories: slots(h.accessoryIds, ACCESSORY_KEYS),
       stats: h.reportedStats ?? {}, gearBonus: null, basis: null, activeSets: [],
     })),
