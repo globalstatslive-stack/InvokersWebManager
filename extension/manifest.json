@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Nexo para Invokers",
   "short_name": "Nexo",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Envía tu caja en vivo a Nexo y guarda sus planes de equipo como presets en tu cuenta de invokers.com.",
   "icons": { "16": "icon-16.png", "48": "icon-48.png", "128": "icon-128.png" },
   "content_scripts": [

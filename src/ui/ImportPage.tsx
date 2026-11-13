@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ArrowUpRight, Bookmark, Check, ClipboardPaste, Copy, Download, FolderOpen, Loader2, Monitor, RefreshCw, Server, ShieldCheck, Smartphone, Upload } from 'lucide-react'
 import { useAccount } from './account'
+import { MarkletInstall } from './Marklet'
 
 import { sharedBoxUrl } from '../officialImport'
 import { droppedFiles, folderPreference, fromInput, readFolder, selectSnapshots, type FolderPreference, type ReadDirectory } from '../folderSync'
@@ -15,7 +16,6 @@ export const DEFAULT_PROXY = 'https://nexo-proxy.globalstatslive.workers.dev'
 export const proxyUrl = () => store.get(PROXY_KEY).trim() || DEFAULT_PROXY
 export const slugOf = (link: string) => sharedBoxUrl(link).searchParams.get('b')!
 export const apiUrl = (slug: string) => `https://invokers.com/api/lamb/${encodeURIComponent(slug)}`
-const APP = () => `${location.origin}${location.pathname}`
 
 /** Descarga la caja mediante el proxy configurado o, si el portal lo permite, directamente. */
 export async function fetchBox(link: string): Promise<File> {
@@ -28,11 +28,7 @@ export async function fetchBox(link: string): Promise<File> {
   return new File([text], `caja-${slug}.json`, { type: 'application/json' })
 }
 
-export function bookmarklet(app: string): string {
-  const origin = new URL(app).origin
-  const code = `(async()=>{const A=${JSON.stringify(app)},O=${JSON.stringify(origin)};if(!/^https:\\/\\/(www\\.)?invokers\\.com$/.test(location.origin)){alert('Nexo: usa este marcador en una página de invokers.com.');return}const m=/[#&]nexo-plan=([A-Za-z0-9_-]+)/.exec(location.hash);if(m){let p;try{const s=m[1].replace(/-/g,'+').replace(/_/g,'/');p=JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(s+'==='.slice((s.length+3)%4)),c=>c.charCodeAt(0))))}catch(e){alert('Nexo: el plan no es válido.');return}const R=['Weapon','Shield','Helmet','Pauldrons','Gauntlets','Chestplate','Belt','Boots'],C=['Amulet','Earrings','Banner','Talisman','Flasks'],ok=(o,k)=>o&&typeof o==='object'&&Object.entries(o).every(([s,v])=>k.includes(s)&&(v===null||Number.isSafeInteger(v)&&v>=0));if(!p||typeof p.name!=='string'||!Array.isArray(p.loadouts)||!p.loadouts.length||p.loadouts.length>50||!p.loadouts.every(l=>Number.isSafeInteger(l.heroId)&&ok(l.relics,R)&&ok(l.accessories,C))){alert('Nexo: el plan no es válido.');return}const n=p.loadouts.reduce((s,l)=>s+Object.keys(l.relics).length+Object.keys(l.accessories).length,0);if(!confirm('Nexo: ¿guardar «'+p.name+'» como preset? '+p.loadouts.length+' Invokers · '+n+' cambios. No se equipa nada hasta que pulses Apply en Presets.'))return;const r=await fetch('/api/box/presets',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:p.name.slice(0,60),category:'Nexo',loadouts:p.loadouts.map(l=>({heroId:l.heroId,relics:l.relics,accessories:l.accessories}))})});history.replaceState(null,'',location.pathname+location.search);if(r.status===401){alert('Nexo: inicia sesión en invokers.com y vuelve a abrir el enlace del plan.');return}if(!r.ok){const t=await r.json().catch(()=>null);alert('Nexo: el portal no aceptó el preset ('+r.status+'). '+(t&&t.message||''));return}location.reload();return}const b=new URLSearchParams(location.search).get('b');const w=window.open(A+'#/recibir','nexo');try{const r=await fetch(b?'/api/lamb/'+encodeURIComponent(b):'/api/box',{credentials:'same-origin'});if(r.status===401){w&&w.close();alert('Nexo: inicia sesión en invokers.com para enviar tu caja en vivo.');return}if(!r.ok)throw Error('HTTP '+r.status);const d=await r.text();if(!w){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([d],{type:'application/json'}));a.download='caja-invokers.json';a.click();alert('Nexo: se ha descargado caja-invokers.json. Impórtalo en Nexo.');return}let k=0;const t=setInterval(()=>{if(++k>80)clearInterval(t);w.postMessage({type:'nexo-box',json:d},O)},400);addEventListener('message',e=>{if(e.origin===O&&e.data==='nexo-ack')clearInterval(t)})}catch(e){alert('Nexo: no se pudo leer la caja. '+e.message)}})()`
-  return `javascript:${encodeURIComponent(code)}`
-}
+export { bookmarklet } from './Marklet'
 
 type Os = 'windows' | 'mac'
 const PATHS: Record<Os, string> = {
@@ -52,9 +48,6 @@ export function ImportPage({ receiving }: { receiving?: boolean }) {
   const [copied, setCopied] = useState(false), [dragging, setDragging] = useState(false)
   const [pref, setPref] = useState<FolderPreference>()
   const folderInput = useRef<HTMLInputElement>(null), jsonInput = useRef<HTMLInputElement>(null)
-  const marklet = useMemo(() => bookmarklet(APP()), [])
-  const markletRef = useRef<HTMLAnchorElement>(null)
-  useEffect(() => { markletRef.current?.setAttribute('href', marklet) }, [marklet, method, needsHelp])
   useEffect(() => { void folderPreference().then(setPref).catch(() => undefined) }, [])
   let slug = ''
   try { slug = link.trim() ? slugOf(link) : '' } catch { slug = '' }
@@ -177,14 +170,8 @@ export function ImportPage({ receiving }: { receiving?: boolean }) {
         <section className="panel method">
           <h3><Bookmark size={18} /> Marcador mágico</h3>
           <p>Se configura una vez. Úsalo en <b>tu caja de invokers.com</b> (con la sesión iniciada) para enviar tu caja <b>en vivo</b>, con el poder actual y sin pulsar «Refresh link». También funciona sobre un enlace compartido.</p>
-          <div className="row-actions">
-            <a ref={markletRef} className="btn bookmarklet" onClick={e => { e.preventDefault(); setStatus('En ordenador, arrastra este botón a la barra de marcadores. En móvil, usa «Copiar código».') }}>⚡ Nexo · Importar</a>
-            <button className="btn" onClick={() => copy(marklet, () => setStatus('Código del marcador copiado.'))}><Copy size={16} /> Copiar código</button>
-          </div>
-          <details><summary>Configurarlo en el móvil</summary><ol>
-            <li>Pulsa «Copiar código».</li><li>En Chrome, guarda cualquier página como marcador, edítalo, llámalo <b>nexo</b> y pega el código como URL.</li>
-            <li>Abre tu enlace de invokers.com, escribe <b>nexo</b> en la barra de direcciones y toca el marcador.</li>
-          </ol></details>
+          <MarkletInstall label="⚡ Nexo" onStatus={setStatus} />
+          <p className="fine">El mismo marcador guarda en invokers.com el plan que envías desde <b>Plan</b>.</p>
         </section>
       </div>
       </details>

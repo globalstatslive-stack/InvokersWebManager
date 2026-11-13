@@ -1,5 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { BookOpen, Calculator, CalendarDays, ChevronDown, Database, Download, Gem, Home, Lightbulb, LayoutGrid, ListChecks, ListOrdered, Menu, Mountain, RefreshCw, Skull, Target, Users, Wand2, X, Zap } from 'lucide-react'
+import { BookOpen, Calculator, CalendarDays, ChevronDown, Database, Download, Gem, GraduationCap, Home, LayoutGrid, ListChecks, ListOrdered, Menu, Mountain, RefreshCw, Skull, Target, Users, Wand2, X, Zap } from 'lucide-react'
 import { clearSharedFiles, listImports, prepareFiles, readSharedFiles, saveImport, type ImportRecord } from './data'
 import { AccountContext, accountFrom, type Account } from './ui/account'
 import { GameImg } from './ui/Art'
@@ -7,13 +7,14 @@ import { Dashboard } from './ui/Dashboard'
 import { Collection } from './ui/Collection'
 import { Goal } from './ui/Goal'
 import { PlanPage } from './ui/PlanPage'
-import { GearDetail } from './ui/GearDetail'
 import { HeroDetail } from './ui/HeroDetail'
 import { Titans } from './ui/Titans'
 import { Optimizer } from './ui/Optimizer'
-import { Advisor } from './ui/Advisor'
 import { Teams } from './ui/Teams'
 // La enciclopedia se carga bajo demanda: no pesa en la primera visita a la cuenta.
+// El coach (asesor, ficha de pieza) se carga al abrirlo: su cálculo y sus textos no hacen falta al arrancar.
+const Advisor = lazy(() => import('./ui/Advisor').then(m => ({ default: m.Advisor })))
+const GearDetail = lazy(() => import('./ui/GearDetail').then(m => ({ default: m.GearDetail })))
 const CharacterList = lazy(() => import('./ui/wiki/Characters').then(m => ({ default: m.CharacterList })))
 const CharacterPage = lazy(() => import('./ui/wiki/Characters').then(m => ({ default: m.CharacterPage })))
 const BossList = lazy(() => import('./ui/wiki/Bosses').then(m => ({ default: m.BossList })))
@@ -36,11 +37,11 @@ import { fmtInt } from './box/i18n'
  * la enciclopedia es un grupo plegable; importar e historial, accesos discretos al pie. */
 const NAV = [
   { path: '/', label: 'Inicio', icon: Home },
+  { path: '/asesor', label: 'Coach', icon: GraduationCap },
   { path: '/coleccion', label: 'Colección', icon: LayoutGrid },
   { path: '/objetivo', label: 'Objetivo', icon: Target },
   { path: '/plan', label: 'Plan', icon: ListChecks },
   { path: '/optimizador', label: 'Optimizador', icon: Wand2 },
-  { path: '/asesor', label: 'Asesor', icon: Lightbulb },
 ]
 const WIKI_NAV = [
   { path: '/wiki/invokers', label: 'Invokers y Titanes', icon: Users },
@@ -52,7 +53,7 @@ const WIKI_NAV = [
   { path: '/wiki/herramientas', label: 'Calculadoras', icon: Calculator },
 ]
 const WIKI_HOME = { path: '/wiki', label: 'Enciclopedia', icon: BookOpen }
-const MOBILE = ['/', '/coleccion', '/objetivo', '/wiki']
+const MOBILE = ['/', '/asesor', '/coleccion', '/wiki']
 const OFFICIAL_ORIGINS = ['https://invokers.com', 'https://www.invokers.com']
 const readRoute = () => (location.hash.replace(/^#/, '') || '/').split('?')[0]
 const stored = (k: string) => { try { return localStorage.getItem(k) ?? '' } catch { return '' } }
@@ -153,7 +154,7 @@ export default function App() {
       case 'titanes': return <Titans />
       case 'equipo': return <Collection tab="piezas" />
       case 'optimizador': return <Optimizer heroId={arg ? Number(arg) : undefined} />
-      case 'asesor': return <Advisor tab={arg} />
+      case 'asesor': return <Advisor tab={arg} arg={arg2} />
       case 'equipos': return <Teams mode={arg} />
       case 'codice': return <CharacterList kind="invokers" />
       case 'wiki': switch (arg) {
@@ -220,7 +221,7 @@ export default function App() {
         </header>
         {toast && <div className={`toast ${toast.bad ? 'bad' : ''}`} role="status"><span>{toast.text}</span><button className="icon-btn" aria-label="Cerrar" onClick={() => setToast(undefined)}><X size={16} /></button></div>}
         <main className="content">{loading ? <div className="loading">Cargando tu cuenta…</div> : <Suspense fallback={<div className="loading" role="status">Cargando…</div>}>{page}</Suspense>}</main>
-        <footer className="foot">Nexo · versión 0.14 · No afiliado a Hitzone. Tus importaciones se guardan solo en este navegador.</footer>
+        <footer className="foot">Nexo · versión 0.15 · No afiliado a Hitzone. Tus importaciones se guardan solo en este navegador.</footer>
       </div>
       <nav className="bottom-nav">{[...NAV, WIKI_HOME].filter(n => MOBILE.includes(n.path)).map(n => <a key={n.path} href={`#${n.path}`} className={active(n.path) ? 'on' : ''}><n.icon size={20} /><span>{n.label}</span></a>)}
         <button onClick={() => setMenu(true)}><Menu size={20} /><span>Más</span></button></nav>

@@ -1,70 +1,34 @@
 import { useMemo, useState } from 'react'
-import { ArrowRight, Coins } from 'lucide-react'
+import { Coins } from 'lucide-react'
 import { useAccount } from './account'
-import { Chips, GearCard, NeedsAccount, PageHead } from './common'
-import { GearIcon, Portrait, SetIcon, Stars } from './Art'
-import { fmtInt, fmtStat, SET_LABEL, SLOT_LABEL, STAT_LABEL, t, TOLERANCES, bonusName, fmtBonus } from '../box/i18n'
-import { diagnose, gearRating, sellCandidates, teamHeroIds, upgradeQueue } from '../box/advisor'
-import { whoBenefits } from '../box/usefulness'
-import { reservedBy, usePlan } from './plan'
-import { useActiveTeams } from './activeTeams'
+import { Chips, NeedsAccount, PageHead } from './common'
+import { Portrait, SetIcon, Stars } from './Art'
+import { fmtInt, fmtStat, SET_LABEL, STAT_LABEL, t, TOLERANCES } from '../box/i18n'
+import { diagnose, teamHeroIds } from '../box/advisor'
+import type { Verdict } from '../box/gearCoach'
+import { CoachNow } from './CoachNow'
+import { PiecesCoach } from './GearCoach'
 import { TeamFinder } from './TeamFinder'
 
-type Tab = 'equipo' | 'venta' | 'mejoras' | 'revision' | 'tolerancias'
-export function Advisor({ tab }: { tab?: string }) {
+type Tab = 'ahora' | 'equipo' | 'piezas' | 'revision' | 'tolerancias'
+const VERDICTS: Verdict[] = ['upgrade', 'replace', 'test', 'equip', 'keep', 'sell', 'done']
+/** Coach: qué hacer ahora, equipo para un jefe, coach de piezas, revisión de builds y tolerancias. */
+export function Advisor({ tab, arg }: { tab?: string; arg?: string }) {
   const { account, go } = useAccount()
-  const current: Tab = (['equipo', 'venta', 'mejoras', 'revision', 'tolerancias'] as Tab[]).includes(tab as Tab) ? tab as Tab : 'equipo'
+  // Rutas antiguas: «Qué vender» y «Qué subir» pasan a Piezas.
+  const legacy = tab === 'venta' ? 'sell' : tab === 'mejoras' ? 'upgrade' : undefined
+  const current: Tab = legacy ? 'piezas' : (['ahora', 'equipo', 'piezas', 'revision', 'tolerancias'] as Tab[]).includes(tab as Tab) ? tab as Tab : 'ahora'
+  const verdict = (legacy ?? (VERDICTS.includes(arg as Verdict) ? arg : undefined)) as Verdict | undefined
   if (!account) return <NeedsAccount />
   return <>
-    <PageHead kicker="Herramientas" title="Asesor">Recomendaciones calculadas con tu inventario. Nada se ejecuta en el juego.</PageHead>
-    <Chips label="Sección" value={current} onChange={v => go(`/asesor/${v}`)} options={[{ id: 'equipo', label: 'Equipo para un jefe' }, { id: 'revision', label: 'Revisión de builds' }, { id: 'mejoras', label: 'Qué subir' }, { id: 'venta', label: 'Qué vender' }, { id: 'tolerancias', label: 'Tolerancias' }]} />
+    <PageHead kicker="Tu entrenador" title="Coach">Qué hacer ahora y por qué, calculado con tu caja, las reglas oficiales del juego y tus equipos. Nada se ejecuta en el juego.</PageHead>
+    <Chips label="Sección" value={current} onChange={v => go(`/asesor/${v}`)} options={[{ id: 'ahora', label: 'Qué hacer ahora' }, { id: 'equipo', label: 'Equipo para un jefe' }, { id: 'piezas', label: 'Piezas: subir o vender' }, { id: 'revision', label: 'Revisión de builds' }, { id: 'tolerancias', label: 'Tolerancias' }]} />
+    {current === 'ahora' && <CoachNow />}
     {current === 'equipo' && <TeamFinder />}
-    {current === 'venta' && <Sell />}
-    {current === 'mejoras' && <Upgrades />}
+    {current === 'piezas' && <PiecesCoach key={verdict ?? 'upgrade'} initial={verdict} />}
     {current === 'revision' && <Review />}
     {current === 'tolerancias' && <Tolerances />}
   </>
-}
-
-function Sell() {
-  const { account } = useAccount()
-  const [limit, setLimit] = useState(40)
-  const { plan } = usePlan(account!.box)
-  const active = useActiveTeams(account!.box)
-  const list = useMemo(() => {
-    const { box, index } = account!
-    const candidates = [...new Map([...box.heroes.filter(h => active.heroes.has(h.id) || plan.some(e => e.heroId === h.id)), ...[...box.heroes].filter(h => h.basis).sort((a, b) => b.power - a.power).slice(0, 15)].map(h => [h.id, h])).values()]
-    return sellCandidates(box, {
-      reserved: reservedBy(plan, -1),
-      usefulFor: g => { if (gearRating(g) < 25) return null; const u = whoBenefits(index, g, candidates)[0]; return u ? `Mejora a ${u.hero.name} (${u.unit === 'damage' ? `+${(100 * u.gain).toFixed(1)} % daño` : `+${u.gain.toFixed(1)} pts`})` : null },
-    })
-  }, [account, plan, active.heroes])
-  return <section className="advisor">
-    <p className="lead">{list.length} piezas libres con poco valor. Se excluyen las reservadas en tu plan, las que mejoran a tus Invokers (equipos activos, plan y los 15 más fuertes) y las pocas de su conjunto en esa ranura. Nexo no vende nada: revisa los motivos y decide en el juego. El oro de desequipar no es el precio de venta, que la caja no publica.</p>
-    <div className="gear-grid">{list.slice(0, limit).map(v => <GearCard key={`${v.gear.kind}${v.gear.id}`} g={v.gear} extra={<div className="verdict">
-      {v.reasons.map(r => <span key={r} className="tag bad">{r}</span>)}{v.keep.map(r => <span key={r} className="tag good">{r}</span>)}
-    </div>} />)}</div>
-    {list.length > limit && <div className="center"><button className="btn" onClick={() => setLimit(limit + 60)}>Mostrar más</button></div>}
-  </section>
-}
-
-function Upgrades() {
-  const { account, go } = useAccount()
-  const list = useMemo(() => upgradeQueue(account!.box, account!.index), [account])
-  const [limit, setLimit] = useState(50)
-  return <section className="advisor">
-    <p className="lead">{list.length} piezas equipadas por debajo del nivel máximo, priorizadas por el poder del Invoker que las lleva. La ganancia de la principal la calcula el portal.</p>
-    <div className="table-wrap"><table className="data">
-      <thead><tr><th>Invoker</th><th>Pieza</th><th>Nivel</th><th>Principal al máximo</th></tr></thead>
-      <tbody>{list.slice(0, limit).map(u => <tr key={`${u.gear.kind}${u.gear.id}`} onClick={() => go(`/invoker/${u.hero.id}`)}>
-        <td className="name-cell"><Portrait c={u.hero} size="sm" /><span><b>{u.hero.name}</b><small>{fmtInt(u.hero.power)}</small></span></td>
-        <td className="name-cell"><GearIcon g={u.gear} size="sm" /><span>{t(SLOT_LABEL, u.gear.slot)}<small>{u.gear.set ? t(SET_LABEL, u.gear.set) : u.gear.faction}</small></span></td>
-        <td>+{u.gear.level} <ArrowRight size={13} /> +{u.gear.level + u.levels}</td>
-        <td>{u.gear.mainAtMax ? <>{bonusName(u.gear.main.stat, u.gear.main.mode)} <b className="up">{fmtBonus(u.gear.main.stat, u.gear.main.mode, u.gear.main.value)} → {fmtBonus(u.gear.mainAtMax.stat, u.gear.mainAtMax.mode, u.gear.mainAtMax.value)}</b></> : <span className="muted">—</span>}</td>
-      </tr>)}</tbody>
-    </table></div>
-    {list.length > limit && <div className="center"><button className="btn" onClick={() => setLimit(limit + 100)}>Mostrar más</button></div>}
-  </section>
 }
 
 function Review() {

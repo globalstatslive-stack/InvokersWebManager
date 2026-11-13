@@ -29,7 +29,7 @@ try {
   assert.ok((await page.locator('.account-strip h1').innerText()).includes(name))
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'desbordamiento horizontal en el inicio')
   // 2) Navegación por las secciones principales, sin desbordamiento horizontal.
-  for (const [hash, selector] of [['#/coleccion', '.gcard'], ['#/coleccion/piezas', '.gear-list li'], ['#/titanes', '.titan-card'], ['#/equipos', '.team-card'], ['#/codice', '.gcard'], ['#/asesor/revision', '.review-row'], ['#/objetivo', '.boss-card']]) {
+  for (const [hash, selector] of [['#/coleccion', '.gcard'], ['#/coleccion/piezas', '.gear-list li'], ['#/titanes', '.titan-card'], ['#/equipos', '.team-card'], ['#/codice', '.gcard'], ['#/asesor/revision', '.review-row'], ['#/asesor', '.coach-now .action'], ['#/asesor/piezas/sell', '.verdict-card'], ['#/objetivo', '.boss-card']]) {
     await page.evaluate(h => { location.hash = h }, hash)
     await page.locator(selector).first().waitFor({ timeout: 20000 })
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `desbordamiento horizontal en ${hash}`)
@@ -111,21 +111,29 @@ try {
   await portal.evaluate(code)
   const received = await popup
   await received.locator('.account-strip').waitFor({ timeout: 20000 })
-  // 5b) El marcador guarda el plan como preset en el portal (API simulada), tras confirmar.
+  // 5b) El marcador guarda el plan como preset en el portal (API y optimizador simulados), tras confirmar,
+  // abre la pestaña Presets y pulsa «Load» en ese preset, sin recargar.
   let presetBody
-  await context.route('https://invokers.com/api/box/presets', r => { presetBody = JSON.parse(r.request().postData()); return r.fulfill({ status: 201, contentType: 'application/json', body: '{"id":"p1"}' }) })
+  await context.route('https://invokers.com/api/box/presets', r => {
+    if (r.request().method() === 'POST') { presetBody = JSON.parse(r.request().postData()); return r.fulfill({ status: 201, contentType: 'application/json', body: '{"id":"p1"}' }) }
+    return r.fulfill({ contentType: 'application/json', body: JSON.stringify({ limit: 50, presets: presetBody ? [{ id: 'p0', name: 'Otro', category: 'Nexo' }, { id: 'p1', name: presetBody.name, category: 'Nexo' }] : [] }) })
+  })
+  await context.route('https://invokers.com/hub/optimizer/**', r => r.fulfill({ contentType: 'text/html', body: `<div role="tablist"><button role="tab">Invokers</button><button role="tab" id="pt">Presets</button></div><ul id="list"></ul>
+    <script>document.getElementById('pt').onclick = async () => { const d = await (await fetch('/api/box/presets')).json(); document.getElementById('list').innerHTML = d.presets.map(p => '<li class="opt-preset"><h4>' + p.name + '</h4><button>Load</button><button>Apply</button></li>').join(''); document.querySelectorAll('.opt-preset').forEach(li => li.querySelector('button').onclick = () => { window.loaded = li.querySelector('h4').textContent }) }</script>` }))
   const planPage = await context.newPage()
   const dialogs = []
   planPage.on('dialog', d => { dialogs.push(d.type()); d.accept() })
   await planPage.goto(planHref)
   await planPage.evaluate(code)
-  await planPage.waitForTimeout(500)
+  await planPage.waitForFunction(() => window.loaded, null, { timeout: 15000 })
   assert.ok(presetBody, 'el marcador no envió el preset')
   assert.equal(presetBody.category, 'Nexo')
   assert.ok(presetBody.loadouts.length >= 1 && presetBody.loadouts.every(l => Number.isInteger(l.heroId)))
   assert.ok(presetBody.loadouts.some(l => Object.keys(l.relics).length > 0))
+  assert.equal(await planPage.evaluate(() => window.loaded), presetBody.name, 'el marcador no cargó el preset guardado')
   assert.deepEqual(dialogs, ['confirm'])
   assert.ok(!(await planPage.evaluate(() => location.hash)).includes('nexo-plan'))
+  await planPage.getByRole('status').getByText(/guardado y cargado/).waitFor()
   await received.evaluate(() => { location.hash = '#/datos' })
   assert.ok(await received.locator('.records li').count() >= 2, 'el marcador no guardó una segunda importación')
   // 6) Borrado.
@@ -133,5 +141,5 @@ try {
   await received.getByRole('button', { name: 'Borrar todos los datos' }).click()
   await received.getByRole('heading', { name: 'Importar tu caja' }).waitFor()
   assert.deepEqual(errors, [])
-  console.log('E2E móvil: importar, secciones sin desbordamiento, filtros, pieza, optimizador en worker, enciclopedia (ficha, jefe → objetivo, calculadora), objetivo → planes → plan, recarga, marcador (caja y preset) y borrado correctos.')
+  console.log('E2E móvil: importar, secciones sin desbordamiento, filtros, pieza, optimizador en worker, enciclopedia (ficha, jefe → objetivo, calculadora), objetivo → planes → plan, recarga, marcador (caja, preset guardado y cargado) y borrado correctos.')
 } finally { await browser.close() }
