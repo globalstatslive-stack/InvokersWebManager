@@ -1361,3 +1361,24 @@ details.panel > summary { cursor: pointer; font-family: var(--display); font-wei
 .game-steps.compact { gap: 10px; margin: 6px 0 14px; }
 .game-steps.compact > li > div { font-size: 14px; color: var(--text-2); padding-top: 6px; }
 .game-steps.compact > li > div > b { display: inline; font-size: 14px; margin: 0; }
+
+/* ===== v0.19: plan en tandas de 5 ===== */
+.tanda-name { margin: 10px 0 6px; max-width: 420px; }
+.tanda-name input { width: 100%; background: var(--bg-2); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; color: var(--text); min-height: 40px; font-size: 14px; text-transform: none; letter-spacing: 0; }
+.tandas { list-style: none; padding: 0; margin: 10px 0 6px; display: flex; flex-direction: column; gap: 8px; }
+.tanda { border: 1px solid var(--line); border-radius: 12px; background: var(--bg-2); padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.tanda.next { border-color: var(--gold-dim); box-shadow: 0 0 0 1px #e2bd6b22; }
+.tanda.sent { opacity: .75; }
+.tanda-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.tanda-head small { color: var(--muted); margin-left: auto; }
+.tanda-heroes { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.tanda-heroes li { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 3px; border-radius: 99px; background: #ffffff08; border: 1px solid var(--line); font-size: 13px; }
+.tanda-heroes .plan-portrait { width: 26px; height: 26px; border-radius: 50%; }
+.tanda .btn { align-self: flex-start; }
+.tanda .btn.disabled { opacity: .5; pointer-events: none; }
+.tanda-ok { display: flex; align-items: center; gap: 6px; margin: 0; color: #b6f0cf; font-size: 12.5px; }
+.tanda-issues { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+.tanda-issues li { padding: 6px 9px; border-radius: 8px; }
+.tanda-issues li svg { vertical-align: -2px; }
+.tanda-issues .warn { background: #33240f; color: #ffd9a1; }
+.tanda-issues .error { background: #3a1820; color: #ffc0c8; }
