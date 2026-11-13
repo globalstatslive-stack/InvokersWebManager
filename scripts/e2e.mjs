@@ -57,6 +57,12 @@ try {
     await page.evaluate(() => { location.hash = '#/plan' })
     await page.locator('.plan-row').first().waitFor()
     assert.ok(await page.locator('.plan-row').count() >= rows, 'el lote no llegó entero al plan')
+    // Más de 5 Invokers: tandas de 5 (límite del optimizador oficial), cada una con su enlace.
+    const total = await page.locator('.plan-row').count()
+    if (total > 5) {
+      assert.equal(await page.locator('.tanda').count(), Math.ceil(total / 5))
+      assert.match(await page.locator('.tanda').first().getByRole('link', { name: /Enviar tanda 1/ }).getAttribute('href'), /\?heroes=(\d+,){4}\d+&from=Nexo#nexo-plan=/)
+    }
     page.once('dialog', d => d.accept())
     await page.getByRole('button', { name: 'Vaciar plan' }).click()
   }

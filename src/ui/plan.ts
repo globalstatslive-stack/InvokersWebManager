@@ -1,8 +1,9 @@
 /** Plan de cambios para varios Invokers: se guarda en este navegador y se envía al portal como preset. */
 import { useCallback, useEffect, useState } from 'react'
-import type { Box, Hero } from '../box/model'
+import type { Box, Gear, Hero } from '../box/model'
+import type { BoxIndex } from '../box/stats'
 import type { BuildResult } from '../box/optimizer'
-import { ACCESSORY_SLOTS, RELIC_SLOTS } from '../box/i18n'
+import { ACCESSORY_SLOTS, fmtInt, RELIC_SLOTS, SLOT_LABEL, t } from '../box/i18n'
 
 export type PlanEntry = {
   heroId: number; name: string; portrait: string; rarity: string
@@ -60,6 +61,63 @@ const b64url = (text: string) => btoa(String.fromCharCode(...new TextEncoder().e
 /** Optimizador oficial: acepta `?heroes=1,2&from=` para abrirse con esos Invokers cargados.
  * El fragmento `#nexo-plan=` lo lee el marcador de Nexo para guardar el preset con la sesión del jugador. */
 export const PORTAL_OPTIMIZER = 'https://invokers.com/hub/optimizer/'
+/** El optimizador oficial trabaja con 5 Invokers a la vez. */
+export const PORTAL_TEAM = 5
+
+/** Tandas de 5 con las entradas pendientes, en el orden del plan (prioridad). Como el plan nunca asigna una pieza a
+ * dos Invokers (`planConflicts`), las tandas no comparten piezas y el resultado final no depende del orden. */
+export function tandasOf(pending: PlanEntry[], size = PORTAL_TEAM): PlanEntry[][] {
+  const out: PlanEntry[][] = []
+  for (let i = 0; i < pending.length; i += size) out.push(pending.slice(i, i + size))
+  return out
+}
+/** Piezas de la entrada (destino completo y cambios). */
+const entryPieces = (e: PlanEntry): { kind: 'relic' | 'accessory'; slot: string; id: number }[] => [
+  ...Object.entries(e.target?.relics ?? e.relics).filter(([, id]) => id !== null).map(([slot, id]) => ({ kind: 'relic' as const, slot, id: id! })),
+  ...Object.entries(e.target?.accessories ?? e.accessories).filter(([, id]) => id !== null).map(([slot, id]) => ({ kind: 'accessory' as const, slot, id: id! })),
+]
+/** Piezas que aparecen en dos entradas a la vez (no debería pasar nunca). */
+export function sharedPieces(entries: PlanEntry[]): string[] {
+  const seen = new Map<string, string>(), out: string[] = []
+  for (const e of entries) for (const p of entryPieces(e)) {
+    const k = `${p.kind}${p.id}`
+    if (seen.has(k) && seen.get(k) !== e.name) out.push(`${t(SLOT_LABEL, p.slot)} de ${e.name} y ${seen.get(k)}`)
+    seen.set(k, e.name)
+  }
+  return out
+}
+export type EntryIssue = { severity: 'error' | 'warn'; text: string }
+/** Comprueba una entrada contra la caja importada ahora: piezas que ya no existen (vendidas o trituradas) y piezas que
+ * ahora lleva un Invoker que no está en el plan (al aplicar se le quitarán, con su oro de desequipar). */
+export function checkEntry(e: PlanEntry, index: BoxIndex, planned: Set<number>): EntryIssue[] {
+  const out: EntryIssue[] = []
+  for (const [kind, map] of [['relic', e.relics], ['accessory', e.accessories]] as const) for (const [slot, id] of Object.entries(map)) {
+    if (id === null) continue
+    const g: Gear | undefined = kind === 'relic' ? index.relic(id) : index.accessory(id)
+    if (!g) { out.push({ severity: 'error', text: `${t(SLOT_LABEL, slot)}: la pieza ya no está en tu caja (¿vendida o triturada?). Vuelve a calcular a ${e.name}.` }); continue }
+    if (g.equippedHeroId !== null && g.equippedHeroId !== e.heroId && !planned.has(g.equippedHeroId)) {
+      const owner = index.heroes.get(g.equippedHeroId)
+      out.push({ severity: 'warn', text: `${t(SLOT_LABEL, slot)}: ahora la lleva ${owner?.name ?? 'otro Invoker'}; al aplicar se la quitarás (${fmtInt(g.unequipGold)} de oro).` })
+    }
+  }
+  return out
+}
+/** Qué tandas se han enviado ya: id de Invoker → momento del envío (en este navegador). */
+const sentKey = (box: Box) => `nexo.plan.sent.${box.profile.name}`
+export function useSentTandas(box: Box | undefined) {
+  const key = box ? sentKey(box) : ''
+  const read = (): Record<string, string> => { try { const v = JSON.parse(localStorage.getItem(key) ?? '{}'); return v && typeof v === 'object' ? v : {} } catch { return {} } }
+  const [sent, setSent] = useState<Record<string, string>>(() => key ? read() : {})
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { setSent(key ? read() : {}) }, [key])
+  const mark = useCallback((ids: number[]) => {
+    const next = { ...sent, ...Object.fromEntries(ids.map(id => [id, new Date().toISOString()])) }
+    setSent(next); try { localStorage.setItem(key, JSON.stringify(next)) } catch { /* sin almacenamiento */ }
+  }, [sent, key])
+  /** Enviada si se envió después de la última modificación de la entrada. */
+  const isSent = useCallback((e: PlanEntry) => !!sent[e.heroId] && sent[e.heroId] >= e.at, [sent])
+  return { mark, isSent }
+}
 export function portalUrl(plan: PlanEntry[], name: string): string {
   const heroes = plan.map(e => e.heroId).slice(0, 5).join(',')
   return `${PORTAL_OPTIMIZER}?heroes=${heroes}&from=Nexo#nexo-plan=${b64url(JSON.stringify(presetPayload(plan, name)))}`

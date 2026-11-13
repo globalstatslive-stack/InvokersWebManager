@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react'
-import { Check, Clock, ExternalLink, Info, ListChecks, MousePointerClick, RefreshCw, ShieldCheck, Trash2, Upload, X } from 'lucide-react'
+import { AlertTriangle, Check, Clock, ExternalLink, Info, ListChecks, MousePointerClick, RefreshCw, Send, ShieldCheck, Trash2, Upload, X } from 'lucide-react'
 import { useAccount } from './account'
 import { Empty, NeedsAccount } from './common'
 import { GameImg } from './Art'
 import { fmtInt, fmtStat, SLOT_LABEL, STAT_SHORT, t } from '../box/i18n'
-import { portalUrl, progressOf, TRACKED_STATS, usePlan, type PlanEntry } from './plan'
+import { checkEntry, portalUrl, PORTAL_TEAM, progressOf, sharedPieces, tandasOf, TRACKED_STATS, usePlan, useSentTandas, type PlanEntry } from './plan'
 import { MarkletInstall } from './Marklet'
 
 const date = (s: string) => new Intl.DateTimeFormat('es-ES', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(s))
@@ -17,6 +17,12 @@ export function PlanPage() {
   // Nombre único por defecto: el marcador busca el preset por su nombre para cargarlo.
   const [name, setName] = useState(() => `Nexo ${new Intl.DateTimeFormat('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date())}`)
   const rows = useMemo(() => plan.map(e => ({ e, p: progressOf(e, account?.index.heroes.get(e.heroId)) })), [plan, account])
+  const { mark, isSent } = useSentTandas(box)
+  // Solo se envía lo pendiente, en tandas de 5 (el optimizador oficial trabaja con 5 Invokers a la vez).
+  const pending = useMemo(() => rows.filter(r => !r.p.done).map(r => r.e), [rows])
+  const tandas = useMemo(() => tandasOf(pending), [pending])
+  const shared = useMemo(() => sharedPieces(plan), [plan])
+  const issues = useMemo(() => { const planned = new Set(plan.map(e => e.heroId)); return new Map(pending.map(e => [e.heroId, account ? checkEntry(e, account.index, planned) : []])) }, [pending, plan, account])
   if (!account) return <NeedsAccount />
   const hasExtension = typeof document !== 'undefined' && !!document.documentElement.dataset.nexoExtension
   const gold = plan.reduce((s, e) => s + e.gold, 0), changes = plan.reduce((s, e) => s + e.changes, 0)
@@ -30,12 +36,35 @@ export function PlanPage() {
         <div className="panel-title"><h2>Llevarlo al juego</h2><small>3 pasos · Nexo no equipa nada</small></div>
         <ol className="game-steps">
           <li><span className="step-n">1</span><div>
-            <b>Envíalo a invokers.com</b>
-            <p className="fine">Se abre el optimizador oficial con tus Invokers cargados{plan.length > 5 ? ' (el portal abre los 5 primeros; el preset los lleva todos)' : ''} y el plan dentro del enlace.</p>
-            <div className="link-row">
-              <input value={name} onChange={e => setName(e.target.value)} aria-label="Nombre del preset" maxLength={60} />
-              <a className="btn primary" href={portalUrl(plan, name)} target="_blank" rel="noopener" referrerPolicy="strict-origin"><Upload size={16} /> Enviar a invokers.com</a>
-            </div>
+            {!pending.length ? <><b>Todo aplicado</b><p className="fine">Tu caja ya tiene todos los cambios del plan. Puedes vaciarlo o añadir más.</p></> : tandas.length === 1 ? <>
+              <b>Envíalo a invokers.com</b>
+              <p className="fine">Se abre el optimizador oficial con tus Invokers cargados y el plan dentro del enlace.</p>
+              {(issues.get(pending[0].heroId) ?? []).length + pending.slice(1).reduce((s, e) => s + (issues.get(e.heroId)?.length ?? 0), 0) > 0 && <TandaIssues entries={pending} issues={issues} />}
+              <div className="link-row">
+                <input value={name} onChange={e => setName(e.target.value)} aria-label="Nombre del preset" maxLength={52} />
+                <a className="btn primary" href={portalUrl(pending, name)} target="_blank" rel="noopener" referrerPolicy="strict-origin" onClick={() => mark(pending.map(e => e.heroId))}><Upload size={16} /> Enviar a invokers.com</a>
+              </div>
+            </> : <>
+              <b>Envíalo en {tandas.length} tandas de {PORTAL_TEAM}</b>
+              <p className="fine">El optimizador oficial trabaja con {PORTAL_TEAM} Invokers a la vez, así que Nexo divide tu plan en tandas, por orden de prioridad. Ninguna pieza está en dos tandas: el resultado es el mismo las hagas en el orden que las hagas. Termina cada tanda (marcador y «Equip all») antes de enviar la siguiente.</p>
+              <label className="select tanda-name"><span>Nombre de los presets</span><input value={name} onChange={e => setName(e.target.value)} aria-label="Nombre de los presets" maxLength={52} /></label>
+              <ol className="tandas">{tandas.map((tanda, i) => {
+                const sent = tanda.every(isSent), errors = tanda.some(e => (issues.get(e.heroId) ?? []).some(x => x.severity === 'error'))
+                const first = tandas.findIndex(x => !x.every(isSent)) === i
+                return <li key={tanda.map(e => e.heroId).join('-')} className={`tanda ${sent ? 'sent' : ''} ${first ? 'next' : ''}`}>
+                  <div className="tanda-head">
+                    <b>Tanda {i + 1} de {tandas.length}</b>
+                    <span className={`state ${sent ? 'geared' : 'bare'}`}>{sent ? <><Send size={12} /> Enviada</> : <><Clock size={12} /> Pendiente</>}</span>
+                    <small>{tanda.reduce((s, e) => s + e.changes, 0)} cambios · {fmtInt(tanda.reduce((s, e) => s + e.gold, 0))} de oro</small>
+                  </div>
+                  <ul className="tanda-heroes">{tanda.map(e => <li key={e.heroId}><GameImg path={e.portrait} alt="" className="plan-portrait" /><span>{e.name}</span></li>)}</ul>
+                  <TandaIssues entries={tanda} issues={issues} />
+                  <a className={`btn ${first && !errors ? 'primary' : ''} ${errors ? 'disabled' : ''}`} aria-disabled={errors} href={errors ? undefined : portalUrl(tanda, `${name} · ${i + 1}/${tandas.length}`)} target="_blank" rel="noopener" referrerPolicy="strict-origin" onClick={() => !errors && mark(tanda.map(e => e.heroId))}><Upload size={15} /> {sent ? 'Volver a enviar' : 'Enviar'} tanda {i + 1}</a>
+                </li>
+              })}</ol>
+              <p className="fine"><Info size={13} /> Cada tanda se guarda como un preset en tu cuenta («{name} · 1/{tandas.length}», …). El portal admite {50} presets: bórralos en la pestaña Presets cuando termines. Al reimportar tu caja, las tandas aplicadas desaparecen de aquí.</p>
+            </>}
+            {shared.length > 0 && <p className="note warn"><AlertTriangle size={15} /> Estas piezas están en dos Invokers del plan: {shared.join('; ')}. Quita a uno de ellos y vuelve a calcularlo antes de enviar.</p>}
           </div></li>
           <li><span className="step-n">2</span><div>
             <b>{hasExtension ? 'La extensión lo guarda y lo carga' : 'Pulsa tu marcador «Nexo» en esa pestaña'}</b>
@@ -63,6 +92,12 @@ export function PlanPage() {
       <div className="center"><button className="btn danger" onClick={() => { if (confirm('¿Vaciar el plan?')) clear() }}><Trash2 size={15} /> Vaciar plan</button></div>
     </>}
   </div>
+}
+
+function TandaIssues({ entries, issues }: { entries: PlanEntry[]; issues: Map<number, { severity: 'error' | 'warn'; text: string }[]> }) {
+  const list = entries.flatMap(e => (issues.get(e.heroId) ?? []).map(x => ({ ...x, who: e.name })))
+  if (!list.length) return <p className="tanda-ok"><Check size={13} /> Piezas comprobadas con tu última caja: todas siguen donde se esperaba.</p>
+  return <ul className="tanda-issues">{list.map((x, i) => <li key={i} className={x.severity}><AlertTriangle size={13} /> <b>{x.who}</b> · {x.text}</li>)}</ul>
 }
 
 function PlanRow({ e, p, remove, open }: { e: PlanEntry; p: ReturnType<typeof progressOf>; remove: () => void; open: () => void }) {

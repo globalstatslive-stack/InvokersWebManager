@@ -6,7 +6,7 @@ import { fmtBonus, bonusName, fmtInt, SET_LABEL, SLOT_LABEL, t } from '../box/i1
 import { RARITY_F } from '../box/gearCoach'
 import { useAccount } from './account'
 import { useActiveTeams } from './activeTeams'
-import { entryFrom, reservedBy, usePlan } from './plan'
+import { entryFrom, PORTAL_TEAM, reservedBy, usePlan } from './plan'
 import { useGearCoach } from './coach'
 import { useFillOptimizer } from './useOptimizer'
 import { GearIcon, Portrait } from './Art'
@@ -68,7 +68,7 @@ export function EquipBatch() {
     <div className="panel-title"><h2><Check size={18} /> Lote añadido a tu plan</h2></div>
     <p className="lead" role="status">{added.n} Invoker{added.n === 1 ? '' : 's'} añadido{added.n === 1 ? '' : 's'} · {added.pieces} piezas · {fmtInt(added.gold)} de oro.{added.blocked.length ? ` No entraron ${added.blocked.join(', ')}: alguna pieza ya estaba reservada para otro Invoker del plan.` : ''}</p>
     <ol className="game-steps compact">
-      <li><span className="step-n">1</span><div><b>Ve a Plan y pulsa «Enviar a invokers.com»</b></div></li>
+      <li><span className="step-n">1</span><div><b>Ve a Plan y envía {Math.ceil(added.n / PORTAL_TEAM) > 1 ? `la primera de sus ${Math.ceil(added.n / PORTAL_TEAM)} tandas de ${PORTAL_TEAM}` : 'el plan'} a invokers.com</b>{Math.ceil(added.n / PORTAL_TEAM) > 1 ? ': el optimizador oficial trabaja con 5 Invokers a la vez y ninguna pieza se repite entre tandas.' : ''}</div></li>
       <li><span className="step-n">2</span><div><b>Pulsa tu marcador «Nexo»</b>: lo guarda como preset y lo carga en el optimizador oficial.</div></li>
       <li><span className="step-n">3</span><div><b>Revisa y pulsa «Equip all»</b>: el portal te enseña el oro antes de confirmar.</div></li>
     </ol>

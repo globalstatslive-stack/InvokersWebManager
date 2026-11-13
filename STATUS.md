@@ -70,6 +70,15 @@
 
 - Equipo para un jefe elige por encaje con el jefe, no por el equipamiento actual: nota oficial, habilidades que pide, elemento y tolerancia innata del kit, más el desarrollo que las piezas no cambian (estrellas, nivel, despertar, habilidades). El poder actual, la tolerancia de conjuntos, la PREC y la RES pasan a «A mejorar con equipamiento», con acceso a Objetivo. Opción «Priorizar a los que ya tengo equipados» para el criterio anterior.
 
+## Versión 0.19
+
+- **Plan en tandas de 5**: el optimizador oficial trabaja con 5 Invokers a la vez (al cargar un preset, solo pone los 5 primeros en su lista). Con más de 5 pendientes, Plan los divide en tandas por orden de prioridad, cada una con su preset («Nombre · 1/4»…) y su enlace «Enviar tanda N».
+  - Ninguna pieza está en dos tandas (el plan nunca asigna una pieza a dos Invokers y `sharedPieces` lo comprueba): el resultado final no depende del orden.
+  - Antes de enviar, cada tanda se comprueba con tu última caja: pieza que ya no existe (vendida o triturada) = error y no se deja enviar; pieza que ahora lleva un Invoker fuera del plan = aviso con su oro de desequipar.
+  - Estado de cada tanda (pendiente o enviada, en este navegador) y la siguiente resaltada; al reimportar, lo aplicado sale del envío. Solo se envía lo pendiente.
+  - El panel del lote dice en cuántas tandas se enviará.
+- Pruebas: `plan.test.ts` (tandas, un preset por tanda, piezas compartidas, comprobación con la caja); e2e con tandas cuando el plan pasa de 5.
+
 ## Versión 0.18
 
 - **Equipar todo de una vez** (Coach › Piezas › Equipar, `src/box/equipBatch.ts`): prepara un lote y lo añade al Plan; de ahí al juego con «Enviar a invokers.com», el marcador y «Equip all».
