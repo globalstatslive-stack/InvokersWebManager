@@ -70,6 +70,18 @@
 
 - Equipo para un jefe elige por encaje con el jefe, no por el equipamiento actual: nota oficial, habilidades que pide, elemento y tolerancia innata del kit, más el desarrollo que las piezas no cambian (estrellas, nivel, despertar, habilidades). El poder actual, la tolerancia de conjuntos, la PREC y la RES pasan a «A mejorar con equipamiento», con acceso a Objetivo. Opción «Priorizar a los que ya tengo equipados» para el criterio anterior.
 
+## Versión 0.18
+
+- **Equipar todo de una vez** (Coach › Piezas › Equipar, `src/box/equipBatch.ts`): prepara un lote y lo añade al Plan; de ahí al juego con «Enviar a invokers.com», el marcador y «Equip all».
+  - Solo Invokers que usas: equipos activos y plan o, si no hay ninguno marcado, los de tus equipos registrados con nivel 30 o más. Los que tienen huecos y no usas se dejan fuera y se nombran: una pieza puesta cuesta oro de desequipar si luego se mueve.
+  - Huecos vacíos: el optimizador, en un modo nuevo «solo huecos» (`onlyEmpty`: las ranuras ocupadas solo admiten su pieza), elige para cada Invoker por orden de prioridad las piezas libres que mejor le encajan con los conjuntos que se activan. Sin oro. Se calcula en el worker con progreso.
+  - Sustituciones opcionales: las del coach que siguen dando un 1 % o más después de rellenar los huecos, con el oro de desequipar de la pieza que sale.
+  - Nunca usa piezas reservadas en el plan ni las que el coach aconseja guardar; cada Invoker entra solo si gana un 1 % o más; ninguna pieza se repite. Se puede desmarcar a cualquiera.
+  - Con la caja real: 11 Invokers y 81 piezas sin oro en unos 2,5 s; con sustituciones, 18 Invokers, 95 piezas y 207.200 de oro.
+- La lista «Equipar» del coach solo propone piezas a Invokers que usas (antes, a los 25 más fuertes, incluidos algunos sin combates ni equipos). En la ficha de una pieza, «¿A quién le sirve?» marca a los que no están en ningún equipo.
+- Plan: `upsertMany` añade varias entradas de una vez (antes, varias altas seguidas se pisaban). El coach sigue visible mientras se recalcula.
+- Pruebas: `equipBatch.test.ts` (quién cuenta como usado, «solo huecos» no toca lo puesto, sin repetir ni usar reservadas, huecos antes que sustituciones, oro de las sustituciones, entrada de plan); e2e del lote hasta el plan.
+
 ## Versión 0.17
 
 - **Coach › Personajes: a quién subir** (`src/box/ascension.ts`): ranking de a quién subir a 6★ y a 5★, una entrada por personaje (su mejor copia).

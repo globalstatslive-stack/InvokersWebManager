@@ -7,6 +7,7 @@ import { SET_LABEL, SLOT_LABEL, t } from '../box/i18n'
 import { whoBenefits } from '../box/usefulness'
 import { gainText } from '../box/gearCoach'
 import { GearCoachPanel } from './GearCoach'
+import { teamsByHero } from '../box/ascension'
 import { usePlan, reservedBy } from './plan'
 import { useActiveTeams } from './activeTeams'
 
@@ -25,6 +26,7 @@ export function GearDetail({ id }: { id: string }) {
     return [...new Map([...extra, ...top].map(h => [h.id, h])).values()]
   }, [account, active.heroes, plan])
   const uses = useMemo(() => g && account ? whoBenefits(account.index, g, candidates).slice(0, 8) : [], [g, account, candidates])
+  const inTeams = useMemo(() => account ? teamsByHero(account.box) : new Map(), [account])
   if (!account) return <NeedsAccount />
   if (!g) return <Empty title="Pieza no encontrada" action={<button className="btn" onClick={() => go('/coleccion/piezas')}>Volver</button>} />
   const owner = g.equippedHeroId !== null ? account.index.heroes.get(g.equippedHeroId) : undefined
@@ -40,7 +42,7 @@ export function GearDetail({ id }: { id: string }) {
       {uses.length === 0 ? <p className="muted">Ninguno de estos Invokers mejora al sustituir su {t(SLOT_LABEL, g.slot).toLowerCase()} por esta pieza.</p> :
         <ul className="use-list">{uses.map(u => <li key={u.hero.id}>
           <Portrait c={u.hero} size="sm" />
-          <span className="row-main"><b>{u.hero.name}{active.heroes.has(u.hero.id) ? <small className="tag good">equipo activo</small> : null}</b>
+          <span className="row-main"><b>{u.hero.name}{active.heroes.has(u.hero.id) ? <small className="tag good">equipo activo</small> : !inTeams.has(u.hero.id) ? <small className="tag">sin equipos</small> : null}</b>
             <small>Sustituye {u.replaces ? <><GearIcon g={u.replaces} size="sm" /> {u.replaces.set ? t(SET_LABEL, u.replaces.set) : u.replaces.faction}</> : 'una ranura vacía'}{u.ownerLoses && owner ? ` · ${owner.name} la perdería` : ''}</small></span>
           <b className="up row-value">{gainText(u)}</b>
           <button className="icon-btn" aria-label={`Optimizar a ${u.hero.name}`} onClick={() => go(`/optimizador/${u.hero.id}`)}><Wand2 size={16} /></button>

@@ -12,6 +12,8 @@ export type WorkerRequest =
   | { type: 'box'; box: Box }
   | { type: 'run'; id: number; heroId: number; opts: OptimizeOptions }
   | { type: 'team'; id: number; members: TeamMember[]; variants: TeamVariant[] }
+  /** Equipar en lote: rellena los huecos de cada Invoker por orden, sin repetir piezas. */
+  | { type: 'fill'; id: number; members: TeamMember[] }
 export type TeamResult = { variant: TeamVariant; plan: TeamPlan; sequential: TeamPlan; conflicts: string[]; limits: Record<number, Limit[]> }
 
 self.onmessage = (e: MessageEvent<WorkerRequest>) => {
@@ -24,6 +26,20 @@ self.onmessage = (e: MessageEvent<WorkerRequest>) => {
       const hero = index.heroes.get(msg.heroId)
       if (!hero) throw Error('Invoker no encontrado')
       self.postMessage({ id: msg.id, result: optimize(index, hero, msg.opts), ms: performance.now() - t0 })
+      return
+    }
+    if (msg.type === 'fill') {
+      const taken = new Set<string>()
+      const fills: [number, ReturnType<typeof optimize>][] = []
+      for (const [i, m] of msg.members.entries()) {
+        const hero = index.heroes.get(m.heroId)
+        if (!hero) continue
+        self.postMessage({ id: msg.id, progress: { done: i, total: msg.members.length, label: hero.name } })
+        const r = optimize(index, hero, { ...m.options, reserved: new Set([...(m.options.reserved ?? []), ...taken]) })
+        for (const c of r.changes) if (c.to) taken.add(`${c.to.kind}${c.to.id}`)
+        fills.push([m.heroId, r])
+      }
+      self.postMessage({ id: msg.id, fills, ms: performance.now() - t0 })
       return
     }
     const out: TeamResult[] = []

@@ -7,11 +7,12 @@ import { useAccount } from './account'
 import { Chips, GradePill } from './common'
 import { GearIcon } from './Art'
 import { useGearCoach, type GearCoach } from './coach'
+import { EquipBatch } from './EquipBatch'
 
 const ICON: Record<Verdict, typeof CheckCircle2> = { upgrade: ArrowUpCircle, replace: Repeat, test: FlaskConical, equip: PackageCheck, keep: ShieldCheck, sell: Recycle, done: CheckCircle2 }
 const HELP: Record<Verdict, string> = {
   upgrade: 'Equipadas por debajo de +20: primero las de tus equipos activos y tu plan.',
-  equip: 'Libres que ya mejoran a uno de tus Invokers (una por ranura).',
+  equip: 'Libres que ya mejoran a un Invoker que usas (una por ranura). Puedes equiparlas todas de una vez.',
   test: 'Libres con futuro para tus equipos: súbelas hasta el siguiente hito y revisa.',
   replace: 'Equipadas de poco rango con alternativas libres mejores: no inviertas en ellas.',
   keep: 'Reservadas en tu plan o escasas (tolerancias).',
@@ -191,6 +192,7 @@ export function PiecesCoach({ initial }: { initial?: Verdict }) {
       <span className="vc-top"><I size={17} aria-hidden /><b>{fmtInt(coach.counts[v])}</b></span><span className="vc-label">{VERDICT_LABEL[v]}</span><small>{HELP[v]}</small>
     </button> })}</div>
     <div className="toolbar-row"><Chips label="Tipo" value={kind} onChange={v => { setKind(v); setLimit(30) }} options={[{ id: 'all', label: 'Todas' }, { id: 'relic', label: 'Reliquias' }, { id: 'accessory', label: 'Accesorios' }]} /><span className="muted">{list.length} piezas</span></div>
+    {verdict === 'equip' && <EquipBatch />}
     {verdict === 'sell' && <p className="note"><Recycle size={15} /> En el juego: sala de equipo → «Sell / Crush» → marca las piezas → «Sell» (oro) o «Crush» (Memorium). Puedes filtrar por rareza, rango y ranura para marcarlas por lotes. Nexo no vende nada: revisa antes las que no te convenzan.</p>}
     {verdict === 'test' && <p className="note"><FlaskConical size={15} /> Sube cada una solo hasta el hito indicado y mira dónde cae la mejora. Si cae en algo útil, sigue; si no, véndela: así no gastas oro ni Memorium en piezas que no van a servir.</p>}
     {list.length === 0 ? <div className="empty small"><h3>Nada en esta categoría</h3></div> :

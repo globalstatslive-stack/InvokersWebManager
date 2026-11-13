@@ -78,6 +78,14 @@ export function usePlan(box: Box | undefined) {
     plan,
     /** Añade o sustituye la entrada; devuelve las piezas en conflicto (y no guarda) si alguna ya es de otro Invoker del plan. */
     upsert: (e: PlanEntry): string[] => { const c = planConflicts(plan, e); if (!c.length) save([...plan.filter(x => x.heroId !== e.heroId), e]); return c },
+    /** Varias entradas de una vez (cada una se comprueba contra las anteriores). Devuelve las que no entraron. */
+    upsertMany: (entries: PlanEntry[]): { added: number; blocked: PlanEntry[] } => {
+      let next = plan
+      const blocked: PlanEntry[] = []
+      for (const e of entries) { if (planConflicts(next, e).length) blocked.push(e); else next = [...next.filter(x => x.heroId !== e.heroId), e] }
+      save(next)
+      return { added: entries.length - blocked.length, blocked }
+    },
     remove: (heroId: number) => save(plan.filter(x => x.heroId !== heroId)),
     clear: () => save([]),
   }
