@@ -1382,3 +1382,51 @@ details.panel > summary { cursor: pointer; font-family: var(--display); font-wei
 .tanda-issues li svg { vertical-align: -2px; }
 .tanda-issues .warn { background: #33240f; color: #ffd9a1; }
 .tanda-issues .error { background: #3a1820; color: #ffc0c8; }
+
+/* ===== v0.20: sala de trofeos ===== */
+.hall .fine, .hall .lead { display: block; }
+.hall .fine svg { vertical-align: -2px; }
+.hall-wallet .panel-title h2, .hall-tier .panel-title h3 { display: flex; align-items: center; gap: 8px; margin: 0; }
+.hall-tier .panel-title h3 small { color: var(--muted); font-weight: 400; font-size: 12.5px; }
+.hall-inputs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+.hall-input { display: flex; flex-direction: column; gap: 4px; font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.hall-input input { width: 110px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; color: var(--text); min-height: 40px; font-size: 15px; font-weight: 650; }
+.t-bronze { --tr: #c98a5a; } .t-silver { --tr: #c9d3e2; } .t-gold { --tr: #f0c75a; }
+.hall-input input { border-left: 4px solid var(--tr); }
+.trophy-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--tr); box-shadow: 0 0 8px var(--tr); display: inline-block; }
+.hall-tier { margin-bottom: 12px; border-left: 3px solid var(--tr); }
+.hall-tier.muted-tier { opacity: .6; }
+.hall-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.hall-opt { border: 1px solid var(--line); border-radius: 12px; background: var(--bg-2); padding: 8px 10px; }
+.hall-opt.first { border-color: var(--gold-dim); }
+.hall-opt-main { display: grid; grid-template-columns: 28px auto minmax(0, 1fr) auto; gap: 10px; align-items: center; }
+.hall-opt-main .row-main b { display: block; }
+.hall-opt-main .row-main small { color: var(--muted); }
+.hall-pos { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-family: var(--display); font-weight: 700; color: var(--gold-2); border: 1px solid var(--gold-dim); background: #e2bd6b12; font-size: 13px; }
+.hall-what { display: inline-flex; align-items: center; gap: 2px; }
+.hall-el { width: 24px; height: 24px; object-fit: contain; }
+.hall-stat { width: 22px; height: 22px; object-fit: contain; }
+.hall-why { margin: 6px 0 0 38px; color: var(--text-2); font-size: 13.5px; }
+.hall-heroes { list-style: none; padding: 8px 0 0; margin: 8px 0 0 38px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 5px; }
+.hall-heroes li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+.hall-heroes li.none { opacity: .55; }
+.hall-heroes .row-main b { display: block; font-size: 14px; }
+.hall-heroes .row-main small { color: var(--muted); }
+.hall-delta { color: var(--up); font-size: 13px; font-weight: 600; white-space: nowrap; }
+.hall-heroes li.none .hall-delta { color: var(--muted); font-weight: 400; }
+@media (max-width: 560px) { .hall-why, .hall-heroes { margin-left: 0; } }
+.hall-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
+.hall-el-card { border: 1px solid var(--line); border-radius: 12px; background: var(--bg-2); padding: 10px; }
+.hall-el-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.hall-el-head small { color: var(--muted); margin-left: auto; }
+.hall-group { display: grid; grid-template-columns: 64px 1fr; gap: 8px; align-items: center; margin-top: 4px; }
+.hall-group-name { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.hall-cells { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+.hall-cell { display: flex; align-items: center; justify-content: center; gap: 3px; padding: 4px; border-radius: 8px; background: #ffffff06; border: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+.hall-cell .hall-stat { width: 16px; height: 16px; opacity: .45; }
+.hall-cell.on { color: var(--text); border-color: #7a5a3a; background: #3a2a1a; }
+.hall-cell.on .hall-stat { opacity: 1; }
+.hall-cell.pick { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); color: var(--gold-2); }
+.hall-unknown summary, .hall-how summary { cursor: pointer; display: flex; align-items: center; gap: 8px; color: var(--gold-2); font-weight: 550; }
+.hall-unknown, .hall-how { margin-top: 12px; }
+.hall-how .dashes { margin-top: 10px; }
