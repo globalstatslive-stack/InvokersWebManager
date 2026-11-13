@@ -113,6 +113,23 @@ describe('veredictos del coach', () => {
     expect(a.watch).toMatch(/Al \+5 se desbloquea/)
     expect(run().get('relic26')!.verdict).toBe('sell') // ni al +20 mejora a Ozmol
   })
+  it('enseña: camino de hitos, próximo hito con sus dos salidas y regla de parada', () => {
+    const t = run().get('relic24')!
+    expect(t.path.map(n => n.kind)).toEqual(['unlock', 'upgrade', 'upgrade', 'upgrade']) // épica: 1 desbloqueo y 3 mejoras
+    expect(t.path.map(n => n.state)).toEqual(['next', 'future', 'future', 'future'])
+    expect(t.next!.level).toBe(5)
+    expect(t.next!.good.length + t.next!.bad.length).toBe(SUB_POOL.get('Gauntlets')!.length - 4)
+    expect(t.next!.ifBad).toMatch(/véndela/)
+    expect(t.stopRule).toMatch(/más de la mitad/)
+    expect(t.pros.join(' ')).toMatch(/Rango 5★/)
+    const up = run().get('relic8')! // botas +15 equipadas: el último hito es una mejora
+    expect(up.path.filter(n => n.state === 'done')).toHaveLength(3)
+    expect(up.next!.level).toBe(20)
+    expect(up.next!.kind).toBe('upgrade')
+    const sell = run().get('relic22')!
+    expect(sell.next).toBeNull()
+    expect(sell.cons.join(' ')).toMatch(/Rango 3★/)
+  })
   it('accesorio de una facción que no tienes: vender', () => {
     const a = run().get('accessory40')!
     expect(a.verdict).toBe('sell')

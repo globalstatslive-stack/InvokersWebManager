@@ -70,6 +70,17 @@
 
 - Equipo para un jefe elige por encaje con el jefe, no por el equipamiento actual: nota oficial, habilidades que pide, elemento y tolerancia innata del kit, más el desarrollo que las piezas no cambian (estrellas, nivel, despertar, habilidades). El poder actual, la tolerancia de conjuntos, la PREC y la RES pasan a «A mejorar con equipamiento», con acceso a Objetivo. Opción «Priorizar a los que ya tengo equipados» para el criterio anterior.
 
+## Versión 0.16
+
+- El coach de piezas enseña en lugar de solo listar razones. Cada pieza (en Coach › Piezas con «Explícamelo» y en su ficha):
+  - **La pieza, para quien la llevaría**: principal (fija, le sirve o no; valor actual → al +20) y las 4 casillas de subestadística con semáforo (le sirve, a medias, no le sirve, casilla vacía con la probabilidad de que salga útil), nota y una marca por mejora recibida.
+  - **A favor / En contra** en frases cortas (rango, rareza, principal, subestadísticas útiles, mejoras que cayeron bien o se perdieron, a quién mejora).
+  - **Camino de subida** +0 → +5 → +10 → +15 → +20: qué pasó, dónde está y, en cada hito que falta, si trae una subestadística nueva o mejora una y la probabilidad de que sea útil.
+  - **Qué hacer en el próximo hito**: barra de probabilidad y dos salidas («si sale X, sigue hasta +N»; «si sale Y, para y véndela» o «búscale sustituta»), con la regla de parada de Nexo: deja de subir cuando más de la mitad de las mejoras se han perdido o no queda ninguna subestadística útil a la que pueda caer.
+  - El razonamiento completo con fuentes queda plegado.
+- **Cómo leer una pieza (2 minutos)**: principal, subestadísticas e hitos, por qué subir es una lotería, rango y rareza, notas y la regla de oro. Se puede plegar y se recuerda.
+- Pruebas del camino de hitos, del próximo hito y de la regla de parada; el e2e abre la explicación de una pieza.
+
 ## Versión 0.15
 
 - **Coach** sustituye al Asesor (segunda entrada del menú y de la barra móvil). «Qué hacer ahora»: acciones priorizadas con su porqué (enlace a punto de caducar, plan pendiente, marcar equipos activos, ranuras vacías, equipar, subir, no invertir en piezas de poco rango, probar, limpieza, siguiente fase de tus jefes). Las 3 primeras, también en Inicio.

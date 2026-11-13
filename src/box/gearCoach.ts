@@ -112,7 +112,18 @@ export type GearAdvice = {
   best: Usefulness | null
   watch: string | null
   sections: { title: string; steps: Step[] }[]
+  /** Para enseñar: a quién se refiere el análisis, lo bueno y lo malo en frases cortas, el camino de hitos y qué hacer en el próximo. */
+  forWho: string
+  pros: string[]; cons: string[]
+  path: PathNode[]
+  next: NextStep | null
+  stopRule: string | null
 }
+export type PathNode = { level: number; kind: 'unlock' | 'upgrade'; state: 'done' | 'next' | 'future'; p: number | null }
+export type NextStep = { level: number; kind: 'unlock' | 'upgrade'; p: number; good: string[]; bad: string[]; ifGood: string; ifBad: string }
+/** Regla de parada de Nexo: deja de invertir cuando más de la mitad de las mejoras recibidas se han perdido o ya no
+ * queda ninguna subestadística útil a la que pueda caer una mejora. */
+export const STOP_RULE = 'Deja de subir una pieza cuando más de la mitad de sus mejoras hayan caído en subestadísticas que no sirven, o cuando ya no le quede ninguna útil a la que pueda caer una mejora.'
 
 export type CoachInput = {
   /** Piezas reservadas en el plan (`relic12`) y para quién. */
@@ -391,7 +402,59 @@ export function adviseGear(g: Gear, ctx: CoachContext, use: PieceUse = { best: n
   if (verdict === 'done' && g.rank <= 3 && (ctx.freeGood.get(goodKey(g)) ?? 0) > 0) decision.push({ tag: 'criterio', tone: 'info', text: `Es ${g.rank}★: cuando subas una pieza libre de más rango para esta ranura, cámbiala por ella.` })
   if (verdict === 'upgrade' || verdict === 'test') decision.push({ tag: 'oficial', tone: 'info', text: 'Subir cuesta oro y Memorium por nivel (la caja no publica cuánto). Los hitos de subestadística están en +5, +10, +15 y +20: subir a medias entre hitos solo mejora la principal.' })
   if (verdict === 'sell') decision.push({ tag: 'oficial', tone: 'info', text: 'Vender (icono de monedas) da oro; triturar (escudo roto) la convierte en Memorium. Las dos cosas hacen falta para subir piezas: tritura si te falta Memorium y vende si te falta oro. Puedes hacerlo por lotes desde la sala de equipo («Sell / Crush»).' })
+  // Para enseñar: lo bueno y lo malo, el camino de hitos y qué hacer en el siguiente.
+  const forWho = subject ? `${subject.name}${role ? ` (${ROLE_LABEL[role]})` : ''}` : role ? `un perfil de ${ROLE_LABEL[role]}` : 'tus Invokers'
+  const usefulNames = subs.filter(x => x.fit !== 'no').map(x => bonusName(x.bonus.stat, x.bonus.mode))
+  const deadNames = subs.filter(x => x.fit === 'no').map(x => bonusName(x.bonus.stat, x.bonus.mode))
+  const pros: string[] = [], cons: string[] = []
+  if (g.rank >= 5) pros.push(`Rango ${g.rank}★: cada tirada vale lo máximo que verás en tu caja.`)
+  else if (g.rank <= 3) cons.push(`Rango ${g.rank}★: tiradas pequeñas, y el rango no se puede subir.`)
+  if (totalUps >= 3) pros.push(`Pieza ${rarityF(g.rarity)}: ${totalUps} de sus 4 hitos mejoran subestadísticas que ya tiene.`)
+  else if (totalUps <= 1) cons.push(`Pieza ${rarityF(g.rarity)}: ${totalUps === 0 ? 'ningún hito mejora' : 'solo 1 hito mejora'} subestadísticas; el resto las saca al azar.`)
+  if (mainFit === 'yes') pros.push(`Su principal, ${bonusName(g.main.stat, g.main.mode)}, es justo lo que necesita ${forWho}.`)
+  else if (mainFit === 'no') cons.push(`Su principal, ${bonusName(g.main.stat, g.main.mode)}, no le sirve a ${forWho}, y la principal nunca cambia.`)
+  if (subs.length && role) {
+    if (usefulSubs >= 3) pros.push(`${usefulNames.length} de sus ${subs.length} subestadísticas le sirven (${usefulNames.join(', ')}).`)
+    else if (usefulSubs >= 2) pros.push(`Le sirven ${usefulNames.join(' y ')}.`)
+    if (deadNames.length >= 2 || (deadNames.length && usefulSubs < 2)) cons.push(`No le sirven ${deadNames.join(', ')}.`)
+  }
+  const wasted = subs.filter(x => x.fit === 'no' && x.bonus.rolls), landed = subs.filter(x => x.fit !== 'no' && x.bonus.rolls)
+  if (landed.length) pros.push(`Mejoras que cayeron bien: ${landed.map(x => `${bonusName(x.bonus.stat, x.bonus.mode)} ×${x.bonus.rolls}`).join(', ')}.`)
+  if (wasted.length) cons.push(`Mejoras perdidas: ${wasted.map(x => `${bonusName(x.bonus.stat, x.bonus.mode)} ×${x.bonus.rolls}`).join(', ')}.`)
+  if (best) pros.push(`Ya mejora a ${best.hero.name}: ${gainText(best)}.`)
+  else if (potential) pros.push(`Subida a +20 podría mejorar a ${potential.hero.name} (${gainText(potential)}).`)
+  else if (reservedFor) pros.push(`Reservada en tu plan para ${reservedFor}.`)
+  else if (important && owner) pros.push(`La lleva ${owner.name}, de tus equipos activos o tu plan.`)
+  else if (!owner) cons.push(crowded ? `Para ${crowded.hero.name} tienes piezas con más futuro en esa ranura.` : 'No mejora a ninguno de tus Invokers, ni ahora ni subida a +20.')
+  if (g.mainAtMax && g.level < GEAR_RULES.maxLevel && (owner || best || potential)) pros.push(`La principal crece con cada nivel: ${fmtBonus(g.main.stat, g.main.mode, g.main.value)} → ${fmtBonus(g.mainAtMax.stat, g.mainAtMax.mode, g.mainAtMax.value)} al +20.`)
+
+  const poolP = outlook.pool.size ? outlook.pool.useful.length / outlook.pool.size : 0
+  const upP = outlook.pUseful ?? (subs.length ? subs.filter(x => x.fit !== 'no').length / GEAR_RULES.maxSubs : 0)
+  const path: PathNode[] = GEAR_RULES.thresholds.map((lv, i) => {
+    const kind = i < totalUnlocks ? 'unlock' as const : 'upgrade' as const
+    return { level: lv, kind, state: lv <= g.level ? 'done' as const : lv === next ? 'next' as const : 'future' as const, p: lv <= g.level ? null : kind === 'unlock' ? poolP : upP }
+  })
+  let nextStep: NextStep | null = null, stopRule: string | null = null
+  const climbing = verdict === 'upgrade' || verdict === 'test' || verdict === 'equip'
+  if (climbing && next) {
+    const kind = path.find(n => n.level === next)!.kind
+    const after = outlook.remaining[1]
+    const good = kind === 'unlock' ? outlook.pool.useful.map(nameOf) : usefulNames
+    const bad = kind === 'unlock' ? (SUB_POOL.get(g.slot) ?? []).filter(k => !outlook.pool.useful.includes(k) && k !== key(g.main) && !g.subs.some(x => key(x) === k)).map(nameOf) : deadNames
+    const cont = after ? `Sigue hasta +${after} y vuelve a mirar.` : 'Perfecto: queda completa y bien aprovechada.'
+    const deadAfter = outlook.madeDead + (kind === 'upgrade' ? 1 : 0), usefulMade = outlook.madeUseful
+    const stopNow = verdict === 'test' || (kind === 'upgrade' && deadAfter > usefulMade) || (kind === 'unlock' && subs.filter(x => x.fit !== 'no').length < 2)
+    nextStep = {
+      level: next, kind, p: kind === 'unlock' ? poolP : upP, good, bad,
+      ifGood: cont,
+      ifBad: !after ? 'No es grave: la principal ya llegó a su máximo. Úsala mientras no tengas una mejor para esa ranura.'
+        : stopNow ? (verdict === 'test' ? 'Para aquí y véndela: no gastes más oro ni Memorium en ella.' : `Para aquí: ${kind === 'upgrade' ? 'tendría más mejoras perdidas que útiles' : 'le quedarían pocas subestadísticas útiles'}. Búscale sustituta en el optimizador antes de invertir más.`)
+        : 'Puedes seguir: la principal sube igual y aún tiene opciones, pero vigila el siguiente hito.',
+    }
+    stopRule = STOP_RULE
+  }
   return {
+    forWho, pros, cons, path, next: nextStep, stopRule,
     gear: g, verdict, title, why, priority, role, subs, outlook, mainFit, owner, important, best, watch,
     sections: [
       { title: 'Qué es', steps: identity },
