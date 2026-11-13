@@ -34,6 +34,16 @@ try {
     await page.locator(selector).first().waitFor({ timeout: 20000 })
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `desbordamiento horizontal en ${hash}`)
   }
+  // Coach de piezas: la primera pieza de la categoría con más piezas se explica (pieza, a favor/en contra, camino de hitos).
+  await page.evaluate(() => { location.hash = '#/asesor/piezas' })
+  const cards = page.locator('.verdict-card')
+  await cards.first().waitFor()
+  const counts = await cards.locator('.vc-top b').allInnerTexts()
+  await cards.nth(counts.map(c => Number(c.replace(/\D/g, ''))).reduce((bi, c, i, a) => c > a[bi] ? i : bi, 0)).click()
+  await page.locator('.coach-row').first().getByRole('button', { name: /Explícamelo/ }).click()
+  await page.locator('.lesson .anatomy').waitFor()
+  await page.locator('.lesson .upath .node').nth(4).waitFor()
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'desbordamiento horizontal en la explicación de una pieza')
   // Colección: filtros plegables con contador de filtros activos.
   await page.evaluate(() => { location.hash = '#/coleccion' })
   await page.getByRole('button', { name: /Filtros/ }).click()
@@ -141,5 +151,5 @@ try {
   await received.getByRole('button', { name: 'Borrar todos los datos' }).click()
   await received.getByRole('heading', { name: 'Importar tu caja' }).waitFor()
   assert.deepEqual(errors, [])
-  console.log('E2E móvil: importar, secciones sin desbordamiento, filtros, pieza, optimizador en worker, enciclopedia (ficha, jefe → objetivo, calculadora), objetivo → planes → plan, recarga, marcador (caja, preset guardado y cargado) y borrado correctos.')
+  console.log('E2E móvil: importar, secciones sin desbordamiento, filtros, pieza, optimizador en worker, enciclopedia (ficha, jefe → objetivo, calculadora), objetivo → planes → plan, recarga, coach de piezas explicado, marcador (caja, preset guardado y cargado) y borrado correctos.')
 } finally { await browser.close() }
