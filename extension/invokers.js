@@ -1,6 +1,6 @@
 // Nexo para Invokers: guarda como preset el plan que Nexo envía en el enlace (#nexo-plan=…)
-// usando la sesión del jugador en invokers.com, y abre la pestaña Presets del optimizador.
-// No equipa nada: aplicar el preset se hace con el botón oficial «Apply».
+// usando la sesión del jugador en invokers.com, abre la pestaña Presets del optimizador y lo carga («Load»).
+// No equipa nada: equipar se confirma en el portal («Equip all» o «Apply»), que muestra el oro antes.
 ;(() => {
   const NEXO_ORIGINS = ['https://globalstatslive-stack.github.io', 'http://localhost:5173', 'http://127.0.0.1:5173']
   const RELIC = ['Weapon', 'Shield', 'Helmet', 'Pauldrons', 'Gauntlets', 'Chestplate', 'Belt', 'Boots']
@@ -26,13 +26,21 @@
     return p && typeof p.name === 'string' && Array.isArray(p.loadouts) && p.loadouts.length > 0 && p.loadouts.length <= 50 &&
       p.loadouts.every(l => Number.isSafeInteger(l.heroId) && slotsOk(l.relics, RELIC) && slotsOk(l.accessories, ACC))
   }
-  /** Tras recargar, abre la pestaña «Presets» del optimizador oficial. */
-  function openPresets() {
+  /** Tras recargar, abre la pestaña «Presets» del optimizador oficial y carga el preset guardado. */
+  function openPresets(name) {
     const started = Date.now()
+    const text = el => (el.textContent || '').trim()
+    let tabClicked = false
     const timer = setInterval(() => {
-      const tab = [...document.querySelectorAll('button, [role="tab"], a')].find(el => /^presets\b/i.test((el.textContent || '').trim()))
-      if (tab) { clearInterval(timer); tab.click(); toast('Nexo: tu plan está en Presets. Pulsa Apply para revisarlo y equiparlo.') }
-      else if (Date.now() - started > 15000) clearInterval(timer)
+      if (!tabClicked) {
+        const tab = [...document.querySelectorAll('[role="tab"], button')].find(el => /^presets\b/i.test(text(el)))
+        if (tab) { tab.click(); tabClicked = true }
+      } else {
+        const li = [...document.querySelectorAll('.opt-preset')].find(el => { const h = el.querySelector('h4'); return h && text(h) === name })
+        const load = li && [...li.querySelectorAll('button')].find(b => /^load$/i.test(text(b)))
+        if (load) { clearInterval(timer); load.click(); toast(`Nexo: «${name}» guardado y cargado. Revisa las builds y pulsa «Equip all»: el portal te muestra el oro antes de confirmar.`); return }
+      }
+      if (Date.now() - started > 15000) { clearInterval(timer); toast(`Nexo: «${name}» está en tus presets. Ábrelo en la pestaña Presets y pulsa «Load».`) }
     }, 300)
   }
 
@@ -60,7 +68,8 @@
   }
   liveButton()
 
-  if (sessionStorage.getItem(OPEN_FLAG)) { sessionStorage.removeItem(OPEN_FLAG); openPresets(); return }
+  const pending = sessionStorage.getItem(OPEN_FLAG)
+  if (pending) { sessionStorage.removeItem(OPEN_FLAG); openPresets(pending); return }
   const m = /[#&]nexo-plan=([A-Za-z0-9_-]+)/.exec(location.hash)
   if (!m) return
   history.replaceState(null, '', location.pathname + location.search)
@@ -70,16 +79,17 @@
   // Si el enlace no viene de Nexo, se pide confirmación antes de guardar nada.
   const fromNexo = NEXO_ORIGINS.some(o => document.referrer === o || document.referrer.startsWith(o + '/'))
   const changes = plan.loadouts.reduce((s, l) => s + Object.keys(l.relics).length + Object.keys(l.accessories).length, 0)
-  if (!fromNexo && !confirm(`Nexo: ¿guardar «${plan.name}» como preset? ${plan.loadouts.length} Invokers · ${changes} cambios. No se equipa nada hasta que pulses Apply.`)) return
+  const name = plan.name.slice(0, 60)
+  if (!fromNexo && !confirm(`Nexo: ¿guardar «${name}» como preset y cargarlo en el optimizador? ${plan.loadouts.length} Invokers · ${changes} cambios. No se equipa nada hasta que lo confirmes en el portal.`)) return
   ;(async () => {
     try {
       const res = await fetch('/api/box/presets', {
         method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: plan.name.slice(0, 60), category: 'Nexo', loadouts: plan.loadouts.map(l => ({ heroId: l.heroId, relics: l.relics, accessories: l.accessories })) }),
+        body: JSON.stringify({ name, category: 'Nexo', loadouts: plan.loadouts.map(l => ({ heroId: l.heroId, relics: l.relics, accessories: l.accessories })) }),
       })
       if (res.status === 401) { toast('Nexo: inicia sesión en invokers.com y vuelve a pulsar «Enviar a invokers.com» en Nexo.', true); return }
       if (!res.ok) { const t = await res.json().catch(() => null); toast(`Nexo: el portal no aceptó el preset (${res.status}). ${(t && t.message) || ''}`, true); return }
-      sessionStorage.setItem(OPEN_FLAG, '1')
+      sessionStorage.setItem(OPEN_FLAG, name)
       location.reload()
     } catch (e) { toast('Nexo: no se pudo guardar el preset. ' + (e && e.message ? e.message : ''), true) }
   })()

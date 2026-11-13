@@ -12,8 +12,9 @@ export function gearRating(g: Gear): number {
   const rank = (g.rank - 1) / 4
   const grade = gradeScore(g)
   const gradePart = grade === null ? 0.4 : (grade - 1) / 4
-  const flatSubs = g.subs.filter(s => s.mode === 'flat' && FLAT_BASE.has(s.stat)).length
-  const subsPart = Math.min(1, g.subs.length / 4) - flatSubs * 0.08
+  // Las subestadísticas planas de ATQ/DEF/VIDA no se penalizan: según la base del Invoker pueden rendir más que las de %
+  // (lo calcula el coach de piezas con los valores de tu caja).
+  const subsPart = Math.min(1, g.subs.length / 4)
   return Math.round(100 * Math.max(0, Math.min(1, 0.25 * rarity + 0.3 * rank + 0.3 * gradePart + 0.15 * subsPart)))
 }
 
@@ -38,8 +39,6 @@ export function sellCandidates(box: Box, ctx: SellContext = {}): SellVerdict[] {
     if (g.rank <= 3) reasons.push(`Rango ${g.rank}★`)
     if (RARITIES.indexOf(g.rarity) <= 1) reasons.push(`Rareza ${g.rarity === 'Common' ? 'común' : 'poco común'}`)
     if (grade !== null && grade < 1.6 && g.subs.length >= 2) reasons.push('Subestadísticas con nota D')
-    const flat = g.subs.filter(s => s.mode === 'flat' && FLAT_BASE.has(s.stat)).length
-    if (flat >= 2) reasons.push(`${flat} subestadísticas planas de ATQ/DEF/VIDA`)
     if (g.kind === 'relic' && ['Pauldrons', 'Gauntlets', 'Chestplate', 'Belt', 'Boots'].includes(g.slot) && g.main.mode === 'flat' && FLAT_BASE.has(g.main.stat)) reasons.push('Principal plana en ranura de porcentaje')
     if (g.rank >= 5) keep.push('Rango 5★')
     if (grade !== null && grade >= 3) keep.push('Buenas notas')

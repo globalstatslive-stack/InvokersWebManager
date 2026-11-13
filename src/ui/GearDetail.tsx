@@ -5,6 +5,8 @@ import { Empty, GearCard, NeedsAccount } from './common'
 import { GearIcon, Portrait } from './Art'
 import { SET_LABEL, SLOT_LABEL, t } from '../box/i18n'
 import { whoBenefits } from '../box/usefulness'
+import { gainText } from '../box/gearCoach'
+import { GearCoachPanel } from './GearCoach'
 import { usePlan, reservedBy } from './plan'
 import { useActiveTeams } from './activeTeams'
 
@@ -31,6 +33,7 @@ export function GearDetail({ id }: { id: string }) {
   return <div className="gear-detail">
     <button className="back" onClick={() => history.back()}><ArrowLeft size={17} /> Volver</button>
     <GearCard g={g} owner={owner?.name ?? null} />
+    <GearCoachPanel g={g} />
     <p className="fine">{owner ? <>La lleva <button className="link" onClick={() => go(`/invoker/${owner.id}`)}>{owner.name}</button>. Moverla cuesta {g.unequipGold ? `${g.unequipGold.toLocaleString('es-ES')} de oro de desequipar` : 'el oro de desequipar (no publicado para esta pieza)'}; no es su precio de venta.</> : 'Pieza libre: equiparla no cuesta oro de desequipar.'}{reserved && planned ? ` Reservada en tu plan para ${planned.name}.` : ''}</p>
     <section className="panel">
       <div className="panel-title"><h2>¿A quién le sirve?</h2><small>{candidates.length} candidatos: tus equipos activos, tu plan y los 25 más fuertes</small></div>
@@ -39,7 +42,7 @@ export function GearDetail({ id }: { id: string }) {
           <Portrait c={u.hero} size="sm" />
           <span className="row-main"><b>{u.hero.name}{active.heroes.has(u.hero.id) ? <small className="tag good">equipo activo</small> : null}</b>
             <small>Sustituye {u.replaces ? <><GearIcon g={u.replaces} size="sm" /> {u.replaces.set ? t(SET_LABEL, u.replaces.set) : u.replaces.faction}</> : 'una ranura vacía'}{u.ownerLoses && owner ? ` · ${owner.name} la perdería` : ''}</small></span>
-          <b className="up row-value">{u.unit === 'damage' ? `+${(100 * u.gain).toFixed(1)} % daño/golpe` : `+${u.gain.toFixed(1)} pts (perfil ${u.hero.cls === 'Tank' ? 'tanque' : 'apoyo'})`}</b>
+          <b className="up row-value">{gainText(u)}</b>
           <button className="icon-btn" aria-label={`Optimizar a ${u.hero.name}`} onClick={() => go(`/optimizador/${u.hero.id}`)}><Wand2 size={16} /></button>
         </li>)}</ul>}
       <p className="fine"><Info size={13} /> Cambio de una sola pieza con la fórmula de estadísticas verificada, incluidos los conjuntos que se activan o se pierden. Atacantes: daño medio por golpe; tanques y apoyos: puntos de su perfil de clase. No es la build óptima completa: para eso, usa el optimizador.</p>

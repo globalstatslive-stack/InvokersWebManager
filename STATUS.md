@@ -1,4 +1,4 @@
-# Estado del proyecto · 11 de noviembre de 2026
+# Estado del proyecto · 13 de noviembre de 2026
 
 ## Versión 0.5 (Nexo)
 
@@ -69,6 +69,17 @@
 ## Versión 0.14
 
 - Equipo para un jefe elige por encaje con el jefe, no por el equipamiento actual: nota oficial, habilidades que pide, elemento y tolerancia innata del kit, más el desarrollo que las piezas no cambian (estrellas, nivel, despertar, habilidades). El poder actual, la tolerancia de conjuntos, la PREC y la RES pasan a «A mejorar con equipamiento», con acceso a Objetivo. Opción «Priorizar a los que ya tengo equipados» para el criterio anterior.
+
+## Versión 0.15
+
+- **Coach** sustituye al Asesor (segunda entrada del menú y de la barra móvil). «Qué hacer ahora»: acciones priorizadas con su porqué (enlace a punto de caducar, plan pendiente, marcar equipos activos, ranuras vacías, equipar, subir, no invertir en piezas de poco rango, probar, limpieza, siguiente fase de tus jefes). Las 3 primeras, también en Inicio.
+- **Coach de piezas** (`src/box/gearCoach.ts`): veredicto y razonamiento completo para cada reliquia y accesorio, por bloques (qué es, sus estadísticas para quien la llevaría, lo que puede llegar a ser, para tu cuenta, decisión), cada paso etiquetado como oficial, tu caja, cálculo o criterio de Nexo.
+  - Reglas oficiales de las guías Relics y Accessories: subestadísticas de serie por rareza, hitos +5/+10/+15/+20 (desbloqueo o mejora al azar), tiradas del 70–100 % con el mismo peso, tabla de notas (una prueba la compara con la guía que se descarga cada semana), el rango no se sube, vender da oro y triturar Memorium, accesorios por facción y despertar, conjuntos que solo dan los jefes.
+  - De tu caja: valor de una tirada máxima por estadística y rango (subestadísticas con nota B sin mejoras = 100 %). Con él se ve que las subestadísticas planas de ATQ/DEF/VIDA pueden rendir más que las de % según la base del Invoker (p. ej., +15 DEF = 4,5 % de una base de 330, frente al 1,9 % de DEF %): se quita la penalización que tenían en «Qué vender» y en la valoración.
+  - Decisión: una pieza libre por Invoker y ranura para «equipar» (ganancia ≥ 1 %); «probar» solo si su valor medio esperado al +20 (principal al máximo del portal y tiradas medias en mejoras y desbloqueos) mejora en ≥ 1 % a tus equipos activos y plan (o a tus 10 más fuertes), con 2 candidatas por ranura y qué vigilar en el siguiente hito; «sustituir» las 3★ equipadas si hay libres de más rango.
+- **Plan** en 3 pasos (enviar, marcador, «Equip all») más la comprobación al reimportar; el marcador se instala desde la propia página. El marcador y la extensión, tras guardar el preset, abren la pestaña Presets y pulsan «Load» (el marcador refresca la lista del portal sin recargar; si algo falla, recarga y lo explica). Nombre de preset con fecha y hora.
+- El coach se carga al abrirlo: el paquete inicial baja de 174 a 153 KB comprimidos.
+- Pruebas: `gearCoach.test.ts` (tabla de notas frente a la guía oficial, hitos por rareza, grupos de desbloqueo, valores de tirada, proyección, veredictos y razonamiento); e2e con el marcador cargando el preset en un optimizador simulado y con las páginas del coach.
 
 ## Pendiente
 

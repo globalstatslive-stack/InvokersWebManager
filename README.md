@@ -4,16 +4,17 @@
 
 Herramienta de fans independiente para gestionar tu cuenta de **Invokers: Titan Legacy** con los retratos, Titanes y objetos reales del juego. La idea central: **elige qué quieres superar, descubre qué cambiar, cuánto cuesta y cómo afecta a tus otros equipos**. El código y el diseño son propios; no incorpora código ni recursos de GGNoLuck. Las ilustraciones se publican conforme a la política oficial de contenido de fans.
 
-## Versión 0.14: qué incluye
+## Versión 0.15: qué incluye
 
 | Sección | Qué hace |
 |---|---|
-| **Inicio** | Cuenta, fecha de la instantánea y caducidad del enlace, objetivo actual, plan, equipos activos y accesos rápidos. |
+| **Inicio** | Cuenta, fecha de la instantánea y caducidad del enlace, objetivo actual, plan, equipos activos, accesos rápidos y los 3 primeros pasos del coach. |
+| **Coach** | **Qué hacer ahora**: acciones ordenadas por lo que más rinde (renovar el enlace, aplicar el plan, marcar equipos activos, rellenar ranuras vacías, equipar, subir, no invertir en piezas de poco rango, probar piezas con futuro, limpiar el inventario, siguiente fase de tus jefes), cada una con su porqué. **Piezas: subir o vender**: veredicto para cada reliquia y accesorio (subir, equipar, probar hasta el siguiente hito, sustituir, guardar, vender o triturar, completa) con el razonamiento paso a paso y su fuente (oficial, tu caja, cálculo, criterio de Nexo) y una guía de cómo funcionan las piezas. Además, **Equipo para un jefe**, revisión de builds y tolerancias. Nunca vende ni sube nada. |
 | **Objetivo** | Elige un jefe y una fase de las guías oficiales (PREC, RES, tolerancia y objetivos publicados, con enlace a la fuente). Diagnostica a tu equipo contra esos objetivos y calcula tres planes comparables (mínimo coste, equilibrio, máximo beneficio) con piezas, cambios, oro de desequipar, a quién se le quita cada pieza y qué mínimos son inalcanzables con tus piezas. Compara asignación conjunta y secuencial. |
 | **Colección** | Invokers y piezas con búsqueda siempre visible, filtros plegables con contador, tarjetas a dos columnas o lista compacta, personajes o ejemplares (copias ×N), estado equipado/libre/bloqueado y ficha de cada pieza con «¿a quién le sirve?». |
-| **Plan** | Cambios guardados por Invoker, sin piezas repetidas entre Invokers. Al reimportar marca qué se aplicó y separa lo **estimado** de lo **observado**. Se puede enviar como preset al portal (extensión opcional). |
+| **Plan** | Cambios guardados por Invoker, sin piezas repetidas entre Invokers. Al reimportar marca qué se aplicó y separa lo **estimado** de lo **observado**. Se lleva al juego en 3 pasos: «Enviar a invokers.com» abre el optimizador oficial con el plan en el enlace; el marcador «Nexo» (o la extensión, sin pulsar nada) lo guarda como preset y lo carga; se confirma en el portal con «Equip all», que muestra el oro. |
 | **Optimizador** | Un Invoker: simulación de combate con sus habilidades, daño efectivo o pesos; esfuerzo (mínimo coste / equilibrio / máximo), mínimos, conjunto obligatorio y protección de equipos activos. Se calcula en un Web Worker con progreso y cancelación; si no hay solución válida lo dice. |
-| **Asesor** | **Equipo para un jefe**: tus 5 mejores Invokers y Titanes para un jefe y fase, con el porqué, alternativas y lo que falta, y paso a Objetivo. Analiza las habilidades del jefe (guía oficial) frente a las de tus Invokers: qué pide, quién lo cubre y qué evitar. Además, revisión de builds, qué subir y candidatas a venta que excluyen las reservadas en el plan, las útiles para tus Invokers y las escasas de su conjunto. Nunca vende nada. |
+| **Coach › Equipo para un jefe** | Tus 5 mejores Invokers y Titanes para un jefe y fase, con el porqué, alternativas y lo que falta, y paso a Objetivo. Analiza las habilidades del jefe (guía oficial) frente a las de tus Invokers: qué pide, quién lo cubre y qué evitar. |
 | **Colección: Titanes y Equipos** | Tus Titanes y los récords por modo, como pestañas de Colección. **Historial** compara importaciones. |
 | **Enciclopedia** | Contenido del juego con datos oficiales de invokers.com, sin cuenta y, si la importas, con lo que tienes: **Invokers** y **Titanes** (estadísticas de nivel 1 y máximas, habilidades nivel a nivel, tolerancias, efectos y nota oficial en cada jefe), **Jefes** (todas las fases, corrupciones, objetivos de la guía y tier list; «Preparar este objetivo»), **Agujas** (120 pisos por elemento: enemigos, nivel, PREC, RES, recompensas), **Eventos** de caza y torneos, **Tier lists** oficiales, **Equipamiento** (principales y secundarias por ranura, notas de tirada, conjuntos y dónde conseguirlos, accesorios), **Efectos**, **Calculadoras** (precisión contra resistencia, recuperación, ticks) y un índice en español de las **guías oficiales**. |
 
@@ -66,7 +67,7 @@ Ninguna caja real se guarda en el repositorio. Las pruebas usan una caja sintét
 
 **Extensión de Chrome/Edge** (`extension/`, se publica como `nexo-extension.zip`): guarda el plan como preset al abrir el optimizador oficial desde Nexo y abre la pestaña Presets, sin marcador. Solo actúa en `invokers.com/hub/*`, no equipa nada y pide confirmación si el enlace no viene de Nexo.
 
-Estructura: `src/box/` (modelo, estadísticas, optimizador, asesor, textos), `src/ui/` (páginas), `src/memorypack.ts` (snapshots `.dat`), `src/folderSync.ts` (carpeta del juego), `proxy/` (Worker opcional).
+Estructura: `src/box/` (modelo, estadísticas, optimizador, asesor, coach de piezas, textos), `src/ui/` (páginas), `src/memorypack.ts` (snapshots `.dat`), `src/folderSync.ts` (carpeta del juego), `proxy/` (Worker opcional).
 
 ## Límites
 - Nexo no estima probabilidades de victoria: compara tus estadísticas con los objetivos publicados de cada fase.

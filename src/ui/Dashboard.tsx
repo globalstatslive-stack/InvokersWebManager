@@ -1,13 +1,14 @@
-import { useMemo } from 'react'
+import { lazy, Suspense, useMemo } from 'react'
 import { AlertTriangle, ArrowRight, Clock, Gem, LayoutGrid, Lightbulb, ListChecks, Target, Wand2, Zap } from 'lucide-react'
 import { useAccount } from './account'
 import { fmtPower, StalePowerNote } from './common'
 import { GameCard, GameImg } from './Art'
 import { fmtInt } from '../box/i18n'
-import { sellCandidates, upgradeQueue } from '../box/advisor'
 import { ImportPage } from './ImportPage'
 import { progressOf, usePlan } from './plan'
 import { useActiveTeams } from './activeTeams'
+const CoachCard = lazy(() => import('./CoachNow').then(m => ({ default: m.CoachCard })))
+const CoachQuick = lazy(() => import('./CoachNow').then(m => ({ default: m.CoachQuick })))
 
 const date = (s: string | null) => s ? new Intl.DateTimeFormat('es-ES', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(s)) : '—'
 export function Dashboard() {
@@ -16,10 +17,10 @@ export function Dashboard() {
   const active = useActiveTeams(account?.box)
   const data = useMemo(() => {
     if (!account) return null
-    const { box, index } = account
+    const { box } = account
     const heroes = [...box.heroes].sort((a, b) => b.power - a.power)
     const free = [...box.relics, ...box.accessories].filter(g => g.equippedHeroId === null).length
-    return { heroes, free, sell: sellCandidates(box).length, upgrades: upgradeQueue(box, index).length }
+    return { heroes, free }
   }, [account])
   if (!account || !data) return <ImportPage />
   const { box } = account
@@ -55,9 +56,10 @@ export function Dashboard() {
     <section className="quick">
       <button onClick={() => go('/coleccion')}><LayoutGrid size={18} /><b>{box.heroes.length}</b><small>Invokers</small></button>
       <button onClick={() => go('/coleccion/piezas')}><Gem size={18} /><b>{data.free}</b><small>piezas libres</small></button>
-      <button onClick={() => go('/asesor/mejoras')}><Wand2 size={18} /><b>{data.upgrades}</b><small>sin subir</small></button>
-      <button onClick={() => go('/asesor/venta')}><Lightbulb size={18} /><b>{data.sell}</b><small>para revisar</small></button>
+      <Suspense fallback={<><button disabled><Wand2 size={18} /><b>…</b><small>para subir</small></button><button disabled><Lightbulb size={18} /><b>…</b><small>para vender</small></button></>}><CoachQuick /></Suspense>
     </section>
+
+    <Suspense fallback={null}><CoachCard /></Suspense>
 
     <section className="panel">
       <div className="panel-title"><h2>Tus más fuertes</h2><button className="link" onClick={() => go('/coleccion')}>Ver todos <ArrowRight size={15} /></button></div>
