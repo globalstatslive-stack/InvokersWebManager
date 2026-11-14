@@ -70,6 +70,17 @@
 
 - Equipo para un jefe elige por encaje con el jefe, no por el equipamiento actual: nota oficial, habilidades que pide, elemento y tolerancia innata del kit, más el desarrollo que las piezas no cambian (estrellas, nivel, despertar, habilidades). El poder actual, la tolerancia de conjuntos, la PREC y la RES pasan a «A mejorar con equipamiento», con acceso a Objetivo. Opción «Priorizar a los que ya tengo equipados» para el criterio anterior.
 
+## Versión 0.20
+
+- **Coach › Sala de trofeos** (`src/box/trophyHall.ts`): en qué gastar los trofeos de arena, por orden y por qué.
+  - Oficial (guía «Arena»): 12 mejoras por elemento (Ataque, Defensa, Función) que suben a todos los Invokers y Titanes de ese elemento en todos los modos; niveles 1–15; bronce paga 1–5, plata 6–10 y oro 11–15; los de más valor se convierten solos en los de menos (1 oro = 2 platas = 4 bronces, 1 plata = 2 bronces); fundir en monedas da 1/5/10. El nivel 1 de ATQ % cuesta 20 bronces y da +2 % (imagen de la guía); el resto de costes no está publicado.
+  - Portal (PlayerBox): la bonificación se suma a los Invokers del elemento; las de % sobre VIDA, ATQ o DEF base.
+  - De la caja: el nivel de cada mejora y cuánto da cada nivel (ATQ %, VIDA %, DEF % +2 %; velocidades, recuperación y maná +4). Las mejoras que nunca has subido (críticos, PREC, RES, instinto) quedan «sin dato todavía» y fuera del orden hasta que suban una.
+  - Orden: el siguiente nivel de cada mejora, por la suma de lo que aporta a los Invokers que usas de ese elemento con los pesos de su perfil en el optimizador (más peso cuantos más equipos; triple para equipos activos y plan); a igualdad, el nivel más bajo. Separado por bronce, plata y oro.
+  - «Tus trofeos» (opcional, en este navegador: la caja no los publica), «Tu sala ahora» como en el juego con las 3 primeras resaltadas, y un paso en «Hoy».
+- El elemento Dark se llama «Tinieblas», como en el juego en español.
+- Pruebas: `trophyHall.test.ts` (reglas, lectura de la caja, perfiles, orden, sin dato); e2e de la sala.
+
 ## Versión 0.19
 
 - **Plan en tandas de 5**: el optimizador oficial trabaja con 5 Invokers a la vez (al cargar un preset, solo pone los 5 primeros en su lista). Con más de 5 pendientes, Plan los divide en tandas por orden de prioridad, cada una con su preset («Nombre · 1/4»…) y su enlace «Enviar tanda N».

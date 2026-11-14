@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
-import { AlertTriangle, ArrowRight, ArrowUpCircle, FlaskConical, Gem, GraduationCap, LayoutGrid, Lightbulb, ListChecks, Loader2, PackageCheck, Recycle, Repeat, ShieldCheck, Star, Swords, Users, Wand2 } from 'lucide-react'
+import { AlertTriangle, ArrowRight, Trophy, ArrowUpCircle, FlaskConical, Gem, GraduationCap, LayoutGrid, Lightbulb, ListChecks, Loader2, PackageCheck, Recycle, Repeat, ShieldCheck, Star, Swords, Users, Wand2 } from 'lucide-react'
 import { ACCESSORY_SLOTS, fmtBonus, fmtInt, MODE_LABEL, RELIC_SLOTS, SLOT_LABEL, t } from '../box/i18n'
 import { gainText, type GearAdvice } from '../box/gearCoach'
 import { ASCENSION } from '../box/ascension'
@@ -9,6 +9,8 @@ import { useActiveTeams, teamKey } from './activeTeams'
 import { progressOf, usePlan } from './plan'
 import { useGearCoach } from './coach'
 import { useAscend } from './AscendCoach'
+import { hallTopPicks } from './TrophyHall'
+import { usedHeroes } from '../box/equipBatch'
 
 /** Un paso del coach: qué hacer (título), por qué en una frase, y una mini-lección opcional para quien empieza. */
 export type CoachAction = { id: string; icon: typeof ListChecks; title: string; why: ReactNode; learn?: ReactNode; items?: ReactNode[]; cta?: { label: string; to: string; before?: () => void }; extra?: ReactNode; urgent?: boolean }
@@ -107,6 +109,16 @@ export function useCoachActions(): { actions: CoachAction[]; ready: boolean } {
       if (sell.length) out.push({ id: 'sell', icon: Recycle, title: `Vende o tritura ${plural(sell.length, 'pieza')} sin futuro`,
         why: 'No mejoran a tus Invokers ni subidas a +20, y con lo que dan pagas las subidas de las buenas.',
         learn: 'Vender da oro y triturar da Memorium: las dos cosas que cuesta subir piezas. En el juego se hace por lotes desde la sala de equipo («Sell / Crush»).', cta: { label: 'Revisarlas', to: '/asesor/piezas/sell' } })
+    }
+    // Sala de trofeos: la mejor mejora con cada tipo de trofeo.
+    if (box.arenaHall.length) {
+      const important = new Set([...active.heroes, ...plan.map(e => e.heroId)])
+      const picks = hallTopPicks(box, usedHeroes(box, important).used)
+      const items = (['bronze', 'silver', 'gold'] as const).map(tr => picks[tr] ? <><b>Con {tr === 'bronze' ? 'bronces' : tr === 'silver' ? 'platas' : 'oros'}</b>: {picks.label(picks[tr]!)}</> : null).filter(Boolean) as ReactNode[]
+      if (items.length) out.push({ id: 'hall', icon: Trophy, title: `Gasta tus trofeos: ${picks.label((picks.bronze ?? picks.silver ?? picks.gold)!)}`,
+        why: 'La Sala de trofeos sube a todos los Invokers de un elemento en todos los modos: Nexo elige la mejora que más notan los que usas.',
+        learn: 'Los trofeos se ganan venciendo en la arena. Bronce paga los niveles 1–5 de cada mejora, plata los 6–10 y oro los 11–15; los de más valor se convierten en los de menos si te faltan, nunca al revés.',
+        items, cta: { label: 'Ver la sala', to: '/asesor/trofeos' } })
     }
     // Siguiente fase de los jefes en los que tienes récord.
     const first = nextBosses[0]

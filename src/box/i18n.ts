@@ -45,7 +45,7 @@ export const SET_LABEL: Record<string, string> = {
 }
 export const RARITY_LABEL: Record<string, string> = { Common: 'Común', Uncommon: 'Poco común', Rare: 'Raro', Epic: 'Épico', Legendary: 'Legendario', Mythic: 'Mítico' }
 export const RARITIES = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Mythic']
-export const ELEMENT_LABEL: Record<string, string> = { Fire: 'Fuego', Water: 'Agua', Earth: 'Tierra', Wind: 'Aire', Light: 'Luz', Dark: 'Oscuridad' }
+export const ELEMENT_LABEL: Record<string, string> = { Fire: 'Fuego', Water: 'Agua', Earth: 'Tierra', Wind: 'Aire', Light: 'Luz', Dark: 'Tinieblas' }
 export const CLASS_LABEL: Record<string, string> = { MeleeAttacker: 'Cuerpo a cuerpo', RangedAttacker: 'A distancia', Support: 'Apoyo', Tank: 'Tanque', Damage: 'Daño' }
 export const FACTION_LABEL: Record<string, string> = {
   Eldrin: 'Eldrin', Magi: 'Magi', Stonehearts: 'Stonehearts', Freeborn: 'Freeborn', Beastbloods: 'Beastbloods',

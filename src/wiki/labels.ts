@@ -48,7 +48,7 @@ export const BOSS_CATEGORY_HELP: Record<string, string> = {
 export const MATCHUP: Record<string, string> = { Neutral: 'Neutral', Advantage: 'Ventaja', Disadvantage: 'Desventaja' }
 export const matchupEs = (s: string) => s.replace('Advantage', 'Ventaja').replace('Disadvantage', 'Desventaja').replace('damage', 'de daño')
 export const REWARD: Record<string, string> = { Gold: 'Oro', Gems: 'Gemas', Energy: 'Energía', 'Medium XP Potion': 'Poción de XP mediana', 'Rare Codex': 'Códice raro', 'Epic Codex': 'Códice épico', 'Legendary Codex': 'Códice legendario', 'Rare Prism': 'Prisma raro', 'Epic Prism': 'Prisma épico', 'Legendary Prism': 'Prisma legendario' }
-export const SPIRE_ES: Record<string, string> = { 'water-spire': 'Aguja de Agua', 'fire-spire': 'Aguja de Fuego', 'earth-spire': 'Aguja de Tierra', 'wind-spire': 'Aguja de Aire', 'light-spire': 'Aguja de Luz', 'dark-spire': 'Aguja de Oscuridad' }
+export const SPIRE_ES: Record<string, string> = { 'water-spire': 'Aguja de Agua', 'fire-spire': 'Aguja de Fuego', 'earth-spire': 'Aguja de Tierra', 'wind-spire': 'Aguja de Aire', 'light-spire': 'Aguja de Luz', 'dark-spire': 'Aguja de Tinieblas' }
 export const SPIRE_ELEMENT: Record<string, string> = { 'water-spire': 'Water', 'fire-spire': 'Fire', 'earth-spire': 'Earth', 'wind-spire': 'Wind', 'light-spire': 'Light', 'dark-spire': 'Dark' }
 export const RUN_ES: Record<string, string> = {}
 

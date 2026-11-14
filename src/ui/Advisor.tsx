@@ -8,10 +8,11 @@ import { diagnose, teamHeroIds } from '../box/advisor'
 import type { Verdict } from '../box/gearCoach'
 import { CoachNow } from './CoachNow'
 import { AscendCoach } from './AscendCoach'
+import { TrophyHall } from './TrophyHall'
 import { PiecesCoach } from './GearCoach'
 import { TeamFinder } from './TeamFinder'
 
-type Tab = 'ahora' | 'invokers' | 'piezas' | 'equipo' | 'mas'
+type Tab = 'ahora' | 'invokers' | 'piezas' | 'equipo' | 'trofeos' | 'mas'
 const VERDICTS: Verdict[] = ['upgrade', 'replace', 'test', 'equip', 'keep', 'sell', 'done']
 /** Coach: qué hacer hoy, a quién subir de estrellas, qué hacer con las piezas, qué equipo llevar a un jefe y, en «Más»,
  * la revisión de builds y las tolerancias. */
@@ -20,15 +21,16 @@ export function Advisor({ tab, arg }: { tab?: string; arg?: string }) {
   // Rutas antiguas: «Qué vender» y «Qué subir» pasan a Piezas; revisión y tolerancias, a «Más».
   const legacy = tab === 'venta' ? 'sell' : tab === 'mejoras' ? 'upgrade' : undefined
   const more = tab === 'revision' || tab === 'tolerancias' ? tab : tab === 'mas' && arg === 'tolerancias' ? 'tolerancias' : 'revision'
-  const current: Tab = legacy ? 'piezas' : tab === 'revision' || tab === 'tolerancias' ? 'mas' : (['ahora', 'invokers', 'piezas', 'equipo', 'mas'] as Tab[]).includes(tab as Tab) ? tab as Tab : 'ahora'
+  const current: Tab = legacy ? 'piezas' : tab === 'revision' || tab === 'tolerancias' ? 'mas' : (['ahora', 'invokers', 'piezas', 'equipo', 'trofeos', 'mas'] as Tab[]).includes(tab as Tab) ? tab as Tab : 'ahora'
   const verdict = (legacy ?? (VERDICTS.includes(arg as Verdict) ? arg : undefined)) as Verdict | undefined
   if (!account) return <NeedsAccount />
   return <>
     <PageHead kicker="Tu entrenador" title="Coach">Qué hacer y por qué, paso a paso, con tu caja y los datos oficiales del juego. Nada se ejecuta en el juego.</PageHead>
-    <Chips label="Sección" value={current} onChange={v => go(`/asesor/${v}`)} options={[{ id: 'ahora', label: 'Hoy' }, { id: 'invokers', label: 'Personajes: a quién subir' }, { id: 'piezas', label: 'Piezas: subir o vender' }, { id: 'equipo', label: 'Jefes: qué equipo llevar' }, { id: 'mas', label: 'Más' }]} />
+    <Chips label="Sección" value={current} onChange={v => go(`/asesor/${v}`)} options={[{ id: 'ahora', label: 'Hoy' }, { id: 'invokers', label: 'Personajes: a quién subir' }, { id: 'piezas', label: 'Piezas: subir o vender' }, { id: 'equipo', label: 'Jefes: qué equipo llevar' }, { id: 'trofeos', label: 'Sala de trofeos' }, { id: 'mas', label: 'Más' }]} />
     {current === 'ahora' && <CoachNow />}
     {current === 'invokers' && <AscendCoach key={arg ?? '6'} initial={arg} />}
     {current === 'equipo' && <TeamFinder />}
+    {current === 'trofeos' && <TrophyHall />}
     {current === 'piezas' && <PiecesCoach key={verdict ?? 'upgrade'} initial={verdict} />}
     {current === 'mas' && <>
       <Chips label="Herramienta" value={more} onChange={v => go(`/asesor/mas/${v}`)} options={[{ id: 'revision', label: 'Revisión de builds' }, { id: 'tolerancias', label: 'Tolerancias' }]} />
