@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { decodeCollection, unpackSnapshot } from './memorypack'
+import { arenaHall, decodeCollection, resources, unpackSnapshot } from './memorypack'
 
 const bytes = (...values: number[]) => new Uint8Array(values)
 const join = (...pieces: Uint8Array[]) => { const result = new Uint8Array(pieces.reduce((n, x) => n + x.length, 0)); let at = 0; for (const piece of pieces) { result.set(piece, at); at += piece.length } return result }
@@ -38,5 +38,34 @@ describe('lector de inventario MemoryPack', () => {
     expect(() => decodeCollection(fixture(99))).toThrow('relación entre equipo')
     const original = fixture()[0]
     expect(() => unpackSnapshot(original.name, original.bytes.subarray(0, -3))).toThrow()
+  })
+})
+
+describe('trofeos y Sala de trofeos de la carpeta del juego', () => {
+  const player = (res: Uint8Array) => { const f: Uint8Array[] = Array.from({ length: 12 }, () => bytes()); f[1] = i32(-1); f[4] = i32(43); f[9] = res; return f }
+  const resList = (pairs: [number, number][]) => object([join(i32(pairs.length), ...pairs.flatMap(([id, n]) => [i32(id), i32(n)]))])
+  const hallRec = (el: number, stat: number, level: number) => object([i32(el), i32(stat), i32(level)])
+  const arena = (recs: Uint8Array[]) => { const f: Uint8Array[] = Array.from({ length: 10 }, () => bytes()); f[8] = join(i32(recs.length), ...recs); return f }
+  it('lee monedas de arena (22), bronces (23), platas (24) y oros (25), y los niveles de la sala', () => {
+    const files = [...fixture(), file('PlayerModel.dat', 1, player(resList([[1, 500], [22, 15020], [23, 96], [24, 12]]))),
+      file('PlayerArenaModel.dat', 9, arena([hallRec(1, 4, 5), hallRec(6, 13, 8)]))]
+    const data = decodeCollection(files)
+    expect(data.player).toEqual({ name: '', level: 43 })
+    expect(data.trophies).toEqual({ arenaCoins: 15020, bronze: 96, silver: 12, gold: 0 })
+    expect(data.arenaHall).toEqual([{ element: 1, stat: 4, level: 5 }, { element: 6, stat: 13, level: 8 }])
+    expect(data.warnings).toEqual(['Falta PlayerAccessoriesModel.dat: no se muestran accesorios.'])
+  })
+  it('si cambia el formato de trofeos o de la sala, avisa y lee el resto de la caja', () => {
+    const files = [...fixture(), file('PlayerModel.dat', 1, player(object([join(i32(3), i32(23))]))), file('PlayerArenaModel.dat', 9, arena([hallRec(9, 4, 5)]))]
+    const data = decodeCollection(files)
+    expect(data.invokers).toHaveLength(1)
+    expect(data.trophies).toBeUndefined()
+    expect(data.arenaHall).toBeUndefined()
+    expect(data.warnings.join(' ')).toMatch(/trofeos.*PlayerModel.*Sala de trofeos/s)
+  })
+  it('rechaza recuentos y niveles imposibles', () => {
+    expect(() => resources(object([join(i32(2), i32(23), i32(1))]))).toThrow('recuento de recursos')
+    expect(() => arenaHall(join(i32(1), hallRec(1, 4, 16)))).toThrow('fuera de rango')
+    expect(() => arenaHall(join(i32(2), hallRec(1, 4, 1)))).toThrow()
   })
 })

@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { parseOfficialBox } from './model'
+import { boxFromCollection, parseOfficialBox } from './model'
+import { mergeWithOfficial } from './merge'
 import { usedHeroes } from './equipBatch'
-import { HALL, HALL_STATS, hallLevels, hallRanking, perLevel, pointsFor } from './trophyHall'
+import { compareSteps, convertedPay, HALL, HALL_STATS, hallLevels, hallRanking, OFFICIAL_COSTS, perLevel, pointsFor, spendPlan } from './trophyHall'
+import type { Collection } from '../memorypack'
 
 const F = 2 ** 32
 const hero = (id: number, name: string, element: string, cls: string) => ({
@@ -54,5 +56,55 @@ describe('Sala de trofeos', () => {
     // Prob. crítico no se ha subido nunca: va a «sin dato», no al orden.
     expect(options.some(o => o.stat === 'criticalRate')).toBe(false)
     expect(unknown.some(o => o.stat === 'criticalRate' && o.element === 'Fire')).toBe(true)
+  })
+})
+
+describe('Sala de trofeos: compra paso a paso', () => {
+  const box = parseOfficialBox(fixture())
+  const { used } = usedHeroes(box, new Set())
+  const { options } = hallRanking(box, used)
+  it('sin costes conocidos se para en el primero y enseña lo que viene después', () => {
+    const lanes = spendPlan(options, { bronze: 100, silver: 50, gold: 0 }, OFFICIAL_COSTS)
+    expect(lanes.silver.steps).toHaveLength(1)
+    expect(lanes.silver.steps[0]).toMatchObject({ from: 5, to: 6, cost: null, left: null })
+    expect(lanes.silver.stop).toEqual({ kind: 'unknown-cost', level: 6 })
+    expect(lanes.bronze.steps[0].option).toMatchObject({ element: 'Water', stat: 'health', next: 3 })
+    expect(lanes.bronze.queue.length).toBeGreaterThan(0)
+    expect(lanes.bronze.queue.every(o => !(o.element === 'Water' && o.stat === 'health'))).toBe(true)
+    // Oro: ninguna mejora útil en el nivel 10.
+    expect(lanes.gold).toMatchObject({ steps: [], stop: { kind: 'done' } })
+  })
+  it('con costes apuntados descuenta, sigue con la misma mejora dentro del tramo y para si no alcanza', () => {
+    const lanes = spendPlan(options, { bronze: 0, silver: 100, gold: 0 }, { ...OFFICIAL_COSTS, 6: 30, 7: 40, 8: 50 })
+    expect(lanes.silver.steps.map(s => [s.to, s.cost, s.left])).toEqual([[6, 30, 70], [7, 40, 30]])
+    expect(lanes.silver.stop).toEqual({ kind: 'short', level: 8, cost: 50, missing: 20 })
+    expect(lanes.silver.spent).toBe(70)
+  })
+  it('con los dos costes conocidos compara aporte por trofeo; si falta alguno, aporte y nivel más bajo', () => {
+    const a = { ...options[0], score: 10, next: 2 }, b = { ...options[0], score: 12, next: 4 }
+    expect(compareSteps(a, b, {})).toBeGreaterThan(0) // b aporta más
+    expect(compareSteps(a, b, { 2: 20, 4: 60 })).toBeLessThan(0) // a rinde más por trofeo
+  })
+  it('si faltan trofeos de un tipo, el juego paga con los de más valor (nunca al revés)', () => {
+    expect(convertedPay('bronze', 5, { bronze: 0, silver: 10, gold: 0 })).toEqual({ silver: 3, gold: 0 })
+    expect(convertedPay('bronze', 6, { bronze: 0, silver: 1, gold: 1 })).toEqual({ silver: 1, gold: 1 })
+    expect(convertedPay('silver', 3, { bronze: 50, silver: 0, gold: 1 })).toBeNull()
+    expect(convertedPay('silver', 2, { bronze: 0, silver: 0, gold: 1 })).toEqual({ silver: 0, gold: 1 })
+  })
+})
+
+describe('Sala de trofeos desde la carpeta del juego', () => {
+  it('toma los niveles de la carpeta y el valor por nivel de la caja oficial', () => {
+    const official = parseOfficialBox(fixture())
+    const c: Collection = { invokers: [], titans: [], relics: [], accessories: [], warnings: [],
+      arenaHall: [{ element: 1, stat: 4, level: 6 }, { element: 1, stat: 7, level: 1 }, { element: 9, stat: 4, level: 2 }] }
+    const files = boxFromCollection(c)
+    expect(files.arenaHall).toHaveLength(2)
+    expect(Number.isNaN(files.arenaHall[0].value)).toBe(true)
+    const merged = mergeWithOfficial(files, official)
+    expect(hallLevels(merged).get('Fire:attack')).toEqual({ level: 6, value: expect.closeTo(0.12, 6) })
+    // Prob. crítico: subido en la carpeta, pero la caja oficial no dice cuánto da: sigue sin dato.
+    expect(perLevel(merged).has('criticalRate')).toBe(false)
+    expect(hallLevels(merged).get('Fire:criticalRate')?.level).toBe(1)
   })
 })

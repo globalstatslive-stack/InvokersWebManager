@@ -32,8 +32,9 @@ export const HALL_STATS: { stat: string; mode: 'flat' | 'percent'; group: HallGr
   { stat: 'comboSpeed', mode: 'flat', group: 'attack' }, { stat: 'criticalDamage', mode: 'percent', group: 'attack' },
   { stat: 'health', mode: 'percent', group: 'defense' }, { stat: 'defense', mode: 'percent', group: 'defense' },
   { stat: 'resistance', mode: 'flat', group: 'defense' }, { stat: 'instinct', mode: 'flat', group: 'defense' },
+  // Mismo orden que la sala del juego (Función: PREC, Recuperación, Vel. habilidad, Gen. maná).
   { stat: 'accuracy', mode: 'flat', group: 'utility' }, { stat: 'skillRecovery', mode: 'flat', group: 'utility' },
-  { stat: 'manaGeneration', mode: 'flat', group: 'utility' }, { stat: 'skillSpeed', mode: 'flat', group: 'utility' },
+  { stat: 'skillSpeed', mode: 'flat', group: 'utility' }, { stat: 'manaGeneration', mode: 'flat', group: 'utility' },
 ]
 const key = (element: string, stat: string) => `${element}:${stat}`
 
@@ -44,7 +45,7 @@ export function hallLevels(box: Box): Map<string, { level: number; value: number
 /** Cuánto da un nivel de cada estadística, observado en tu caja (valor ÷ nivel). Sin dato si aún no has subido ninguna. */
 export function perLevel(box: Box): Map<string, number> {
   const seen = new Map<string, number[]>()
-  for (const a of box.arenaHall) if (a.level > 0) seen.set(a.stat, [...(seen.get(a.stat) ?? []), a.value / a.level])
+  for (const a of box.arenaHall) if (a.level > 0 && Number.isFinite(a.value)) seen.set(a.stat, [...(seen.get(a.stat) ?? []), a.value / a.level])
   return new Map([...seen].map(([s, v]) => [s, Math.round(v.reduce((x, y) => x + y, 0) / v.length * 1e4) / 1e4]))
 }
 
@@ -101,4 +102,65 @@ export function hallRanking(box: Box, used: UsedHero[]): { options: HallOption[]
   options.sort((a, b) => b.score - a.score || a.level - b.level)
   unknown.sort((a, b) => b.beneficiaries.reduce((t, x) => t + x.weight, 0) - a.beneficiaries.reduce((t, x) => t + x.weight, 0))
   return { options, unknown, maxed }
+}
+
+export type Wallet = Record<Trophy, number>
+/** Valor de cada trofeo en bronces, como los convierte el juego (solo hacia abajo). */
+export const TIER_VALUE: Record<Trophy, number> = { bronze: 1, silver: 2, gold: 4 }
+/** Coste de cada nivel en trofeos de su tipo. Oficial solo el nivel 1 (20 bronces); el resto lo apunta el jugador
+ * al verlo en el juego. Nexo supone que un mismo nivel cuesta lo mismo en todas las mejoras (y lo dice). */
+export type HallCosts = Record<number, number>
+export const OFFICIAL_COSTS: HallCosts = { 1: HALL.firstLevel.amount }
+export const TIER_LEVELS: Record<Trophy, [number, number]> = { bronze: [1, 5], silver: [6, 10], gold: [11, 15] }
+
+export type SpendStep = { option: HallOption; from: number; to: number; cost: number | null; left: number | null }
+export type SpendStop =
+  | { kind: 'unknown-cost'; level: number }
+  | { kind: 'short'; level: number; cost: number; missing: number }
+  | { kind: 'limit' }
+  | { kind: 'done' }
+export type SpendLane = { trophy: Trophy; have: number; spent: number; steps: SpendStep[]; stop: SpendStop
+  /** Lo que viene después de donde se para la compra, por orden (otras mejoras de este tramo). */
+  queue: HallOption[] }
+
+/** Orden de compra dentro de un tipo de trofeo. Con los dos costes conocidos, aporte por trofeo; si falta alguno,
+ * más aporte primero y, a igualdad, el nivel más bajo (cada nivel cuesta más que el anterior, guía oficial). */
+export function compareSteps(a: HallOption, b: HallOption, costs: HallCosts): number {
+  const ca = costs[a.next], cb = costs[b.next]
+  if (ca && cb) return b.score / cb - a.score / ca || a.next - b.next
+  return b.score - a.score || a.next - b.next
+}
+
+/** Compra simulada con los trofeos de cada tipo, sin convertir (la plata y el oro rinden más en sus niveles).
+ * Para en el primer coste desconocido (hay que mirarlo en el juego) o cuando no alcanza para la mejor compra. */
+export function spendPlan(options: HallOption[], wallet: Wallet, costs: HallCosts, max = 6): Record<Trophy, SpendLane> {
+  const lane = (trophy: Trophy): SpendLane => {
+    let have = Math.max(0, wallet[trophy] || 0), spent = 0
+    const steps: SpendStep[] = []
+    let pool = options.filter(o => o.trophy === trophy && o.score > 0)
+    const after = (skip: HallOption) => [...pool].filter(o => o.stat !== skip.stat || o.element !== skip.element).sort((a, b) => compareSteps(a, b, costs)).slice(0, 3)
+    while (pool.length) {
+      const best = [...pool].sort((a, b) => compareSteps(a, b, costs))[0]
+      if (steps.length >= max) return { trophy, have, spent, steps, stop: { kind: 'limit' }, queue: [] }
+      const cost = costs[best.next] ?? null
+      if (cost === null) { steps.push({ option: best, from: best.level, to: best.next, cost: null, left: null }); return { trophy, have, spent, steps, stop: { kind: 'unknown-cost', level: best.next }, queue: after(best) } }
+      if (cost > have) return { trophy, have, spent, steps, stop: { kind: 'short', level: best.next, cost, missing: cost - have }, queue: [] }
+      have -= cost; spent += cost
+      steps.push({ option: best, from: best.level, to: best.next, cost, left: have })
+      // Siguiente nivel de esa misma mejora, si se sigue pagando con este tipo de trofeo (el aporte por nivel es el mismo).
+      const next = best.next + 1
+      pool = pool.filter(o => o !== best)
+      if (next <= TIER_LEVELS[trophy][1]) pool.push({ ...best, level: best.next, next })
+    }
+    return { trophy, have, spent, steps, stop: { kind: 'done' }, queue: [] }
+  }
+  return { bronze: lane('bronze'), silver: lane('silver'), gold: lane('gold') }
+}
+
+/** Trofeos que pagarían un coste si faltan los del tipo: el juego usa los de más valor (nunca al revés). */
+export function convertedPay(trophy: Trophy, missing: number, wallet: Wallet): { silver: number; gold: number } | null {
+  let rest = missing, silver = 0, gold = 0
+  if (trophy === 'bronze') { silver = Math.min(wallet.silver, Math.ceil(rest / 2)); rest -= silver * 2 }
+  if (rest > 0 && trophy !== 'gold') { const per = trophy === 'bronze' ? 4 : 2; gold = Math.min(wallet.gold, Math.ceil(rest / per)); rest -= gold * per }
+  return rest > 0 ? null : { silver, gold }
 }

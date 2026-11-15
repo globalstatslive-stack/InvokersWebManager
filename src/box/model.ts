@@ -214,6 +214,8 @@ const STAT_IDS: Record<number, [string, 'flat' | 'percent']> = {
   7: ['criticalRate', 'percent'], 8: ['criticalDamage', 'percent'], 9: ['accuracy', 'flat'], 10: ['resistance', 'flat'], 11: ['runSpeed', 'flat'],
   12: ['comboSpeed', 'flat'], 13: ['skillSpeed', 'flat'], 14: ['skillRecovery', 'flat'], 15: ['manaGeneration', 'flat'], 16: ['instinct', 'flat'],
 }
+/** Elementos de la Sala de trofeos en PlayerArenaModel.dat (comprobados con la sala del juego). */
+export const HALL_ELEMENT_IDS: Record<number, string> = { 1: 'Fire', 2: 'Earth', 3: 'Wind', 4: 'Water', 5: 'Light', 6: 'Dark' }
 const FACTIONS: Record<number, string> = { 1: 'Eldrin', 2: 'Magi', 3: 'Stonehearts', 5: 'Freeborn', 6: 'Beastbloods', 7: 'Nocturna', 9: 'Ironbands', 11: 'Cambion', 12: 'Lightseekers' }
 function fromCatalog(c: Character | undefined, id: number): Character2 {
   return {
@@ -240,7 +242,9 @@ export function boxFromCollection(c: Collection): Box {
       stats: h.reportedStats ?? {}, gearBonus: null, basis: null, activeSets: [],
     })),
     titans: c.titans.map(t => ({ ...fromCatalog(characterFor(t), t.inventoryId), id: t.inventoryId, rank: t.rank, level: t.level, locked: t.locked, power: 0, battles: 0, empowerment: t.empowermentLevel, bound: null, boundBonuses: [], flatBonuses: [] })),
-    relics: c.relics.map(toGear), accessories: c.accessories.map(toGear), teams: [], setRules: [], arenaHall: [],
+    relics: c.relics.map(toGear), accessories: c.accessories.map(toGear), teams: [], setRules: [],
+    // La carpeta da el nivel de cada mejora, no su valor (NaN): el valor por nivel sale de la caja oficial.
+    arenaHall: (c.arenaHall ?? []).flatMap(a => { const el = HALL_ELEMENT_IDS[a.element], st = STAT_IDS[a.stat]; return el && st && a.level > 0 ? [{ element: el, stat: st[0], mode: st[1], level: a.level, value: NaN }] : [] }),
     accessorySlotAwake: { Amulet: 0, Earrings: 2, Banner: 4, Talisman: 5, Flasks: 6 }, mainStatsBySlot: {}, ratingCurves: null, maxGearLevel: 20,
     snapshotAt: null, expiresAt: null, sharePath: null, exact: false, assetBase: null,
   }
