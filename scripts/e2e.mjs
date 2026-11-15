@@ -34,6 +34,34 @@ try {
     await page.locator(selector).first().waitFor({ timeout: 20000 })
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `desbordamiento horizontal en ${hash}`)
   }
+  // Sala de trofeos: lee los contadores de una captura (sintética, generada aquí) en el navegador, se confirman y
+  // la compra paso a paso usa el coste que apunta el jugador.
+  await page.evaluate(() => { location.hash = '#/asesor/trofeos' })
+  await page.locator('.hall-hud').waitFor()
+  assert.ok(await page.locator('.hc').count() === 72, 'la sala no muestra las 72 mejoras')
+  const shot = await page.evaluate(() => {
+    const c = document.createElement('canvas'); c.width = 2400; c.height = 1080
+    const g = c.getContext('2d'); g.fillStyle = '#141a2c'; g.fillRect(0, 0, c.width, c.height)
+    g.font = 'bold 36px sans-serif'; g.fillStyle = '#f2f2f2'; g.fillText('SALA DE TROFEOS', 240, 74)
+    for (const [text, x, color] of [['12,5K', 1150, '#7f8cab'], ['58', 1500, '#b5651d'], ['143', 1800, '#9aa3ad'], ['0', 2100, '#d9a520']]) {
+      g.fillStyle = color; g.beginPath(); g.arc(x - 50, 60, 22, 0, 7); g.fill()
+      g.fillStyle = '#f4f4f0'; g.fillText(text, x, 74)
+    }
+    return c.toDataURL('image/png')
+  })
+  await page.getByTestId('trophy-shot').setInputFiles({ name: 'sala.png', mimeType: 'image/png', buffer: Buffer.from(shot.split(',')[1], 'base64') })
+  await page.locator('.wallet-editor').waitFor({ timeout: 60000 })
+  assert.deepEqual(await page.locator('.wallet-field input').evaluateAll(xs => xs.map(x => x.value)), ['12500', '58', '143', '0'])
+  await page.getByRole('button', { name: 'Sí, guardar' }).click()
+  assert.match(await page.locator('.hall-hud').innerText(), /Según tu captura/)
+  assert.match(await page.locator('.hall-hud').innerText(), /143/)
+  const ask = page.locator('.cost-in input').first()
+  if (await ask.count()) {
+    await ask.fill('30'); await page.locator('.cost-in').first().getByRole('button', { name: 'Apuntar' }).click()
+    await page.locator('.lane-cost b', { hasText: '−30' }).first().waitFor()
+  }
+  assert.ok(await page.locator('.tip').count() >= 2)
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'desbordamiento horizontal en la sala de trofeos')
   // Coach de piezas: la primera pieza de la categoría con más piezas se explica (pieza, a favor/en contra, camino de hitos).
   await page.evaluate(() => { location.hash = '#/asesor/piezas' })
   const cards = page.locator('.verdict-card')

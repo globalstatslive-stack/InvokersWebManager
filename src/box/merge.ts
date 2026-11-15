@@ -49,9 +49,14 @@ export function mergeWithOfficial(files: Box, official: Box): Box {
     const o = officialTitans.get(t.id)
     return o && (!t.code || t.code === o.code) ? { ...o, rank: t.rank, level: t.level, locked: t.locked, empowerment: t.empowerment } : t
   })
+  // Sala de trofeos: niveles de la carpeta (más reciente) con el valor por nivel observado en la caja oficial.
+  const step = new Map<string, number>()
+  for (const a of official.arenaHall) if (a.level > 0 && Number.isFinite(a.value) && !step.has(a.stat)) step.set(a.stat, a.value / a.level)
+  const arenaHall = files.arenaHall.length ? files.arenaHall.map(a => ({ ...a, value: step.has(a.stat) ? step.get(a.stat)! * a.level : NaN })) : official.arenaHall
   return {
     ...official,
     source: 'files',
+    arenaHall,
     profile: { ...official.profile, name: files.profile.name !== 'Jugador' ? files.profile.name : official.profile.name, level: files.profile.level || official.profile.level, totalPower: heroes.reduce((s, h) => s + h.power, 0) || official.profile.totalPower },
     heroes, titans, relics, accessories,
     snapshotAt: null, expiresAt: official.expiresAt, sharePath: official.sharePath,

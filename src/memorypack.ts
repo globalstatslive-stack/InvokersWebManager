@@ -20,14 +20,20 @@ export type Equipment = {
 export type Collection = {
   invokers: Invoker[]; titans: Titan[]; relics: Equipment[]; accessories: Equipment[];
   player?: { name: string; level: number };
+  /** Monedas de arena y trofeos que tiene ahora (PlayerModel.dat, diccionario de recursos). */
+  trophies?: { arenaCoins: number | null; bronze: number; silver: number; gold: number };
+  /** Niveles de la Sala de trofeos (PlayerArenaModel.dat), con los identificadores del juego. */
+  arenaHall?: { element: number; stat: number; level: number }[];
   warnings: string[];
 }
 
 type NamedBytes = { name: string; bytes: Uint8Array }
 const TAGS: Record<string, number> = {
   'PlayerModel.dat': 1, 'PlayerHeroesModel.dat': 2, 'PlayerAnimasModel.dat': 3,
-  'PlayerRelicsModel.dat': 4, 'PlayerAccessoriesModel.dat': 5,
+  'PlayerRelicsModel.dat': 4, 'PlayerAccessoriesModel.dat': 5, 'PlayerArenaModel.dat': 9,
 }
+/** Identificadores de recurso de la arena en PlayerModel.dat (comprobados con el contador del juego). */
+export const ARENA_RESOURCES = { arenaCoins: 22, bronze: 23, silver: 24, gold: 25 } as const
 const MAX_COLLECTION = 50_000
 
 function fail(message: string): never { throw new Error(`Snapshot MemoryPack: ${message}`) }
@@ -168,6 +174,35 @@ function memoryString(data: Uint8Array): string {
   return new TextDecoder('utf-8', { fatal: true }).decode(data.subarray(8))
 }
 
+/** Diccionario de recursos actuales: objeto con un campo, recuento int32 y pares (id uint32, cantidad int32). */
+export function resources(data: Uint8Array): Record<number, number> {
+  const inner = versioned(data)
+  if (inner.end !== data.length || inner.members.length !== 1) fail('recursos con formato inesperado')
+  const d = inner.members[0], count = int32(d)
+  if (count < 0 || count > 1024 || d.length !== 4 + count * 8) fail('recuento de recursos inválido')
+  const out: Record<number, number> = {}
+  for (let i = 0; i < count; i++) out[uint32(d, 4 + 8 * i)] = int32(d, 8 + 8 * i)
+  return out
+}
+/** Mejoras de la Sala de trofeos: recuento int32 y registros (elemento, estadística, nivel). */
+export function arenaHall(data: Uint8Array): { element: number; stat: number; level: number }[] {
+  const count = int32(data)
+  if (count < 0 || count > 6 * 12) fail('número de mejoras de la sala inválido')
+  let at = 4
+  const out: { element: number; stat: number; level: number }[] = []
+  for (let i = 0; i < count; i++) {
+    const item = versioned(data, at); at = item.end
+    const f = item.members
+    if (f.length < 3) fail('mejora de la sala incompleta')
+    f.slice(0, 3).forEach((x, j) => exactly(x, 4, `mejora de la sala ${j}`))
+    const element = uint32(f[0]), stat = uint32(f[1]), level = uint32(f[2])
+    if (element < 1 || element > 6 || level > 15) fail('mejora de la sala fuera de rango')
+    out.push({ element, stat, level })
+  }
+  if (at !== data.length) fail('mejoras de la sala con datos sobrantes')
+  return out
+}
+
 export function decodeCollection(files: NamedBytes[]): Collection {
   const byName = new Map(files.map(file => [file.name.toLowerCase(), file]))
   const fields = (name: string): Uint8Array[] | undefined => {
@@ -191,7 +226,19 @@ export function decodeCollection(files: NamedBytes[]): Collection {
   if (player) {
     if (player.length < 5) fail('PlayerModel.dat incompleto')
     result.player = { name: memoryString(player[1]), level: uint32(player[4]) }
+    // Trofeos: si el formato cambia, se avisa y el resto de la caja se lee igual.
+    try {
+      const r = player.length > 9 ? resources(player[9]) : {}
+      if (ARENA_RESOURCES.bronze in r || ARENA_RESOURCES.silver in r || ARENA_RESOURCES.gold in r) {
+        const n = (id: number) => Math.max(0, r[id] ?? 0)
+        result.trophies = { arenaCoins: ARENA_RESOURCES.arenaCoins in r ? n(ARENA_RESOURCES.arenaCoins) : null, bronze: n(ARENA_RESOURCES.bronze), silver: n(ARENA_RESOURCES.silver), gold: n(ARENA_RESOURCES.gold) }
+      }
+    } catch { result.warnings.push('No se pudieron leer los trofeos de PlayerModel.dat.') }
   } else result.warnings.push('Falta PlayerModel.dat: los datos de cuenta son parciales.')
+  try {
+    const arena = fields('PlayerArenaModel.dat')
+    if (arena && arena.length > 8) result.arenaHall = arenaHall(arena[8])
+  } catch { result.warnings.push('No se pudo leer la Sala de trofeos de PlayerArenaModel.dat.') }
   if (!accessories) result.warnings.push('Falta PlayerAccessoriesModel.dat: no se muestran accesorios.')
   const heroesById = new Map(result.invokers.map(hero => [hero.inventoryId, hero]))
   for (const item of [...result.relics, ...result.accessories]) {

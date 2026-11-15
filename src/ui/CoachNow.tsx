@@ -10,6 +10,7 @@ import { progressOf, usePlan } from './plan'
 import { useGearCoach } from './coach'
 import { useAscend } from './AscendCoach'
 import { hallTopPicks } from './TrophyHall'
+import { folderWallet, pickWallet, savedWallet, TROPHY_PL } from './trophyWallet'
 import { usedHeroes } from '../box/equipBatch'
 
 /** Un paso del coach: qué hacer (título), por qué en una frase, y una mini-lección opcional para quien empieza. */
@@ -35,7 +36,7 @@ const openBoss = (b: NextBoss) => () => { try { localStorage.setItem('nexo.teamf
 
 /** Pasos de la cuenta ordenados por lo que más rinde ahora, cada uno con su porqué. */
 export function useCoachActions(): { actions: CoachAction[]; ready: boolean } {
-  const { account } = useAccount()
+  const { account, records } = useAccount()
   const coach = useGearCoach()
   const ascend = useAscend()
   const { plan } = usePlan(account?.box)
@@ -114,8 +115,12 @@ export function useCoachActions(): { actions: CoachAction[]; ready: boolean } {
     if (box.arenaHall.length) {
       const important = new Set([...active.heroes, ...plan.map(e => e.heroId)])
       const picks = hallTopPicks(box, usedHeroes(box, important).used)
-      const items = (['bronze', 'silver', 'gold'] as const).map(tr => picks[tr] ? <><b>Con {tr === 'bronze' ? 'bronces' : tr === 'silver' ? 'platas' : 'oros'}</b>: {picks.label(picks[tr]!)}</> : null).filter(Boolean) as ReactNode[]
-      if (items.length) out.push({ id: 'hall', icon: Trophy, title: `Gasta tus trofeos: ${picks.label((picks.bronze ?? picks.silver ?? picks.gold)!)}`,
+      const wallet = pickWallet(folderWallet(records, box.profile.name), savedWallet(box.profile.name))
+      const order = ['silver', 'bronze', 'gold'] as const
+      const items = order.map(tr => picks[tr] ? <><b>Con {TROPHY_PL[tr]}</b>{wallet ? ` (tienes ${fmtInt(wallet[tr])})` : ''}: {picks.label(picks[tr]!)}</> : null).filter(Boolean) as ReactNode[]
+      // Con trofeos conocidos, la primera compra que puedes pagar (la plata primero: solo vale para sus niveles).
+      const first = wallet ? order.find(tr => picks[tr] && wallet[tr] > 0) : undefined
+      if (items.length) out.push({ id: 'hall', icon: Trophy, title: first ? `Gasta tus ${fmtInt(wallet![first])} ${TROPHY_PL[first]}: ${picks.label(picks[first]!)}` : `Gasta tus trofeos: ${picks.label((picks.silver ?? picks.bronze ?? picks.gold)!)}`,
         why: 'La Sala de trofeos sube a todos los Invokers de un elemento en todos los modos: Nexo elige la mejora que más notan los que usas.',
         learn: 'Los trofeos se ganan venciendo en la arena. Bronce paga los niveles 1–5 de cada mejora, plata los 6–10 y oro los 11–15; los de más valor se convierten en los de menos si te faltan, nunca al revés.',
         items, cta: { label: 'Ver la sala', to: '/asesor/trofeos' } })
@@ -128,7 +133,7 @@ export function useCoachActions(): { actions: CoachAction[]; ready: boolean } {
       items: nextBosses.slice(0, 3).map(x => <><b>{x.name}</b>: récord fase {x.record} de {x.stages}</>),
       cta: { label: 'Ver equipo recomendado', to: '/asesor/equipo', before: openBoss(first) } })
     return out
-  }, [account, coach, ascend, plan, active, nextBosses])
+  }, [account, records, coach, ascend, plan, active, nextBosses])
   return { actions, ready: !!coach && !!ascend }
 }
 

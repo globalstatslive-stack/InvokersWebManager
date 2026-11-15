@@ -100,7 +100,8 @@ export async function prepareFiles(files: File[]): Promise<ImportRecord> {
   return interpretImport({ id: crypto.randomUUID(), importedAt: new Date().toISOString(), files: stored, missing: missingNames(stored.map(file => file.name)) })
 }
 
-const DECODER_VERSION = 1
+/** 2: trofeos y Sala de trofeos de la carpeta del juego. */
+const DECODER_VERSION = 2
 /** Interpreta también las importaciones guardadas por versiones anteriores. */
 export async function interpretImport(record: ImportRecord): Promise<ImportRecord> {
   if (record.decoderVersion === DECODER_VERSION) return record

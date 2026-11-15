@@ -31,6 +31,6 @@ export function sampleBox() {
     rules: { relicSets: [set('Health', [{ stat: 'health', mode: 'percent', value: 0.1 }], [{ stat: 'health', mode: 'percent', value: 0.2 }]), set('Attack', [{ stat: 'attack', mode: 'percent', value: 0.1 }], [{ stat: 'attack', mode: 'percent', value: 0.2 }]),
       set('CriticalRate', [{ stat: 'criticalRate', mode: 'percent', value: 0.1 }], [{ stat: 'criticalRate', mode: 'percent', value: 0.2 }]), set('Defense', [{ stat: 'defense', mode: 'percent', value: 0.1 }], [])],
       accessorySlotAwakeLevel: { Amulet: 0, Earrings: 2, Banner: 4, Talisman: 5, Flasks: 6 }, maxGearLevel: 20, relicMainStatsBySlot: {}, accessoryMainStatsBySlot: {} },
-    arenaHallBonuses: [], sharing: { snapshotAt: '2026-11-11T09:00:00Z', expiresAt: '2026-11-18T09:00:00Z', sharePath: '/lamb/?b=prueba-abc' }, ratingCurves: null,
+    arenaHallBonuses: [{ element: 'Fire', stat: 'attack', mode: 'percent', level: 5, value: 0.1 }, { element: 'Fire', stat: 'comboSpeed', mode: 'flat', level: 3, value: 12 }], sharing: { snapshotAt: '2026-11-11T09:00:00Z', expiresAt: '2026-11-18T09:00:00Z', sharePath: '/lamb/?b=prueba-abc' }, ratingCurves: null,
   }
 }
