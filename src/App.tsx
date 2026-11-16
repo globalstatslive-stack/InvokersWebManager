@@ -32,6 +32,7 @@ import { fetchBox, ImportPage, LINK_KEY, proxyUrl } from './ui/ImportPage'
 import { folderPreference, readFolder } from './folderSync'
 import { DataPage } from './ui/DataPage'
 import { fmtInt } from './box/i18n'
+import { saveAccountStats } from './ui/coachMemory'
 
 /** Lateral reducido a lo que se usa a diario. Titanes y récords viven como pestañas de Colección;
  * la enciclopedia es un grupo plegable; importar e historial, accesos discretos al pie. */
@@ -118,6 +119,7 @@ export default function App() {
       if (!OFFICIAL_ORIGINS.includes(e.origin) || typeof e.data !== 'object' || e.data?.type !== 'nexo-box' || typeof e.data.json !== 'string') return
       ;(e.source as Window | null)?.postMessage('nexo-ack', e.origin)
       if (e.data.json.length > 20 * 1024 * 1024) return
+      if (typeof e.data.stats === 'string' && e.data.stats.length < 2 * 1024 * 1024) saveAccountStats(e.data.json, e.data.stats)
       importFiles([new File([e.data.json], 'caja-invokers.json', { type: 'application/json' })]).catch(err => setToast({ text: err instanceof Error ? err.message : String(err), bad: true }))
     }
     addEventListener('message', onMessage)
@@ -221,7 +223,7 @@ export default function App() {
         </header>
         {toast && <div className={`toast ${toast.bad ? 'bad' : ''}`} role="status"><span>{toast.text}</span><button className="icon-btn" aria-label="Cerrar" onClick={() => setToast(undefined)}><X size={16} /></button></div>}
         <main className="content">{loading ? <div className="loading">Cargando tu cuenta…</div> : <Suspense fallback={<div className="loading" role="status">Cargando…</div>}>{page}</Suspense>}</main>
-        <footer className="foot">Nexo · versión 0.21 · No afiliado a Hitzone. Tus importaciones se guardan solo en este navegador.</footer>
+        <footer className="foot">Nexo · versión 0.22 · No afiliado a Hitzone. Tus importaciones se guardan solo en este navegador.</footer>
       </div>
       <nav className="bottom-nav">{[...NAV, WIKI_HOME].filter(n => MOBILE.includes(n.path)).map(n => <a key={n.path} href={`#${n.path}`} className={active(n.path) ? 'on' : ''}><n.icon size={20} /><span>{n.label}</span></a>)}
         <button onClick={() => setMenu(true)}><Menu size={20} /><span>Más</span></button></nav>

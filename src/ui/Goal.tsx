@@ -4,7 +4,7 @@ import { useAccount } from './account'
 import { NeedsAccount } from './common'
 import { GearIcon, Portrait, Stars } from './Art'
 import { ELEMENT_LABEL, fmtInt, MODE_LABEL, SLOT_LABEL, STAT_SHORT, t } from '../box/i18n'
-import { diagnoseMember, loadBosses, toleranceKey, type Boss, type BossCatalog, type BossStage, type MemberDiagnosis, type TeamMember } from '../box/goal'
+import { diagnoseMember, loadBosses, recordOf, toleranceKey, type Boss, type BossCatalog, type BossStage, type MemberDiagnosis, type TeamMember } from '../box/goal'
 import { loadKits, profileOf, skillLevels, type Kit } from '../box/combat'
 import { PRESETS, presetFor, type BuildResult, type Pool } from '../box/optimizer'
 import { projectStats } from '../box/stats'
@@ -49,7 +49,7 @@ function GoalFlow({ catalog, kits, go }: { catalog: BossCatalog; kits: Record<st
   const [g, setG] = useState<GoalState>(() => ({ boss: 'ulgorim', stage: 0, team: [], requireAcc: true, requireTol: false, pool: 'unlocked', budget: '', ...saved }))
   const update = (p: Partial<GoalState>) => { const next = { ...g, ...p }; setG(next); try { localStorage.setItem(storeKey(box.profile.name), JSON.stringify(next)) } catch { /* sin almacenamiento */ } }
   const boss = catalog.bosses.find(b => b.slug === g.boss) ?? catalog.bosses[0]
-  const record = box.teams.find(t => t.mode === 'dungeon' && t.key === boss.slug)
+  const record = recordOf(box.teams, boss.slug)
   const stageNum = g.stage || Math.min(boss.stages.length, (record?.highestLevel ?? 0) + 1) || 1
   const stage = boss.stages.find(s => s.stage === stageNum) ?? boss.stages[0]
   // Equipo: el elegido o, si no hay, el del récord de mejor tiempo de ese jefe.

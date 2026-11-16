@@ -6,9 +6,9 @@ import { Portrait, SetIcon, Stars } from './Art'
 import { fmtInt, fmtStat, SET_LABEL, STAT_LABEL, t, TOLERANCES } from '../box/i18n'
 import { diagnose, teamHeroIds } from '../box/advisor'
 import type { Verdict } from '../box/gearCoach'
-import { CoachNow } from './CoachNow'
 import { AscendCoach } from './AscendCoach'
 import { TrophyHall } from './TrophyHall'
+import { CoachHome } from './CoachHome'
 import { PiecesCoach } from './GearCoach'
 import { TeamFinder } from './TeamFinder'
 
@@ -27,7 +27,7 @@ export function Advisor({ tab, arg }: { tab?: string; arg?: string }) {
   return <>
     <PageHead kicker="Tu entrenador" title="Coach">Qué hacer y por qué, paso a paso, con tu caja y los datos oficiales del juego. Nada se ejecuta en el juego.</PageHead>
     <Chips label="Sección" value={current} onChange={v => go(`/asesor/${v}`)} options={[{ id: 'ahora', label: 'Hoy' }, { id: 'invokers', label: 'Personajes: a quién subir' }, { id: 'piezas', label: 'Piezas: subir o vender' }, { id: 'equipo', label: 'Jefes: qué equipo llevar' }, { id: 'trofeos', label: 'Sala de trofeos' }, { id: 'mas', label: 'Más' }]} />
-    {current === 'ahora' && <CoachNow />}
+    {current === 'ahora' && <CoachHome />}
     {current === 'invokers' && <AscendCoach key={arg ?? '6'} initial={arg} />}
     {current === 'equipo' && <TeamFinder />}
     {current === 'trofeos' && <TrophyHall />}

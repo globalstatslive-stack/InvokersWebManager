@@ -171,7 +171,7 @@ export function ImportPage({ receiving }: { receiving?: boolean }) {
           <h3><Bookmark size={18} /> Marcador mágico</h3>
           <p>Se configura una vez. Úsalo en <b>tu caja de invokers.com</b> (con la sesión iniciada) para enviar tu caja <b>en vivo</b>, con el poder actual y sin pulsar «Refresh link». También funciona sobre un enlace compartido.</p>
           <MarkletInstall label="⚡ Nexo" onStatus={setStatus} />
-          <p className="fine">El mismo marcador guarda en invokers.com el plan que envías desde <b>Plan</b>.</p>
+          <p className="fine">El mismo marcador guarda en invokers.com el plan que envías desde <b>Plan</b>. Si lo pulsas en tu caja en vivo (con tu sesión iniciada), envía también tus <b>Account Stats</b> (liga y victorias de arena, jefes, agujas, Invokers más usados), lo mismo que muestra la página oficial; con un enlace compartido no, porque puede ser de otra cuenta. Se guardan solo en este navegador.</p>
         </section>
       </div>
       </details>

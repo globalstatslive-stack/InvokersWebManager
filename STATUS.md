@@ -70,6 +70,27 @@
 
 - Equipo para un jefe elige por encaje con el jefe, no por el equipamiento actual: nota oficial, habilidades que pide, elemento y tolerancia innata del kit, más el desarrollo que las piezas no cambian (estrellas, nivel, despertar, habilidades). El poder actual, la tolerancia de conjuntos, la PREC y la RES pasan a «A mejorar con equipamiento», con acceso a Objetivo. Opción «Priorizar a los que ya tengo equipados» para el criterio anterior.
 
+## Versión 0.22
+
+Coach personalizado: decide el siguiente paso más conveniente y lo justifica con datos de la cuenta.
+
+- **Auditoría de My Box** (`/api/lamb`): 542 campos. Verificado con una caja real: total = base + equipo + `basisFlat` + sala de trofeos (3.024 comprobaciones de estadísticas planas) y ATQ/VIDA/DEF = base × (1 + sala %) + equipo (1.134), sin un solo fallo.
+- **Corregido**: los niveles de habilidad de My Box cuentan desde 0 (0 = nivel 1 de la ficha; comprobado con las tolerancias). El simulador los leía un nivel por debajo (`fichaLevel`), afectando a Optimizador, Objetivo y Jefes. La ficha del Invoker muestra «n/11».
+- **Corregido**: las claves de los récords no coinciden con las guías (`fire-omnissi` ↔ `omnissi-fire`, `clanBoss-301` ↔ Sorgott). `bossSlugOf`/`recordOf` en Coach, Objetivo, Jefes y Personajes: ahora se ven los récords de Garudas y jefes de clan.
+- **Campos nuevos** (opcionales): nodos de despertar, `basisFlat`, habilidades y nivel máximo de Titanes, vínculo fuera de especialidad (`specializationMiss`), líder y prioridad de Titán de los récords, `clearTimed`.
+- **Motor** (`src/box/coachEngine.ts`):
+  - Objetivos sacados de los récords: toda la cuenta, superar la siguiente fase de un jefe, farmear la más jugada más rápido, arena (ataque) y agujas (con dificultad). Equipo = el del mejor tiempo del récord; fase = RES y objetivos de la guía o de la aguja.
+  - Valor de un Invoker = perfil del optimizador y, contra un jefe o piso, × (0,05 + probabilidad oficial de que entren sus perjuicios)^peso de control (mismo índice del simulador). Cada efecto separa daño y probabilidad de perjuicios.
+  - Acciones: piezas (libres y **desaprovechadas** en Invokers que no usas; nunca de equipos activos, plan u objetivo; una pieza por Invoker; agrupadas por Invoker con la ganancia conjunta, conjuntos incluidos), **habilidades** (simulación nivel actual → siguiente y → 11, más lo que cambia según el texto oficial: `skillDiff.ts`), tolerancias de habilidad frente a la guía (+10 %/nivel), **vínculo de Titán** por modo (global, especializado o fuera de su especialidad), despertar que abre una ranura de accesorio con una pieza libre, sala de trofeos y ascensión (sin cifra).
+  - Puntuación = impacto × confianza (1 / 0,75 / 0,5) × disponibilidad (1 / 0,7 / 0,45) × coste (el oro divide entre 1 + oro/100.000). Lo que no tiene cifra puntúa como mucho 0,6. Cumplir una tolerancia de la guía vale 5 puntos.
+  - **Alternativas**: otras acciones para el mismo Invoker y la mejor de cada tipo, con la misma puntuación.
+  - **Sinergias**: quién amplifica el daño (bajar DEF, subir ATQ o críticos), sustento, perjuicios que no entran contra la RES de la fase, Invokers sin Titán.
+- **Seguimiento** (`src/box/progress.ts`): cambios de la cuenta (rango, nivel, despertar y nodos, habilidades, estadísticas, piezas) separados de los resultados en combate (victorias, derrotas y mejor tiempo por fase, nuevas fases máximas). Si no hay combates nuevos, se dice.
+- **Memoria** (`src/ui/coachMemory.ts`): recuerda las primeras recomendaciones de cada caja y, al reimportar, dice si se aplicaron y qué pasó después en la fase del objetivo (coincidencia, no causa).
+- **Account Stats**: la página oficial `/hub/account-stats/` pide `/api/profile/account-stats` con la sesión del jugador (401 sin ella). El marcador y la extensión (1.3.0) lo envían junto con la caja **en vivo** (nunca con un enlace compartido). `accountStats.ts` lee arena (liga, victorias, % de defensa), jefes, agujas e Invokers más usados; se guarda en el navegador y se compara entre lecturas.
+- **Pantalla**: Coach › Hoy con objetivo, «Tu siguiente paso» (¿qué mejoro?, ¿por qué es lo más importante?, ¿qué necesito?), chips de disponibilidad, confianza y coste, «Añadir al plan», «Cómo hacerlo», alternativas comparadas, prioridades con filtro, sinergias, «Desde tu última importación» y «Cómo decide el Coach». Inicio muestra el siguiente paso. Las tareas anteriores siguen en «Otras tareas de la cuenta».
+- Pruebas: `coachEngine.test.ts` (objetivos, piezas desaprovechadas y protegidas, reservas, habilidades, Titanes, puntuación, aplicado, campos nuevos, nivel de habilidad), `progress.test.ts` (evolución, sin combates, Account Stats, texto de habilidades); e2e del Coach (tres preguntas, objetivo, añadir al plan, sin desbordamiento).
+
 ## Versión 0.21
 
 - **Sala de trofeos con tus trofeos de verdad** (`src/ui/TrophyHall.tsx`, `src/ui/trophyWallet.ts`): la caja compartida no publica los trofeos; Nexo los toma del dato más reciente entre:

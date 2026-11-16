@@ -3,7 +3,7 @@ import { AlertTriangle, ArrowRight, ArrowRightLeft, Check, ExternalLink, RotateC
 import { useAccount } from './account'
 import { GameCard, GameImg } from './Art'
 import { ELEMENT_LABEL, t } from '../box/i18n'
-import { loadBosses } from '../box/goal'
+import { loadBosses, recordOf } from '../box/goal'
 import { loadKits, profileOf, skillLevels, type Profile } from '../box/combat'
 import { DEFAULT_WEIGHTS, recommendTeam, roleLabel, type Candidate, type TeamPick } from '../box/recommend'
 import { loadIndex, loadTiers, loadTools, useLoad } from '../wiki/data'
@@ -29,7 +29,7 @@ export function TeamFinder() {
   const [include, setInclude] = useState<number[]>([])
   const box = account!.box
   const boss = bosses.data?.bosses.find(b => b.slug === bossSlug) ?? bosses.data?.bosses[0]
-  const record = boss ? box.teams.find(t => t.mode === 'dungeon' && t.key === boss.slug) : undefined
+  const record = boss ? recordOf(box.teams, boss.slug) : undefined
   const stage = boss ? (boss.stages.find(s => s.stage === stageNum) ?? boss.stages.find(s => s.stage === Math.min(boss.stages.length, (record?.highestLevel ?? 0) + 1)) ?? boss.stages[0]) : undefined
   const profiles = useMemo(() => {
     const m = new Map<number, Profile | null>()
