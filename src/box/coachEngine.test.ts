@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseOfficialBox } from './model'
+import { canBind, parseOfficialBox } from './model'
 import { BoxIndex } from './stats'
 import { usedHeroes } from './equipBatch'
 import { fichaLevel, skillLevels, type Kit } from './combat'
@@ -19,8 +19,8 @@ const relic = (id: number, slot: string, owner: number | null, main: [string, st
   id, kind: 'relic', slot, rank: 5, rarity: 'Epic', set: 'Attack', level: 20, equippedHeroId: owner, unequipGold: 1000,
   main: { stat: main[0], mode: main[1], value: main[2], rolls: 0, grade: null }, subs: [], mainAtMax: null, ...extra,
 })
-const titan = (id: number, name: string, stat: string, mode: string, spec: string, general: number, specialized: number, miss: number) => ({
-  titanId: id, character: { shortName: name, portraitUrl: `/game-assets/1/characters/T/${name}/portrait.webp`, rarity: 'Epic', faction: 'Magi', role: 'Damage' },
+const titan = (id: number, name: string, stat: string, mode: string, spec: string, general: number, specialized: number, miss: number, faction = 'Magi') => ({
+  titanId: id, character: { shortName: name, portraitUrl: `/game-assets/1/characters/T/${name}/portrait.webp`, rarity: 'Epic', faction, role: 'Damage' },
   rank: 5, level: 50, maxLevel: 50, locked: false, power: 1, battles: 1, empowerment: 0, skillLevels: [{ kind: 'Combo', level: 0 }],
   boundEffect: { stat, mode, specialization: spec, general, specialized, specializationMiss: miss }, stats: { boundBonuses: [], flatBonuses: [] },
 })
@@ -36,7 +36,9 @@ function fixture() {
       relic(13, 'Gauntlets', null, ['criticalRate', 'percent', 0.2]), // libre
       relic(14, 'Chestplate', 4, ['attack', 'percent', 0.3]),        // en OTRO, que sí se usa
     ],
-    accessories: [], titans: [titan(7, 'GENERAL', 'attack', 'percent', 'General', 0.2, 0.2, 0.2), titan(8, 'JEFES', 'attack', 'percent', 'Dungeon', 0.2, 0.3, 0.1)],
+    accessories: [], titans: [titan(7, 'GENERAL', 'attack', 'percent', 'General', 0.2, 0.2, 0.2), titan(8, 'JEFES', 'attack', 'percent', 'Dungeon', 0.2, 0.3, 0.1),
+      // Mejor vínculo, pero de otra facción: no se puede vincular a Invokers Magi.
+      titan(9, 'AJENO', 'attack', 'percent', 'General', 0.6, 0.6, 0.6, 'Ironbands')],
     teams: [
       { mode: 'dungeon', key: 'fire-omnissi', label: 'Omnissi', detail: 'Fire', element: 'Fire', difficultyLabel: 'Normal', highestLevel: 3, clearTimed: true, levels: [level(3, [[1, 7], [2, null]], 2, 1, 200), level(2, [[1, 7], [2, null]], 40, 0, 90)] },
       { mode: 'tower', key: 'fire-spire', label: 'Fire Spire', detail: null, element: 'Fire', difficultyLabel: 'Hard', highestLevel: 2, levels: [level(2, [[1, null], [4, null]])] },
@@ -120,6 +122,18 @@ describe('Coach: acciones, prioridad y comprobación', () => {
     const t = planFor(base(farm())).actions.find(a => a.kind === 'titan' && a.hero?.name === 'ATACANTE')
     expect(t?.titan?.name).toBe('JEFES')
     expect(t?.cost.kind).toBe('free')
+  })
+  it('vínculo de Titán: solo de la facción del Invoker o un Dragón', () => {
+    expect(canBind({ faction: 'Magi' }, { faction: 'Magi' })).toBe(true)
+    expect(canBind({ faction: 'Ironbands' }, { faction: 'Magi' })).toBe(false)
+    expect(canBind({ faction: 'Dragons' }, { faction: 'Magi' })).toBe(true)
+    // AJENO (Ironbands) da más ATQ pero nunca se propone a Invokers Magi.
+    expect(planFor(base(farm())).actions.some(a => a.kind === 'titan' && a.titan?.name === 'AJENO')).toBe(false)
+    // Un Dragón con el mismo vínculo sí se puede proponer.
+    const withDragon = parseOfficialBox({ ...fixture(), titans: [...fixture().titans, titan(10, 'DRAGON', 'attack', 'percent', 'General', 0.6, 0.6, 0.6, 'Dragons')] })
+    const objD = resolveObjective(withDragon, objectiveOptions(withDragon, { bosses }).find(x => x.label.startsWith('Farmear'))!.choice, usedHeroes(withDragon, new Set()).used, { bosses })
+    const dragon = planFor({ ...base(objD), index: new BoxIndex(withDragon) }).actions.find(a => a.kind === 'titan' && a.hero?.name === 'ATACANTE')
+    expect(dragon?.titan?.name).toBe('DRAGON')
   })
   it('puntuación: el oro resta según la cantidad y lo que no tiene cifra tiene un tope', () => {
     const a = { impact: 10, confidence: 'alta' as const, availability: 'now' as const }

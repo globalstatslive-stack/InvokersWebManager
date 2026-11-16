@@ -2,13 +2,13 @@ import { describe, expect, it } from 'vitest'
 import type { Box, Hero, Titan } from './model'
 import type { Boss, BossStage } from './goal'
 import type { Profile } from './combat'
-import { bestCopies, recommendTeam, scoreCandidates } from './recommend'
+import { assignTitans, bestCopies, recommendTeam, scoreCandidates } from './recommend'
 import type { Need } from './bossNeeds'
 
 const ELEMENTS = { names: ['Fire', 'Earth', 'Wind', 'Water', 'Light', 'Dark', 'Neutral'], sign: [[0, 1, 0, -1, 0, 0, 0], [-1, 0, 1, 0, 0, 0, 0], [0, -1, 0, 1, 0, 0, 0], [1, 0, -1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0]] }
 const hero = (id: number, code: string, cls: string, element: string, power: number, stats: Record<string, number> = {}): Hero =>
   ({ id, code, name: code, fullName: code, cls, element, power, rank: 5, level: 50, awakeLevel: 3, stats: { accuracy: 0, resistance: 0, ...stats }, skills: [], relics: {}, accessories: {} }) as unknown as Hero
-const titan = (id: number, code: string, stat: string): Titan => ({ id, code, name: code, power: 100, bound: { stat, mode: 'percent', specialization: 'General', general: 0.1, specialized: 0 } }) as unknown as Titan
+const titan = (id: number, code: string, stat: string): Titan => ({ id, code, name: code, faction: 'Dragons', power: 100, bound: { stat, mode: 'percent', specialization: 'General', general: 0.1, specialized: 0 } }) as unknown as Titan
 const prof = (p: Partial<Profile>): Profile => ({ scaling: { attack: 1, defense: 0, health: 0 }, needsAccuracy: false, accuracySkills: [], debuffs: [], buffs: [], control: [], heals: false, shields: false, mix: { damage: 1, control: 0, sustain: 0, tough: 0 }, ...p })
 
 const stage: BossStage = { stage: 5, label: 'Stage 5', element: 'Earth', hp: 1, atk: 1, def: 1, acc: 100, res: 200, tolerance: -50, accGoal: 200, resGoal: 220, tolGoal: 150 }
@@ -102,5 +102,16 @@ describe('equipo recomendado para un jefe', () => {
     expect(after.picks.map(p => p.hero.id)).toContain(swap.in.hero.id)
     expect(after.picks.map(p => p.hero.id)).not.toContain(swap.out.hero.id)
     expect(after.needs[0].coveredBy.map(h => h.code)).toEqual(['WEAK'])
+  })
+})
+
+describe('Titanes del equipo para un jefe', () => {
+  const c = (id: number, faction: string) => ({ hero: { id, faction } as unknown as Hero, profile: null, role: 'damage' }) as unknown as Parameters<typeof assignTitans>[0][number]
+  const t = (id: number, faction: string, stat: string) => ({ id, code: `T${id}`, faction, power: 100 - id, bound: { stat, mode: 'percent', specialization: 'General', general: 0.2, specialized: 0.2 } }) as unknown as Titan
+  it('solo vincula Titanes de la facción del Invoker o Dragones', () => {
+    const out = assignTitans([c(1, 'Ironbands'), c(2, 'Magi')], [t(1, 'Magi', 'attack'), t(2, 'Nocturna', 'attack'), t(3, 'Dragons', 'attack')], new Map())
+    expect(out[0]?.titan.faction).toBe('Dragons')  // el Magi no puede ir con un Ironbands
+    expect(out[1]?.titan.faction).toBe('Magi')
+    expect(out.some(p => p?.titan.faction === 'Nocturna')).toBe(false)
   })
 })

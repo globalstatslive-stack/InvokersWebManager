@@ -73,6 +73,11 @@ export type Box = {
   merge?: { officialSnapshot: string | null; exactHeroes: number; changedHeroes: number }
 }
 
+/** Un Titán solo se vincula a Invokers de su facción; los Titanes Dragón, a cualquiera. Comprobado con los récords
+ * de una caja real: 1.494 vínculos (1.186 de la misma facción y 308 de Dragones), ninguna excepción. */
+export const canBind = (titan: { faction: string | null }, hero: { faction: string | null }) =>
+  titan.faction === 'Dragons' || (!!titan.faction && titan.faction === hero.faction)
+
 const FIXED = 2 ** 32
 const fail = (s: string): never => { throw Error(`Caja oficial: ${s}`) }
 const obj = (x: unknown): Record<string, any> => x && typeof x === 'object' && !Array.isArray(x) ? x as Record<string, any> : fail('objeto inválido')
