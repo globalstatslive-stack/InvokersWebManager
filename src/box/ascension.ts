@@ -10,7 +10,7 @@
  * Criterio de Nexo: los pesos del ranking (a la vista) y qué cuenta como «material». No se estima cuánto sube cada
  * estadística: el juego no lo publica. */
 import type { Box, Hero } from './model'
-import type { Boss } from './goal'
+import { bossSlugOf, type Boss } from './goal'
 import { ACCESSORY_SLOTS, fmtInt, MODE_LABEL, RELIC_SLOTS, t } from './i18n'
 
 export const ASCENSION = {
@@ -81,7 +81,7 @@ export function ascendRanking(box: Box, from: number, tiers: OfficialTiers, opts
   const scores = [...tiers.general.values()].map(x => x.score)
   const lo = scores.length ? Math.min(...scores) : 0, hi = scores.length ? Math.max(...scores) : 5
   const norm = (s: number) => hi > lo ? clamp((s - lo) / (hi - lo)) : 0
-  const records = box.teams.filter(tm => tm.mode === 'dungeon' || tm.mode === 'clanBoss').map(tm => ({ tm, boss: tiers.bosses.find(b => b.slug === tm.key) })).filter(x => x.boss)
+  const records = box.teams.filter(tm => tm.mode === 'dungeon' || tm.mode === 'clanBoss').map(tm => ({ tm, boss: tiers.bosses.find(b => b.slug === bossSlugOf(tm)) })).filter(x => x.boss)
   const out: AscendCandidate[] = []
   for (const [code, copies] of byCode) {
     const best = [...copies].sort((a, b) => rank(b) - rank(a))[0]

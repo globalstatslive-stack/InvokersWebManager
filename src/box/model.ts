@@ -20,6 +20,11 @@ export type Hero = Character2 & {
   power: number; battles: number; skills: { kind: string; level: number }[]
   /** Experiencia acumulada publicada por el portal (null si no se conoce, p. ej. con la carpeta del juego). */
   totalXp?: number | null
+  /** Nodos de despertar desbloqueados (acumulados; `awakeNodesUnlocked`). Null si no se conoce. */
+  awakeNodes?: number | null
+  /** Bonificaciones planas que no son base ni equipo (`basisFlat`, ya en unidades): PREC, instinto, críticos,
+   * tolerancias de habilidad… Verificado: total = base + equipo + basisFlat + sala de trofeos. */
+  basisFlat?: Record<string, number> | null
   relics: Record<string, number>; accessories: Record<string, number>
   /** Estadísticas totales publicadas por el portal. */
   stats: Record<string, number>
@@ -33,15 +38,20 @@ export type Hero = Character2 & {
 }
 export type Titan = Character2 & {
   id: number; rank: number; level: number; locked: boolean; power: number; battles: number; empowerment: number
-  bound: { stat: string; mode: string; specialization: string; general: number; specialized: number } | null
+  maxLevel?: number; skills?: { kind: string; level: number }[]
+  /** Vínculo (guía oficial): global (`General`, igual en todo el juego) o dual: `specialized` en su modo
+   * (p. ej. `Dungeon`, jefes) y `miss` fuera de él. */
+  bound: { stat: string; mode: string; specialization: string; general: number; specialized: number; miss?: number } | null
   boundBonuses: Bonus[]; flatBonuses: Bonus[]
 }
 export type SetRule = { set: string; name: string; three: Bonus[]; five: Bonus[]; eight: Bonus[]; flags: string[]; threeDescription: string }
-export type TeamSlot = { position: string; line: string; heroId: number; titanId: number | null }
+export type TeamSlot = { position: string; line: string; heroId: number; titanId: number | null; titanPriority?: number }
 export type TeamRecord = {
   mode: string; key: string; label: string; detail: string | null; icon: string | null; element: string | null
   difficulty: string; highestLevel: number
-  levels: { level: number; bestTime: number; victories: number; defeats: number; formation: string | null; slots: TeamSlot[] }[]
+  /** El modo se supera por tiempo (`clearTimed`). */
+  clearTimed?: boolean
+  levels: { level: number; bestTime: number; victories: number; defeats: number; formation: string | null; lead?: string | null; slots: TeamSlot[] }[]
 }
 export type Box = {
   source: 'official-link' | 'files'
@@ -149,6 +159,8 @@ export function parseOfficialBox(value: unknown): Box {
       ...character(r.character), id: int(r.heroId, 'heroId'), rank: num(r.rank), level: num(r.level), maxLevel: num(r.maxLevel),
       awakeLevel: num(r.awakeLevel), locked: r.locked === true, power: num(r.power), battles: num(r.battles),
       totalXp: typeof r.totalExperience === 'number' && Number.isFinite(r.totalExperience) && r.totalExperience >= 0 ? r.totalExperience : null,
+      awakeNodes: typeof r.awakeNodesUnlocked === 'number' && Number.isFinite(r.awakeNodesUnlocked) && r.awakeNodesUnlocked >= 0 ? r.awakeNodesUnlocked : null,
+      basisFlat: r.basisFlat && typeof r.basisFlat === 'object' ? decodeFixed(r.basisFlat) : null,
       skills: list(r.skillLevels).map(s => ({ kind: String(s.kind), level: num(s.level) })),
       relics: numbers(r.relicIdBySlot), accessories: numbers(r.accessoryIdBySlot), stats: numbers(r.stats),
       gearBonus: r.gearBonus ? numbers(r.gearBonus) : null,
@@ -161,7 +173,8 @@ export function parseOfficialBox(value: unknown): Box {
     return {
       ...character(r.character), id: int(r.titanId, 'titanId'), rank: num(r.rank), level: num(r.level), locked: r.locked === true,
       power: num(r.power), battles: num(r.battles), empowerment: num(r.empowerment),
-      bound: b ? { stat: String(b.stat), mode: String(b.mode), specialization: String(b.specialization), general: num(b.general), specialized: num(b.specialized) } : null,
+      maxLevel: num(r.maxLevel), skills: list(r.skillLevels).map(s => ({ kind: String(s.kind), level: num(s.level) })),
+      bound: b ? { stat: String(b.stat), mode: String(b.mode), specialization: String(b.specialization), general: num(b.general), specialized: num(b.specialized), miss: typeof b.specializationMiss === 'number' ? b.specializationMiss : undefined } : null,
       boundBonuses: list(s.boundBonuses).map(bonus), flatBonuses: list(s.flatBonuses).map(bonus),
     }
   })
@@ -180,13 +193,13 @@ export function parseOfficialBox(value: unknown): Box {
     const r = obj(raw)
     return {
       mode: String(r.mode), key: String(r.key), label: String(r.label ?? r.key), detail: str(r.detail), icon: assetPath(r.iconUrl),
-      element: str(r.element), difficulty: String(r.difficultyLabel ?? ''), highestLevel: num(r.highestLevel),
+      element: str(r.element), difficulty: String(r.difficultyLabel ?? ''), highestLevel: num(r.highestLevel), clearTimed: r.clearTimed === true,
       levels: list(r.levels).map(l => {
         const team = l.bestTimeTeam ? obj(l.bestTimeTeam) : null
         return {
           level: num(l.level), bestTime: num(l.bestTimeSeconds), victories: num(l.victories), defeats: num(l.defeats),
-          formation: team ? str(team.formation) : null,
-          slots: team ? list(team.slots).map(s => ({ position: String(s.position), line: String(s.line), heroId: num(s.heroId), titanId: s.titanId == null ? null : num(s.titanId) })) : [],
+          formation: team ? str(team.formation) : null, lead: team ? str(team.leadPosition) : null,
+          slots: team ? list(team.slots).map(s => ({ position: String(s.position), line: String(s.line), heroId: num(s.heroId), titanId: s.titanId == null ? null : num(s.titanId), titanPriority: num(s.titanPriority) })) : [],
         }
       }),
     }

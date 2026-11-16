@@ -7,7 +7,7 @@ import { fmtInt } from '../box/i18n'
 import { ImportPage } from './ImportPage'
 import { progressOf, usePlan } from './plan'
 import { useActiveTeams } from './activeTeams'
-const CoachCard = lazy(() => import('./CoachNow').then(m => ({ default: m.CoachCard })))
+const CoachCard = lazy(() => import('./CoachHome').then(m => ({ default: m.CoachHomeCard })))
 const CoachQuick = lazy(() => import('./CoachNow').then(m => ({ default: m.CoachQuick })))
 
 const date = (s: string | null) => s ? new Intl.DateTimeFormat('es-ES', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(s)) : '—'

@@ -9,7 +9,7 @@
 import type { Box, Hero, Titan } from './model'
 import type { Profile } from './combat'
 import type { Boss, BossStage } from './goal'
-import { toleranceKey } from './goal'
+import { recordOf, toleranceKey } from './goal'
 import { ELEMENT_LABEL, STAT_LABEL, t } from './i18n'
 import { TOL_LABEL } from '../wiki/labels'
 import { skillFit, type HeroSkills, type Need, type SkillFit } from './bossNeeds'
@@ -67,7 +67,7 @@ export function scoreCandidates(box: Box, boss: Boss, stage: BossStage, profiles
   const heroes = bestCopies(box.heroes.filter(h => !exclude.has(h.id)))
   const max = (f: (h: Hero) => number) => Math.max(1, ...box.heroes.map(f))
   const maxPower = max(h => h.power || 0), maxRank = max(h => h.rank || 0), maxLevel = max(h => h.level || 0), maxAwake = max(h => h.awakeLevel || 0)
-  const avgSkill = (h: Hero) => h.skills?.length ? h.skills.reduce((a, s) => a + (s.level || 1), 0) / h.skills.length : 1
+  const avgSkill = (h: Hero) => h.skills?.length ? h.skills.reduce((a, s) => a + (s.level ?? 0) + 1, 0) / h.skills.length : 1
   const maxSkill = max(avgSkill)
   return heroes.map(hero => {
     const profile = profiles.get(hero.id) ?? null
@@ -195,7 +195,7 @@ export function recommendTeam(box: Box, boss: Boss, stage: BossStage, profiles: 
     if (best && !swaps.some(x => x.in === best!.in && x.out === best!.out)) swaps.push(best)
   }
   const bySkill = pool.filter(c => c.fit.matched.length && !c.fit.avoided.length).slice(0, 10)
-  const rec = box.teams.find(t => t.mode === 'dungeon' && t.key === boss.slug)
+  const rec = recordOf(box.teams, boss.slug)
   const recordIds = rec?.levels[0]?.slots.map(s => s.heroId) ?? []
   const pickedCodes = new Set(picks.map(p => p.hero.code))
   const recordCodes = new Set(recordIds.map(id => box.heroes.find(h => h.id === id)?.code).filter(Boolean) as string[])

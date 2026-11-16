@@ -5,7 +5,8 @@ import { Copy } from 'lucide-react'
  * - Con `#nexo-plan=` en la dirección (enlace «Enviar a invokers.com» del Plan): valida el plan, pide confirmación,
  *   lo guarda como preset (POST /api/box/presets), abre la pestaña Presets del optimizador oficial y pulsa «Load».
  *   No equipa nada: equipar se confirma en el portal («Equip all» o «Apply»), que muestra el oro antes.
- * - En cualquier otra página de invokers.com: envía la caja (en vivo o del enlace compartido) a Nexo.
+ * - En cualquier otra página de invokers.com: envía la caja (en vivo o del enlace compartido) a Nexo. Con la caja en
+ *   vivo (tu sesión) envía también tus Account Stats (`/api/profile/account-stats`, lo que muestra la página oficial).
  * Código en una sola línea con `;` para que sobreviva al pegarlo como dirección de un marcador. */
 export function bookmarklet(app: string): string {
   const origin = new URL(app).origin
@@ -33,8 +34,10 @@ export function bookmarklet(app: string): string {
     `const b=new URLSearchParams(location.search).get('b');const w=window.open(A+'#/recibir','nexo');`,
     `try{const r=await fetch(b?'/api/lamb/'+encodeURIComponent(b):'/api/box',{credentials:'same-origin'});`,
     `if(r.status===401){w&&w.close();alert('Nexo: inicia sesión en invokers.com para enviar tu caja en vivo.');return}if(!r.ok)throw Error('HTTP '+r.status);const d=await r.text();`,
+    // Account Stats solo con tu sesión y tu caja en vivo (un enlace compartido puede ser de otra cuenta).
+    `let st=null;if(!b){try{const q=await fetch('/api/profile/account-stats',{credentials:'same-origin'});if(q.ok)st=await q.text()}catch(e){}}`,
     `if(!w){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([d],{type:'application/json'}));a.download='caja-invokers.json';a.click();alert('Nexo: se ha descargado caja-invokers.json. Impórtalo en Nexo.');return}`,
-    `let k=0;const t=setInterval(()=>{if(++k>80)clearInterval(t);w.postMessage({type:'nexo-box',json:d},O)},400);addEventListener('message',e=>{if(e.origin===O&&e.data==='nexo-ack')clearInterval(t)})`,
+    `let k=0;const t=setInterval(()=>{if(++k>80)clearInterval(t);w.postMessage({type:'nexo-box',json:d,stats:st},O)},400);addEventListener('message',e=>{if(e.origin===O&&e.data==='nexo-ack')clearInterval(t)})`,
     `}catch(e){alert('Nexo: no se pudo leer la caja. '+e.message)}})()`,
   ].join('')
   return `javascript:${encodeURIComponent(code)}`

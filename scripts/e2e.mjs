@@ -29,11 +29,28 @@ try {
   assert.ok((await page.locator('.account-strip h1').innerText()).includes(name))
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'desbordamiento horizontal en el inicio')
   // 2) Navegación por las secciones principales, sin desbordamiento horizontal.
-  for (const [hash, selector] of [['#/coleccion', '.gcard'], ['#/coleccion/piezas', '.gear-list li'], ['#/titanes', '.titan-card'], ['#/equipos', '.team-card'], ['#/codice', '.gcard'], ['#/asesor/revision', '.review-row'], ['#/asesor', '.coach-now .action'], ['#/asesor', '.fronts .front'], ['#/asesor/invokers', '.asc-material'], ['#/asesor/mas/tolerancias', '.tol-picker'], ['#/asesor/trofeos', '.hall, .advisor + p.muted, main p.muted'], ['#/asesor/piezas/sell', '.verdict-card'], ['#/objetivo', '.boss-card']]) {
+  for (const [hash, selector] of [['#/coleccion', '.gcard'], ['#/coleccion/piezas', '.gear-list li'], ['#/titanes', '.titan-card'], ['#/equipos', '.team-card'], ['#/codice', '.gcard'], ['#/asesor/revision', '.review-row'], ['#/asesor', '.coach-home .step-card h2'], ['#/asesor', '.fronts .front'], ['#/asesor/invokers', '.asc-material'], ['#/asesor/mas/tolerancias', '.tol-picker'], ['#/asesor/trofeos', '.hall, .advisor + p.muted, main p.muted'], ['#/asesor/piezas/sell', '.verdict-card'], ['#/objetivo', '.boss-card']]) {
     await page.evaluate(h => { location.hash = h }, hash)
     await page.locator(selector).first().waitFor({ timeout: 20000 })
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `desbordamiento horizontal en ${hash}`)
   }
+  // Coach personalizado: siguiente paso con qué, por qué y qué necesitas; prioridades; cambiar de objetivo recalcula.
+  await page.evaluate(() => { location.hash = '#/asesor' })
+  await page.locator('.step-card h2').waitFor({ timeout: 30000 })
+  assert.equal(await page.locator('.step-card .nc-q h3').count(), 3, 'el siguiente paso no responde a las tres preguntas')
+  assert.ok(await page.locator('.step-card .ch-chip').count() >= 3, 'faltan disponibilidad, confianza y coste')
+  const options = await page.locator('.obj-select option').allInnerTexts()
+  assert.ok(options[0].startsWith('Toda la cuenta'))
+  if (options.length > 1) {
+    await page.locator('.obj-select select').selectOption({ index: 1 })
+    await page.waitForFunction(o => document.querySelector('.step-card .nc-kicker')?.textContent?.includes(o), options[1].split(' — ')[0], { timeout: 30000 })
+  }
+  // Las piezas propuestas se pueden añadir al plan.
+  const addPlan = page.locator('.coach-home').getByRole('button', { name: 'Añadir al plan' }).first()
+  if (await addPlan.count()) { await addPlan.click(); await page.locator('.coach-home .ch-msg', { hasText: 'Añadido al plan' }).first().waitFor() }
+  await page.locator('.ch-how-decides summary').click()
+  assert.ok((await page.locator('.ch-how-decides').innerText()).includes('Puntuación'))
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'desbordamiento horizontal en el coach')
   // Sala de trofeos: lee los contadores de una captura (sintética, generada aquí) en el navegador, se confirman y
   // la compra paso a paso usa el coste que apunta el jugador.
   await page.evaluate(() => { location.hash = '#/asesor/trofeos' })
@@ -201,5 +218,5 @@ try {
   await received.getByRole('button', { name: 'Borrar todos los datos' }).click()
   await received.getByRole('heading', { name: 'Importar tu caja' }).waitFor()
   assert.deepEqual(errors, [])
-  console.log('E2E móvil: importar, secciones sin desbordamiento, filtros, pieza, optimizador en worker, enciclopedia (ficha, jefe → objetivo, calculadora), objetivo → planes → plan, recarga, coach (hoy, personajes, piezas explicadas, equipar en lote, sala de trofeos), marcador (caja, preset guardado y cargado) y borrado correctos.')
+  console.log('E2E móvil: importar, secciones sin desbordamiento, filtros, pieza, optimizador en worker, enciclopedia (ficha, jefe → objetivo, calculadora), objetivo → planes → plan, recarga, coach (siguiente paso, objetivos, añadir al plan, personajes, piezas explicadas, equipar en lote, sala de trofeos), marcador (caja, preset guardado y cargado) y borrado correctos.')
 } finally { await browser.close() }

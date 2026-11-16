@@ -59,8 +59,11 @@
         if (!res.ok) throw Error('HTTP ' + res.status)
         const json = await res.text()
         if (!w) { toast('Nexo: permite las ventanas emergentes de invokers.com y vuelve a pulsar.', true); return }
+        // Account Stats de tu sesión (lo mismo que muestra la página oficial); si falla, se envía solo la caja.
+        let stats = null
+        try { const q = await fetch('/api/profile/account-stats', { credentials: 'same-origin' }); if (q.ok) stats = await q.text() } catch (e) { /* opcional */ }
         let n = 0
-        const timer = setInterval(() => { if (++n > 80) clearInterval(timer); w.postMessage({ type: 'nexo-box', json }, origin) }, 400)
+        const timer = setInterval(() => { if (++n > 80) clearInterval(timer); w.postMessage({ type: 'nexo-box', json, stats }, origin) }, 400)
         addEventListener('message', e => { if (e.origin === origin && e.data === 'nexo-ack') clearInterval(timer) })
       } catch (e) { toast('Nexo: no se pudo leer tu caja. ' + (e && e.message ? e.message : ''), true) }
     })

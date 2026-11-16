@@ -59,9 +59,14 @@ function smooth(box: Box, stat: string, value: number) {
   const lo = Math.floor(value), f = value - lo
   return pct(box, stat, lo) * (1 - f) + pct(box, stat, lo + 1) * f
 }
+/** Nivel de ficha (1–11) de cada habilidad. My Box cuenta las mejoras desde 0: su nivel 0 es el nivel 1 de la ficha
+ * oficial (comprobado con las tolerancias: nivel 2 de My Box = 120 % = tercer nivel de la ficha). */
 export function skillLevels(hero: Hero): number[] {
-  return SKILL_KINDS.map(k => Math.max(1, Math.min(11, hero.skills.find(s => s.kind === k)?.level || 1)))
+  return SKILL_KINDS.map(k => fichaLevel(hero.skills.find(s => s.kind === k)?.level))
 }
+/** Nivel de ficha (1–11) a partir del nivel de My Box (0–10). */
+export const fichaLevel = (boxLevel: number | undefined) => Math.max(1, Math.min(11, Math.round(boxLevel ?? 0) + 1))
+export const MAX_SKILL_LEVEL = 11
 
 /** Combate sostenido contra un objetivo: reparto del tiempo entre habilidades, definitiva y combos. */
 export function simulate(box: Box, kit: Kit, levels: number[], stats: Stats, settings: SimSettings = DEFAULT_SIM): SimResult {

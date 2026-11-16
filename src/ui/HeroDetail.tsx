@@ -68,7 +68,7 @@ export function HeroDetail({ id }: { id: number }) {
           return <tr key={s}><td><StatIcon stat={s} /> {STAT_LABEL[s]}</td><td className="muted">{hero.gearBonus ? fmtStat(s, total - gear) : ''}</td><td className="plus">{gear ? fmtStat(s, gear, true) : ''}</td><td><b>{fmtStat(s, total)}</b>{r !== null && <small className="rating-pct"> {r} %</small>}</td></tr>
         })}</tbody></table>
         {tolerances.length > 0 && <><h3 className="sub">Tolerancias</h3><div className="tol-list">{tolerances.map(k => <span key={k}>{STAT_LABEL[k]} <b>{fmtStat(k, hero.stats[k])}</b></span>)}</div></>}
-        {hero.skills.length > 0 && <><h3 className="sub">Habilidades</h3><div className="skills">{hero.skills.map(s => <span key={s.kind}><small>{t(SKILL_LABEL, s.kind)}</small><b>{s.level}</b></span>)}</div></>}
+        {hero.skills.length > 0 && <><h3 className="sub">Habilidades</h3><div className="skills">{hero.skills.map(s => <span key={s.kind}><small>{t(SKILL_LABEL, s.kind)}</small><b>{s.level + 1}<small>/11</small></b></span>)}</div></>}
       </div>
     </section>
     {hero.powerStale && <StalePowerNote />}

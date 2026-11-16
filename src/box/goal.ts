@@ -21,6 +21,17 @@ export const loadBosses = () => cache ??= import('../catalog/bosses.json').then(
 
 export type Check = { key: string; label: string; value: number; target: number; unit: 'num' | 'pct'; ok: boolean; applies: 'yes' | 'unknown'; why: string }
 export type MemberDiagnosis = { hero: Hero; checks: Check[]; tier: { tier: string; score: number | null } | null; gear: string[]; missingKit: boolean }
+/** Jefe del catálogo de un récord de la caja. Las claves no siempre coinciden con las guías: «fire-omnissi» es
+ * «omnissi-fire» y los jefes de clan llegan como «clanBoss-301» (se reconocen por su nombre, «Sorgott»). */
+export function bossSlugOf(tm: { mode: string; key: string; label: string }): string {
+  const omnissi = /^([a-z]+)-omnissi$/.exec(tm.key)
+  if (omnissi) return `omnissi-${omnissi[1]}`
+  if (tm.mode === 'clanBoss') return tm.label.toLowerCase()
+  return tm.key
+}
+/** Récord de un jefe del catálogo (el primero si hay varios, p. ej. Sedula por elemento). */
+export const recordOf = <T extends { mode: string; key: string; label: string }>(teams: T[], slug: string, modes = ['dungeon', 'clanBoss']) =>
+  teams.find(t => modes.includes(t.mode) && bossSlugOf(t) === slug)
 export const toleranceKey = (corruption: string) => corruption.charAt(0).toLowerCase() + corruption.slice(1) + 'Tolerance'
 
 export function diagnoseMember(box: Box, index: BoxIndex, hero: Hero, profile: Profile | null, boss: Boss, stage: BossStage): MemberDiagnosis {

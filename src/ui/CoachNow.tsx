@@ -3,7 +3,7 @@ import { AlertTriangle, ArrowRight, Trophy, ArrowUpCircle, FlaskConical, Gem, Gr
 import { ACCESSORY_SLOTS, fmtBonus, fmtInt, MODE_LABEL, RELIC_SLOTS, SLOT_LABEL, t } from '../box/i18n'
 import { gainText, type GearAdvice } from '../box/gearCoach'
 import { ASCENSION } from '../box/ascension'
-import { loadBosses, type BossCatalog } from '../box/goal'
+import { bossSlugOf, loadBosses, type BossCatalog } from '../box/goal'
 import { useAccount } from './account'
 import { useActiveTeams, teamKey } from './activeTeams'
 import { progressOf, usePlan } from './plan'
@@ -27,7 +27,7 @@ function useNextBosses(): NextBoss[] {
   useEffect(() => { void loadBosses().then(setBosses).catch(() => undefined) }, [])
   return useMemo(() => {
     if (!account || !bosses) return []
-    return account.box.teams.filter(tm => tm.mode === 'dungeon').map(tm => ({ tm, boss: bosses.bosses.find(b => b.slug === tm.key) })).filter(x => x.boss && x.tm.highestLevel < x.boss.stages.length)
+    return account.box.teams.filter(tm => tm.mode === 'dungeon').map(tm => ({ tm, boss: bosses.bosses.find(b => b.slug === bossSlugOf(tm)) })).filter(x => x.boss && x.tm.highestLevel < x.boss.stages.length)
       .sort((a, b) => Number(active.isActive(b.tm)) - Number(active.isActive(a.tm)) || b.tm.highestLevel - a.tm.highestLevel)
       .map(x => ({ slug: x.boss!.slug, name: x.boss!.name, record: x.tm.highestLevel, stages: x.boss!.stages.length }))
   }, [account, bosses, active])
@@ -153,7 +153,7 @@ function ActionItem({ a, n }: { a: CoachAction; n: number }) {
 }
 
 /** Los tres frentes de la cuenta, con datos de la caja: personajes, piezas y jefes. */
-function Fronts() {
+export function Fronts() {
   const { account, go } = useAccount()
   const coach = useGearCoach()
   const ascend = useAscend()
@@ -184,13 +184,23 @@ function Fronts() {
 }
 
 /** Coach › Hoy: los tres frentes y los pasos, de tres en tres. */
-export function CoachNow({ limit }: { limit?: number }) {
+/** Avisos urgentes (p. ej. enlace a punto de caducar), para la parte de arriba del Coach. */
+export function UrgentNotices() {
+  const { actions } = useCoachActions()
+  const urgent = actions.filter(a => a.urgent)
+  if (!urgent.length) return null
+  return <ol className="action-list urgent-list">{urgent.map((a, i) => <ActionItem key={a.id} a={a} n={i + 1} />)}</ol>
+}
+
+/** Pasos de la cuenta. `bare`: todos, sin introducción (dentro de «Otras tareas» del Coach). */
+export function CoachNow({ limit, bare }: { limit?: number; bare?: boolean }) {
   const { account, go } = useAccount()
-  const { actions, ready } = useCoachActions()
+  const { actions: all, ready } = useCoachActions()
   if (!account) return null
-  const first = actions.slice(0, limit ?? 3), rest = limit ? [] : actions.slice(3)
+  const actions = bare ? all.filter(a => !a.urgent) : all
+  const first = bare ? actions : actions.slice(0, limit ?? 3), rest = limit || bare ? [] : actions.slice(3)
   return <section className="coach-now">
-    {!limit && <>
+    {!limit && !bare && <>
       <p className="lead">Tu cuenta mejora por tres caminos: a quién subes, qué piezas llevan y a qué jefes te enfrentas. Aquí tienes cómo va cada uno y por dónde empezar. Nada se ejecuta en el juego.</p>
       <Fronts />
       <h2 className="coach-h">Empieza por aquí</h2>

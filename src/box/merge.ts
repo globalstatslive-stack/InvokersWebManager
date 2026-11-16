@@ -27,7 +27,9 @@ export function mergeWithOfficial(files: Box, official: Box): Box {
     if (!o || (h.code && o.code && h.code !== o.code)) return h
     const character = { code: o.code, name: o.name, fullName: o.fullName, portrait: o.portrait, rarity: o.rarity, element: o.element, cls: o.cls, role: o.role, faction: o.faction, soulSign: o.soulSign, soulSignIcon: o.soulSignIcon, boundIcon: o.boundIcon }
     // La XP acumulada solo vale si el nivel no ha cambiado desde el enlace.
-    const base = { ...h, ...character, battles: o.battles, skills: o.skills, maxLevel: h.rank === o.rank ? o.maxLevel : h.maxLevel, totalXp: h.level === o.level && h.rank === o.rank ? o.totalXp ?? null : null }
+    const base = { ...h, ...character, battles: o.battles, skills: o.skills, maxLevel: h.rank === o.rank ? o.maxLevel : h.maxLevel, totalXp: h.level === o.level && h.rank === o.rank ? o.totalXp ?? null : null,
+      // Nodos y bonos planos: solo si el despertar no ha cambiado desde el enlace.
+      awakeNodes: h.awakeLevel === o.awakeLevel ? o.awakeNodes ?? null : null, basisFlat: h.awakeLevel === o.awakeLevel ? o.basisFlat ?? null : null }
     const same = h.level === o.level && h.rank === o.rank && h.awakeLevel === o.awakeLevel
     const sameGear = (a: Record<string, number>, b: Record<string, number>) => Object.keys(a).length === Object.keys(b).length && Object.entries(a).every(([k, v]) => b[k] === v)
     // Los .dat no traen el poder: se conserva el del enlace y se marca si ya no corresponde al equipo actual.
