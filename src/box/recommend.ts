@@ -6,7 +6,7 @@
  *
  * Heurística de Nexo (pesos propios, a la vista en la interfaz): la puntuación combina la nota oficial con tu
  * inversión (poder relativo) y ajusta por elemento, tolerancia y precisión. No estima probabilidad de victoria. */
-import type { Box, Hero, Titan } from './model'
+import { canBind, type Box, type Hero, type Titan } from './model'
 import type { Profile } from './combat'
 import type { Boss, BossStage } from './goal'
 import { recordOf, toleranceKey } from './goal'
@@ -115,8 +115,9 @@ export function assignTitans(picks: Candidate[], titans: Titan[], titanTier: Map
     const stat = titan.bound?.stat ?? ''
     const fit = BOUND_FIT[stat]
     let bestIdx = -1, bestFit = -1
-    picks.forEach((c, i) => { if (out[i]) return; const f = fit ? fit(c) : 0.1; if (f > bestFit) { bestFit = f; bestIdx = i } })
-    if (bestIdx < 0) break
+    // Solo a Invokers de su facción (o cualquiera si es un Dragón): un Titán que no encaja con ninguno se salta.
+    picks.forEach((c, i) => { if (out[i] || !canBind(titan, c.hero)) return; const f = fit ? fit(c) : 0.1; if (f > bestFit) { bestFit = f; bestIdx = i } })
+    if (bestIdx < 0) continue
     out[bestIdx] = { titan, tier: titanTier.get(titan.code) ?? null, why: !stat ? 'sin bonificación vinculada conocida' : BOUND_FIT[stat] ? `su vínculo da ${(STAT_LABEL[stat] ?? stat).toLowerCase()}, lo que más aprovecha este Invoker` : `su vínculo da ${(STAT_LABEL[stat] ?? stat).toLowerCase()}; sin preferencia clara, va por nota oficial` }
   }
   return out

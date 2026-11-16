@@ -47,7 +47,15 @@ try {
   }
   // Las piezas propuestas se pueden añadir al plan.
   const addPlan = page.locator('.coach-home').getByRole('button', { name: 'Añadir al plan' }).first()
-  if (await addPlan.count()) { await addPlan.click(); await page.locator('.coach-home .ch-msg', { hasText: 'Añadido al plan' }).first().waitFor() }
+  if (await addPlan.count()) {
+    const planKey = `nexo.plan.${name}`, savedPlan = await page.evaluate(k => localStorage.getItem(k), planKey)
+    await addPlan.click()
+    await page.locator('.coach-home .ch-msg', { hasText: 'Añadido al plan' }).first().waitFor()
+    await page.locator('.coach-home').getByRole('button', { name: /En tu plan/ }).first().waitFor()
+    // Se deja el plan como estaba para no mezclar esta prueba con las siguientes.
+    await page.evaluate(([k, v]) => { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v) }, [planKey, savedPlan])
+    await page.reload(); await page.locator('.step-card h2').waitFor({ timeout: 30000 })
+  }
   await page.locator('.ch-how-decides summary').click()
   assert.ok((await page.locator('.ch-how-decides').innerText()).includes('Puntuación'))
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'desbordamiento horizontal en el coach')

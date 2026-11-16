@@ -17,7 +17,7 @@
  * y, contra un jefe o un piso, × (0,05 + probabilidad oficial de que entren sus perjuicios) elevado a su peso de
  * control (el mismo índice que usa el simulador) si sus habilidades necesitan PREC.
  * Nexo no estima probabilidades de victoria ni resultados de combate. */
-import type { Box, Gear, Hero, Titan } from './model'
+import { canBind, type Box, type Gear, type Hero, type Titan } from './model'
 import { BoxIndex, projectStats, type Stats } from './stats'
 import { valueOf } from './usefulness'
 import { PRESETS, presetFor, STAT_SCALE } from './optimizer'
@@ -456,37 +456,61 @@ function titanActions(inp: EngineInput): CoachAction[] {
     const v0 = heroValue(h, addStats(h.stats, boundBonus(h, cur, obj.mode)), obj, p)
     for (const ti of titans) gain.set(`${h.id}:${ti.id}`, rel(heroValue(h, addStats(h.stats, boundBonus(h, ti, obj.mode)), obj, p), v0))
   }
-  // Asignación voraz: el mayor aporte ponderado primero, un Titán por Invoker.
-  const pairs = team.flatMap(h => titans.map(ti => ({ h, ti, g: gain.get(`${h.id}:${ti.id}`)!, w: obj.weights.get(h.id) ?? 0 }))).sort((a, b) => b.w * b.g - a.w * a.g)
+  // Asignación voraz: el mayor aporte ponderado primero, un Titán por Invoker y solo los que se le pueden vincular
+  // (su facción o Dragones). Entre copias iguales, la de más rango y nivel (sus estadísticas al invocarlo son mayores).
+  const pairs = team.flatMap(h => titans.filter(ti => canBind(ti, h)).map(ti => ({ h, ti, g: gain.get(`${h.id}:${ti.id}`)!, w: obj.weights.get(h.id) ?? 0 })))
+    .sort((a, b) => b.w * b.g - a.w * a.g || b.ti.rank - a.ti.rank || b.ti.level - a.ti.level || b.ti.power - a.ti.power)
   const usedT = new Set<number>(), done = new Set<number>(), assign = new Map<number, { ti: Titan; g: number }>()
   for (const p of pairs) { if (done.has(p.h.id) || usedT.has(p.ti.id)) continue; done.add(p.h.id); usedT.add(p.ti.id); assign.set(p.h.id, { ti: p.ti, g: p.g }) }
+  // Titán con el que acaba cada Invoker: el asignado o, si no se le asigna ninguno, el suyo si nadie se lo lleva.
+  const curOf = (h: Hero) => obj.titans.get(h.id) ?? null
+  const taken = new Set([...assign.values()].map(a => a.ti.id))
+  const finalOf = (h: Hero): Titan | null => assign.get(h.id)?.ti ?? (curOf(h) !== null && !taken.has(curOf(h)!) ? byId.get(curOf(h)!) ?? null : null)
+  const holder = new Map(team.filter(h => curOf(h) !== null).map(h => [curOf(h)!, h]))
+  const changed = team.filter(h => (finalOf(h)?.id ?? null) !== curOf(h))
+  const gainOf = (h: Hero) => {
+    const p = profileFor(h, inp.kits), cur = byId.get(curOf(h) ?? -1)
+    return rel(heroValue(h, addStats(h.stats, boundBonus(h, finalOf(h), obj.mode)), obj, p), heroValue(h, addStats(h.stats, boundBonus(h, cur, obj.mode)), obj, p))
+  }
+  // Cambios en cadena (un Titán pasa de un Invoker del equipo a otro) se proponen juntos y se juzgan por el neto.
+  const group = new Map<number, number>()
+  const find = (x: number): number => { while (group.has(x) && group.get(x) !== x) x = group.get(x)!; return x }
+  for (const h of changed) { group.set(h.id, find(h.id)); const t = finalOf(h), from = t ? holder.get(t.id) : undefined; if (from && from.id !== h.id) group.set(find(from.id), find(h.id)) }
+  const comps = new Map<number, Hero[]>()
+  for (const h of changed) comps.set(find(h.id), [...(comps.get(find(h.id)) ?? []), h])
   const out: CoachAction[] = []
-  for (const h of team) {
-    const a = assign.get(h.id), curId = obj.titans.get(h.id) ?? null
-    if (!a || a.ti.id === curId || a.g < MIN_GAIN / 2) continue
-    const cur = curId ? byId.get(curId) : undefined
-    const nv = boundValue(a.ti, obj.mode)!, cv = cur ? boundValue(cur, obj.mode) : null
-    const bonus = boundBonus(h, a.ti, obj.mode), stat = a.ti.bound!.stat
-    const w = obj.weights.get(h.id) ?? 0
+  const nameOf = (t: Titan | null | undefined) => t ? t.name : 'sin Titán'
+  for (const members of comps.values()) {
+    const per = members.map(h => ({ hero: h, gain: gainOf(h), w: obj.weights.get(h.id) ?? 0 }))
+    const total = per.reduce((t, x) => t + x.w * x.gain, 0)
+    const best = [...per].sort((a, b) => b.w * b.gain - a.w * a.gain)[0]
+    if (total <= 0 || best.gain < MIN_GAIN / 2) continue
+    const h = best.hero, ti = finalOf(h)!, cur = byId.get(curOf(h) ?? -1)
+    const nv = boundValue(ti, obj.mode)!, cv = cur ? boundValue(cur, obj.mode) : null
+    const bonus = boundBonus(h, ti, obj.mode), stat = ti.bound!.stat
     const p = profileFor(h, inp.kits)
     const sBefore = addStats(h.stats, boundBonus(h, cur, obj.mode)), sAfter = addStats(h.stats, bonus)
+    const chain = members.length > 1
+    const others = per.filter(x => x.hero.id !== h.id)
     out.push({
-      id: `titan:${h.id}:${a.ti.id}:${obj.id}`, kind: 'titan',
-      title: `Vincula a ${a.ti.name} con ${h.name} en «${obj.label}»`, hero: h, heroes: [h], titan: a.ti,
-      impact: 100 * w * a.g, perHero: [{ hero: h, gain: a.g }],
-      effect: `${pctText(a.g)} para ${h.name}: ${breakdown(h, sBefore, sAfter, obj, p)} (${a.ti.bound!.mode === 'percent' ? `${Math.round(100 * nv.value)} % de ${STAT_LABEL[stat] ?? stat}, +${fmtInt(Math.round(bonus[stat] ?? 0))}` : `+${fmtInt(nv.value)} ${STAT_LABEL[stat] ?? stat}`} en combate)`,
+      id: `titan:${members.map(m => `${m.id}-${finalOf(m)?.id ?? 0}`).sort().join(',')}:${obj.id}`, kind: 'titan',
+      title: chain ? `Reorganiza los Titanes de ${members.map(m => m.name).join(' y ')} en «${obj.label}»` : `Vincula a ${ti.name} con ${h.name} en «${obj.label}»`,
+      hero: h, heroes: members, titan: ti,
+      impact: 100 * total, perHero: per.map(x => ({ hero: x.hero, gain: x.gain })),
+      effect: `${pctText(best.gain)} para ${h.name}: ${breakdown(h, sBefore, sAfter, obj, p)} (${ti.bound!.mode === 'percent' ? `${Math.round(100 * nv.value)} % de ${STAT_LABEL[stat] ?? stat}, +${fmtInt(Math.round(bonus[stat] ?? 0))}` : `+${fmtInt(nv.value)} ${STAT_LABEL[stat] ?? stat}`} en combate)${others.length ? `; ${others.map(x => `${x.hero.name} ${pctText(x.gain)}`).join(', ')}` : ''}`,
       why: [
-        `Vínculo de ${a.ti.name}: ${STAT_LABEL[stat] ?? stat} ${nv.label}.`,
+        `Vínculo de ${ti.name} (${ti.faction === 'Dragons' ? 'Dragón: se vincula a cualquier facción' : `${ti.faction}, como ${h.name}`}, ${ti.rank}★ nivel ${ti.level}): ${STAT_LABEL[stat] ?? stat} ${nv.label}.`,
         cur && cv ? `Ahora lleva a ${cur.name}: ${STAT_LABEL[cur.bound!.stat] ?? cur.bound!.stat} ${cv.label}, que le aporta menos.` : 'Ahora no tiene Titán vinculado en ese récord.',
-        'Guía oficial: los vínculos duales dan más en su modo y menos fuera; las estadísticas del Titán invocado salen de la base del Invoker vinculado.',
+        ...(chain ? [`${ti.name} lo lleva ahora ${holder.get(ti.id)?.name ?? 'otro Invoker'}: el cambio se propone junto y compensa en total (${pctText(total)} ponderado en el equipo).`] : []),
+        'Solo se proponen Titanes de la facción del Invoker o Dragones (los únicos que el juego deja vincular).',
       ],
       needs: 'Nada: cambiar el vínculo en la formación es gratis',
       cost: { kind: 'free', text: 'Gratis' }, availability: 'now',
       confidence: nv.sure ? 'media' : 'baja', confidenceWhy: 'Valores del vínculo de la caja; que el % se aplique sobre la base es un supuesto (como el resto de % del juego).',
-      significant: a.g >= 0.03, score: 0,
-      how: [`En el juego: prepara el equipo de ${obj.label} → ${h.name} → Titán → ${a.ti.name}.`],
-      details: [],
-      check: { kind: 'titan', heroId: h.id, titanId: a.ti.id, mode: obj.choice.kind === 'record' ? obj.choice.mode : '', key: obj.choice.kind === 'record' ? obj.choice.key : '' },
+      significant: best.gain >= 0.03, score: 0,
+      how: [`En el juego: prepara el equipo de ${obj.label}${members.map(m => ` → ${m.name}: ${nameOf(finalOf(m))}`).join(';')}.`],
+      details: members.map(m => ({ label: m.name, value: `${nameOf(byId.get(curOf(m) ?? -1))} → ${nameOf(finalOf(m))} (${pctText(gainOf(m))})`, good: gainOf(m) >= 0 })),
+      check: { kind: 'titan', heroId: h.id, titanId: ti.id, mode: obj.choice.kind === 'record' ? obj.choice.mode : '', key: obj.choice.kind === 'record' ? obj.choice.key : '' },
     })
   }
   return out

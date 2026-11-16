@@ -70,6 +70,15 @@
 
 - Equipo para un jefe elige por encaje con el jefe, no por el equipamiento actual: nota oficial, habilidades que pide, elemento y tolerancia innata del kit, más el desarrollo que las piezas no cambian (estrellas, nivel, despertar, habilidades). El poder actual, la tolerancia de conjuntos, la PREC y la RES pasan a «A mejorar con equipamiento», con acceso a Objetivo. Opción «Priorizar a los que ya tengo equipados» para el criterio anterior.
 
+## Versión 0.22.1
+
+- **Corregido: Titanes de otra facción.** El juego solo deja vincular un Titán a Invokers de su facción; los Titanes Dragón, a cualquiera (comprobado con los récords de una caja real: 1.494 vínculos, 1.186 de la misma facción y 308 de Dragones, ninguna excepción). El Coach proponía, por ejemplo, Quadrax (Magi) para Ozmol (Ironbands), y la pestaña Jefes repartía Titanes sin mirar la facción. `canBind` en `model.ts`, usado en el motor y en `assignTitans`.
+- Cambios en cadena: si el Titán propuesto lo lleva otro Invoker del equipo, se propone todo junto («Reorganiza los Titanes de…»), con lo que gana o pierde cada uno, y solo si compensa en total.
+- Entre copias iguales de un Titán, la de más rango y nivel. Cada propuesta dice su facción, rango y nivel.
+- Corregido: al añadir una recomendación al Plan, «Toda la cuenta» se reducía a los Invokers del plan. En el Coach, tus equipos registrados cuentan siempre; los de equipos activos y plan pesan el triple.
+- Corregido: el mensaje «Añadido al plan» desaparecía al instante; ahora se ve junto a «En tu plan · abrir».
+- Pruebas: Titán de otra facción nunca propuesto, Dragón sí; reparto de Titanes de Jefes por facción; e2e de «Añadir al plan» con la caja real.
+
 ## Versión 0.22
 
 Coach personalizado: decide el siguiente paso más conveniente y lo justifica con datos de la cuenta.

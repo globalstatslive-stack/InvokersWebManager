@@ -37,7 +37,7 @@ function AddToPlan({ a, objective }: { a: CoachAction; objective: Objective }) {
   const [msg, setMsg] = useState<string | null>(null)
   if (!account || !a.plan?.length || !a.hero) return null
   const inPlan = a.plan.every(c => { const e = plan.find(x => x.heroId === c.heroId); return (c.kind === 'relic' ? e?.relics : e?.accessories)?.[c.slot] === c.gearId })
-  if (inPlan) return <button className="btn small" onClick={() => go('/plan')}><Check size={15} /> En tu plan · abrir</button>
+  if (inPlan) return <><button className="btn small" onClick={() => go('/plan')}><Check size={15} /> En tu plan · abrir</button>{msg && <small className="ch-msg" role="status">{msg}</small>}</>
   const add = () => {
     const e = entryFromAction(account.index, a.hero!, a, plan.find(x => x.heroId === a.hero!.id), objective.label)
     if (!e) return

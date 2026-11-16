@@ -41,7 +41,14 @@ export function useCoachPlan(): CoachState {
 
   const cat: Catalogs = useMemo(() => ({ bosses: bosses.data?.bosses, spires: spires.data?.spires }), [bosses.data, spires.data])
   const important = useMemo(() => new Set([...active.heroes, ...planEntries.map(e => e.heroId)]), [active.heroes, planEntries])
-  const used = useMemo(() => box ? usedHeroes(box, important).used : [], [box, important])
+  // Para el Coach, tus equipos registrados cuentan siempre; los de equipos activos y plan, además, pesan el triple.
+  // (Así añadir una recomendación al plan no reduce «Toda la cuenta» a los Invokers del plan.)
+  const used = useMemo(() => {
+    if (!box) return []
+    const marked = usedHeroes(box, important).used, teams = usedHeroes(box, new Set()).used
+    const seen = new Set(marked.map(u => u.hero.id))
+    return [...marked, ...teams.filter(u => !seen.has(u.hero.id))]
+  }, [box, important])
   const options = useMemo(() => box ? objectiveOptions(box, cat) : [], [box, cat])
   const choice = options.find(o => o.id === objectiveId)?.choice ?? { kind: 'general' as const }
   const objective = useMemo(() => box ? resolveObjective(box, choice, used, cat) : null, [box, JSON.stringify(choice), used, cat]) // eslint-disable-line react-hooks/exhaustive-deps
