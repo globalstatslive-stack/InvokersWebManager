@@ -7,6 +7,7 @@ import { useAccount } from './account'
 import { Chips, GradePill } from './common'
 import { GearIcon } from './Art'
 import { useGearCoach, type GearCoach } from './coach'
+import { useTeamReview } from './teamReview'
 import { EquipBatch } from './EquipBatch'
 
 const ICON: Record<Verdict, typeof CheckCircle2> = { upgrade: ArrowUpCircle, replace: Repeat, test: FlaskConical, equip: PackageCheck, keep: ShieldCheck, sell: Recycle, done: CheckCircle2 }
@@ -177,6 +178,7 @@ export function GearCoachPanel({ g }: { g: Gear }) {
 export function PiecesCoach({ initial }: { initial?: Verdict }) {
   const { account, go } = useAccount()
   const coach = useGearCoach()
+  const { review, progress } = useTeamReview()
   const [verdict, setVerdict] = useState<Verdict>(initial ?? 'upgrade')
   const [kind, setKind] = useState<'all' | 'relic' | 'accessory'>('all')
   const [limit, setLimit] = useState(30)
@@ -193,6 +195,7 @@ export function PiecesCoach({ initial }: { initial?: Verdict }) {
     </button> })}</div>
     <div className="toolbar-row"><Chips label="Tipo" value={kind} onChange={v => { setKind(v); setLimit(30) }} options={[{ id: 'all', label: 'Todas' }, { id: 'relic', label: 'Reliquias' }, { id: 'accessory', label: 'Accesorios' }]} /><span className="muted">{list.length} piezas</span></div>
     {verdict === 'equip' && <EquipBatch />}
+    {verdict === 'sell' && !review && <p className="note warn-note" role="status"><Loader2 size={15} className="spin" /> Comprobando con el optimizador completo que tus Invokers más usados no necesiten estas piezas{progress?.label ? ` (${progress.label}, ${progress.done + 1} de ${progress.total})` : ''}. Espera a que termine antes de vender.</p>}
     {verdict === 'sell' && <p className="note"><Recycle size={15} /> En el juego: sala de equipo → «Sell / Crush» → marca las piezas → «Sell» (oro) o «Crush» (Memorium). Puedes filtrar por rareza, rango y ranura para marcarlas por lotes. Nexo no vende nada: revisa antes las que no te convenzan.</p>}
     {verdict === 'test' && <p className="note"><FlaskConical size={15} /> Sube cada una solo hasta el hito indicado y mira dónde cae la mejora. Si cae en algo útil, sigue; si no, véndela: así no gastas oro ni Memorium en piezas que no van a servir.</p>}
     {list.length === 0 ? <div className="empty small"><h3>Nada en esta categoría</h3></div> :

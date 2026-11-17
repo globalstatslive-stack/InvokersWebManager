@@ -70,6 +70,17 @@
 
 - Equipo para un jefe elige por encaje con el jefe, no por el equipamiento actual: nota oficial, habilidades que pide, elemento y tolerancia innata del kit, más el desarrollo que las piezas no cambian (estrellas, nivel, despertar, habilidades). El poder actual, la tolerancia de conjuntos, la PREC y la RES pasan a «A mejorar con equipamiento», con acceso a Objetivo. Opción «Priorizar a los que ya tengo equipados» para el criterio anterior.
 
+## Versión 0.23
+
+Revisión completa del equipo de tus Invokers más usados.
+
+- **Diagnóstico** (caja real del 11/11): el Coach y el coach de piezas comparaban pieza a pieza. Una pieza nueva de otro conjunto, sola, rompe el conjunto actual y «no mejora», aunque cambiando 3, 5 u 8 a la vez sí. El optimizador completo encontraba mucho más: Lumisa +19,7 % (el Coach, nada), Ozmol +44 % (el Coach, +8,9 %), Zalasi +16,9 % (nada), Sodama +108 % (+16,7 %). Además, 25 de las piezas que usaría se aconsejaban **vender**.
+- **Equipar en lote › Revisión completa** (por defecto): el optimizador exacto, con conjuntos, revisa en el worker a tus 10/20/40 Invokers más usados, en orden de uso y sin repetir piezas. Usa piezas libres (también las que el coach aconseja guardar) y las de Invokers que no usas; nunca toca a los que usas, equipos activos ni plan. «Solo los cambios que más aportan» (por defecto; 12 puntos por cambio) o «Más cambios» (3 puntos). Muestra ganancia conjunta, oro y lo que aporta cada pieza sola («vale por el conjunto»). «Solo huecos vacíos (sin oro)» sigue disponible.
+- **Optimizador**: acceso «Revisar mis Invokers más usados».
+- **Coach**: los Invokers del objetivo se revisan con el optimizador completo en segundo plano (contra un jefe o piso, con el índice del simulador, como en Objetivo); la acción «Revisa el equipo de X: n cambios» dice qué conjuntos activa o deja.
+- **Coach de piezas**: una revisión de tus 20 Invokers más usados se calcula una vez por caja (se guarda en el navegador). Ninguna pieza que esa revisión pondría en un Invoker se aconseja vender o guardar: pasa a «Equípala en X». Mientras calcula, «Vender» pide esperar.
+- Pruebas: `review.test.ts` (opciones, cambio de conjunto de 3 piezas que pieza a pieza no se ve, acción del Coach, veredictos de venta corregidos).
+
 ## Versión 0.22.1
 
 - **Corregido: Titanes de otra facción.** El juego solo deja vincular un Titán a Invokers de su facción; los Titanes Dragón, a cualquiera (comprobado con los récords de una caja real: 1.494 vínculos, 1.186 de la misma facción y 308 de Dragones, ninguna excepción). El Coach proponía, por ejemplo, Quadrax (Magi) para Ozmol (Ironbands), y la pestaña Jefes repartía Titanes sin mirar la facción. `canBind` en `model.ts`, usado en el motor y en `assignTitans`.

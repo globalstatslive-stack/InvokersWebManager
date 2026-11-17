@@ -229,7 +229,8 @@ export function CoachHome() {
     <UrgentNotices />
     <ObjectiveBar options={s.options} value={s.objectiveId} onChange={s.setObjective} objective={objective} />
     {s.plan ? <>
-      {s.computing && <p className="fine ch-busy"><Loader2 size={14} className="spin" /> Recalculando…</p>}
+      {s.computing && !s.reviewing && <p className="fine ch-busy"><Loader2 size={14} className="spin" /> Recalculando…</p>}
+      {s.reviewing && <p className="fine ch-busy" role="status"><Loader2 size={14} className="spin" /> Revisando el equipo completo con el optimizador (conjuntos incluidos){s.reviewing.label ? `: ${s.reviewing.label}, ${s.reviewing.done + 1} de ${s.reviewing.total}` : ''}…</p>}
       <NextStep plan={s.plan} />
       <Priorities plan={s.plan} />
       <Synergy plan={s.plan} />

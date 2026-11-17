@@ -183,6 +183,7 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
   const kept = [...RELIC_SLOTS, ...ACCESSORY_SLOTS].map(s => (RELIC_SLOTS.includes(s) ? result.relics : result.accessories)[s]).filter((g): g is Gear => !!g && !result.changes.some(c => c.to === g))
   return <>
     <header className="goal-head"><Wand2 size={20} aria-hidden /><div><h1>Optimizador</h1><p className="hide-sm">Builds para cada campeón según sus habilidades, de qué escalan, sus enfriamientos y si necesita precisión contra el jefe.</p></div></header>
+    <button className="next-card review-link" onClick={() => go('/asesor/piezas/equip')}><ListChecks size={20} /><span><b>Revisar mis Invokers más usados</b><small>El optimizador completo, uno tras otro, con tus piezas nuevas: propone solo los cambios que compensan y los añade al plan.</small></span><ArrowRight size={16} /></button>
     <section className={`panel champion r-${hero.rarity.toLowerCase()}`}>
       <Portrait c={hero} size="lg" />
       <div className="champion-main">

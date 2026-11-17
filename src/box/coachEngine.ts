@@ -18,9 +18,9 @@
  * control (el mismo índice que usa el simulador) si sus habilidades necesitan PREC.
  * Nexo no estima probabilidades de victoria ni resultados de combate. */
 import { canBind, type Box, type Gear, type Hero, type Titan } from './model'
-import { BoxIndex, projectStats, type Stats } from './stats'
+import { activeSetBonuses, BoxIndex, projectStats, type Stats } from './stats'
 import { valueOf } from './usefulness'
-import { PRESETS, presetFor, STAT_SCALE } from './optimizer'
+import { PRESETS, presetFor, STAT_SCALE, type BuildResult } from './optimizer'
 import { indexOf, landChance, profileOf, simulate, skillLevels, SKILL_KINDS, type Kit, type Profile } from './combat'
 import { changeSummary, levelChanges, type SkillChange, type SkillLevelText } from './skillDiff'
 import { bossSlugOf, toleranceKey } from './goal'
@@ -237,6 +237,9 @@ export type EngineInput = {
   skillText?: Map<string, { skills: { type: string; levels: SkillLevelText[] }[]; tolerances: { key: string; levels: string[] }[] }>
   hall?: { options: HallOption[]; wallet: Wallet | null; costs: HallCosts } | null
   ascend?: { hero: Hero; to: number; score: number; units: number; have: boolean; why: string }[] | null
+  /** Revisión completa del optimizador (con conjuntos) para los Invokers del objetivo, si ya está calculada. Sustituye
+   * a la comparación pieza a pieza, que no ve los cambios de conjunto de varias piezas. */
+  builds?: Map<number, BuildResult> | null
 }
 
 const SKILL_TYPE: Record<string, string> = { Combo: 'Combo', ActiveSkill1: 'Active Skill1', ActiveSkill2: 'Active Skill2', ActiveSkill3: 'Active Skill3', Ultimate: 'Ultimate' }
@@ -248,11 +251,56 @@ function profileFor(h: Hero, kits?: Record<string, Kit> | null): Profile | null 
 }
 
 /** Mejor pieza para cada ranura de los Invokers del objetivo: libres o puestas en Invokers que no usas. */
+/** Acción de piezas a partir de la revisión completa del optimizador para un Invoker. */
+function buildAction(inp: EngineInput, h: Hero, b: BuildResult): CoachAction | null {
+  const { index, objective: obj } = inp
+  const changes = b.changes.filter(c => c.to)
+  if (!changes.length) return null
+  const current = index.equipped(h)
+  const next = [...Object.values(b.relics), ...Object.values(b.accessories)].filter((g): g is Gear => !!g)
+  const before = projectStats(h, current, index.rules), after = projectStats(h, next, index.rules)
+  const p = profileFor(h, inp.kits)
+  const gain = rel(heroValue(h, after, obj, p), heroValue(h, before, obj, p))
+  if (gain < MIN_GAIN) return null
+  const w = obj.weights.get(h.id) ?? 0
+  const taken = changes.filter(c => c.takenFrom)
+  const one = changes.length === 1 ? changes[0] : null
+  const setsOf = (pieces: Gear[]) => new Map(activeSetBonuses(pieces, index.rules).map(x => [x.set, x.pieces]))
+  const s0 = setsOf(current), s1 = setsOf(next)
+  const gained = [...s1].filter(([k, n]) => (s0.get(k) ?? 0) < n && n >= 3).map(([k, n]) => `${t(SET_LABEL, k)} (${n})`)
+  const lost = [...s0].filter(([k, n]) => (s1.get(k) ?? 0) < n && n >= 3 && (s1.get(k) ?? 0) < 3).map(([k]) => t(SET_LABEL, k))
+  const empty = changes.filter(c => !c.from).length
+  return {
+    id: `${taken.length ? 'trapped' : 'gear'}:${h.id}:${changes.map(c => `${c.to!.kind}${c.to!.id}`).sort().join(',')}`, kind: taken.length ? 'trapped' : 'gear',
+    title: one ? (one.takenFrom ? `Pasa a ${h.name} la pieza ${gearName(one.to!)} que lleva ${one.takenFrom.name}` : `Equipa a ${h.name}: ${gearName(one.to!)}`) : `Revisa el equipo de ${h.name}: ${changes.length} cambios`,
+    hero: h, heroes: [h], gear: one?.to ?? undefined,
+    impact: 100 * w * gain, perHero: [{ hero: h, gain }],
+    effect: `${pctText(gain)} para ${h.name}: ${breakdown(h, before, after, obj, p)} (${statDelta(before, after, 3, h)})`,
+    why: [
+      `Optimizador completo con todas tus piezas libres${taken.length ? ` y las de Invokers que no usas (${[...new Set(taken.map(c => c.takenFrom!.name))].join(', ')})` : ''}: ${empty ? `${empty} ${empty === 1 ? 'hueco vacío' : 'huecos vacíos'}` : ''}${empty && changes.length > empty ? ' y ' : ''}${changes.length > empty ? `${changes.length - empty} ${changes.length - empty === 1 ? 'sustitución' : 'sustituciones'}` : ''}, cada una tiene que compensar su coste.`,
+      gained.length || lost.length ? `Conjuntos: ${gained.length ? `activa ${gained.join(', ')}` : ''}${gained.length && lost.length ? '; ' : ''}${lost.length ? `deja ${lost.join(', ')}` : ''}. Por eso algunas piezas valen por el conjunto aunque solas aporten poco.` : 'La ganancia cuenta todos los cambios juntos, conjuntos incluidos.',
+      'Cálculo exacto con la fórmula de estadísticas verificada en tu caja.',
+    ],
+    needs: b.goldCost ? `${fmtInt(b.goldCost)} de oro de desequipar (dato de la caja)` : 'Nada: piezas libres en huecos vacíos',
+    cost: b.goldCost ? { kind: 'gold', gold: b.goldCost, text: `${fmtInt(b.goldCost)} oro` } : { kind: 'free', text: 'Gratis' },
+    availability: 'now', confidence: 'alta', confidenceWhy: 'Estadísticas exactas; el valor usa el perfil del optimizador.',
+    significant: gain >= 0.03, score: 0,
+    how: ['Pulsa «Añadir al plan» y envíalo al optimizador oficial desde Plan (tandas de 5).', `O ábrelo en el Optimizador de Nexo para ajustarlo: ${h.name}.`],
+    details: changes.map(c => ({ label: SLOT_LABEL[c.slot] ?? c.slot, value: `${gearName(c.to!)}${c.takenFrom ? ` (de ${c.takenFrom.name})` : ''}${c.from ? `, sustituye a ${gearName(c.from)}` : ' (hueco vacío)'}`, good: true })),
+    plan: changes.map(c => ({ heroId: h.id, kind: c.to!.kind, slot: c.slot, gearId: c.to!.id })),
+    check: { kind: 'gearset', heroId: h.id, items: changes.map(c => ({ slot: c.slot, gearKind: c.to!.kind, gearId: c.to!.id })) },
+  }
+}
+
 function gearActions(inp: EngineInput): CoachAction[] {
   const { index, objective: obj } = inp, box = index.box
+  // Con la revisión completa calculada, cada Invoker revisado tiene su acción y no se compara pieza a pieza.
+  const deep: CoachAction[] = []
+  const reviewed = new Set<number>()
+  if (inp.builds) for (const h of obj.team) { const b = inp.builds.get(h.id); if (!b) continue; reviewed.add(h.id); const a = buildAction(inp, h, b); if (a) deep.push(a) }
   type Move = { h: Hero; slot: string; kind: 'relic' | 'accessory'; piece: Gear; replaces: Gear | null; gain: number; before: Stats; after: Stats; owner: Hero | null; w: number; alt: { piece: Gear; gain: number }[] }
   const moves: Move[] = []
-  const focus = obj.team.filter(h => h.basis && h.gearBonus).slice(0, 12)
+  const focus = obj.team.filter(h => h.basis && h.gearBonus && !reviewed.has(h.id)).slice(0, 12)
   const owners = new Map(box.heroes.map(h => [h.id, h]))
   for (const h of focus) {
     const w = obj.weights.get(h.id) ?? 0
@@ -330,7 +378,7 @@ function gearActions(inp: EngineInput): CoachAction[] {
       check: one ? { kind: 'gear', heroId: h.id, slot: one.slot, gearKind: one.kind, gearId: one.piece.id } : { kind: 'gearset', heroId: h.id, items: ms.map(m => ({ slot: m.slot, gearKind: m.kind, gearId: m.piece.id })) },
     })
   }
-  return out
+  return [...deep, ...out]
 }
 
 /** Siguiente nivel de cada habilidad de los Invokers del objetivo, con la simulación y el texto oficial. */

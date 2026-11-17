@@ -11,7 +11,7 @@ type Reply = { id: number; result?: BuildResult; team?: TeamResult[]; fills?: [n
 
 /** Worker del optimizador. Cada petición nueva o «Cancelar» termina el cálculo en curso (se recrea el worker),
  * así que la interfaz nunca se bloquea ni muestra un resultado obsoleto. */
-function useWorker<T>(box: Box, pick: (r: Reply) => T | undefined) {
+function useWorker<T>(box: Box | undefined, pick: (r: Reply) => T | undefined) {
   const worker = useRef<Worker | null>(null)
   const seq = useRef(0)
   const busy = useRef(false)
@@ -19,7 +19,7 @@ function useWorker<T>(box: Box, pick: (r: Reply) => T | undefined) {
   const spawn = useCallback(() => {
     worker.current?.terminate()
     const w = new Worker(new URL('../box/optimize.worker.ts', import.meta.url), { type: 'module' })
-    w.postMessage({ type: 'box', box })
+    if (box) w.postMessage({ type: 'box', box })
     w.onmessage = (e: MessageEvent<Reply>) => {
       if (e.data.id !== seq.current) return
       if (e.data.progress) { setState({ status: 'running', progress: e.data.progress }); return }
@@ -60,7 +60,7 @@ export function useTeamOptimizer(box: Box) {
   return { state, run, cancel }
 }
 /** Equipar en lote: huecos de varios Invokers por orden de prioridad, bajo demanda. */
-export function useFillOptimizer(box: Box) {
+export function useFillOptimizer(box: Box | undefined) {
   const { state, post, cancel } = useWorker<Map<number, BuildResult>>(box, r => new Map(r.fills ?? []))
   const run = useCallback((members: TeamMember[]) => post({ type: 'fill', members }), [post])
   return { state, run, cancel }

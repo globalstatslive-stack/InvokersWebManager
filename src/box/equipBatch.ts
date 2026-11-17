@@ -43,6 +43,18 @@ export function fillOptions(hero: Hero, reserved: Set<string>): OptimizeOptions 
   return { objective: preset === 'dps' ? 'damage' : 'weights', weights, pool: 'free', onlyEmpty: true, changeCost: 0.5, reserved }
 }
 
+/** Revisión completa: puntos que debe ganar cada cambio (como «Cambios» del optimizador: mínimos o equilibrio). */
+export const REVIEW_EFFORT = { min: 12, balanced: 3 } as const
+export type ReviewEffort = keyof typeof REVIEW_EFFORT
+/** Revisión completa de un Invoker: el optimizador exacto (conjuntos incluidos) puede cambiar piezas puestas, usar piezas
+ * libres y las de Invokers que no usas; nunca toca las de `protect` (los que usas, equipos activos y plan) ni las
+ * reservadas en el plan. Cada cambio debe compensar su coste (`REVIEW_EFFORT`), así que no rehace la build entera. */
+export function reviewOptions(hero: Hero, reserved: Set<string>, protect: Set<number>, effort: ReviewEffort = 'balanced'): OptimizeOptions {
+  const preset = presetFor(hero)
+  const weights = PRESETS.find(p => p.id === preset)!.weights
+  return { objective: preset === 'dps' ? 'damage' : 'weights', weights, pool: 'all', protectedHeroes: new Set([...protect].filter(id => id !== hero.id)), changeCost: REVIEW_EFFORT[effort], moveAversion: 0.35, reserved }
+}
+
 const piecesOf = (index: BoxIndex, relics: Record<string, number | null>, accessories: Record<string, number | null>): Gear[] => [
   ...Object.values(relics).map(id => id === null ? undefined : index.relic(id)),
   ...Object.values(accessories).map(id => id === null ? undefined : index.accessory(id)),
@@ -129,4 +141,28 @@ export function assembleBatch(index: BoxIndex, used: UsedHero[], fills: Map<numb
     out.push({ hero: w.u.hero, why: w.u.why, teams: w.u.teams, fills: w.fills, swaps: w.swaps, fillGain: w.fillGain, gain: relativeGain(index, w.u.hero, w.current, piecesOf(index, w.relics, w.accessories)), gold: build.goldCost, build })
   }
   return { heroes: out, pieces: out.reduce((s, h) => s + h.fills.length + h.swaps.length, 0), gold: out.reduce((s, h) => s + h.gold, 0), skipped, left }
+}
+
+/** Lote de la revisión completa: lo que propone el optimizador para cada Invoker (en orden de uso, sin repetir piezas,
+ * ya resuelto en el worker), con la ganancia conjunta y el oro (el de la pieza que sale y el de las que se toman de
+ * otros Invokers). Cada cambio muestra también lo que aporta solo: puede ser poco o nada si su valor es el conjunto. */
+export function reviewBatch(index: BoxIndex, used: UsedHero[], builds: Map<number, BuildResult>, skipped: Hero[] = []): Batch {
+  const heroes: BatchHero[] = [], left: Batch['left'] = []
+  for (const u of used) {
+    const b = builds.get(u.hero.id)
+    if (!b) continue
+    const changes = b.changes.filter(c => c.to)
+    if (!changes.length) continue
+    const current = index.equipped(u.hero)
+    const after = piecesOf(index, Object.fromEntries(Object.entries(b.relics).map(([k, g]) => [k, g?.id ?? null])), Object.fromEntries(Object.entries(b.accessories).map(([k, g]) => [k, g?.id ?? null])))
+    const gain = relativeGain(index, u.hero, current, after)
+    if (gain < MIN_BATCH_GAIN) { left.push({ hero: u.hero, reason: `lo mejor que encuentra le da solo un ${(100 * gain).toFixed(1).replace('.', ',')} %` }); continue }
+    const one = (c: Change) => relativeGain(index, u.hero, current, [...current.filter(g => !(g.kind === c.to!.kind && g.slot === c.slot)), c.to!])
+    heroes.push({
+      hero: u.hero, why: u.why, teams: u.teams,
+      fills: changes.filter(c => !c.from), swaps: changes.filter(c => c.from).map(c => ({ ...c, gain: one(c) })),
+      fillGain: 0, gain, gold: b.goldCost, build: b,
+    })
+  }
+  return { heroes, left, skipped, pieces: heroes.reduce((t, h) => t + h.fills.length + h.swaps.length, 0), gold: heroes.reduce((t, h) => t + h.gold, 0) }
 }

@@ -2,9 +2,9 @@
  * el plan, los equipos activos o los trofeos; el cálculo se hace tras pintar para no bloquear la pantalla. */
 import { useEffect, useMemo, useState } from 'react'
 import { objectiveOptions, planFor, resolveObjective, type Catalogs, type CoachPlan, type EngineInput, type ObjectiveOption } from '../box/coachEngine'
-import { loadKits, type Kit } from '../box/combat'
+import { loadKits, profileOf, skillLevels, type Kit } from '../box/combat'
 import { loadBosses } from '../box/goal'
-import { usedHeroes } from '../box/equipBatch'
+import { REVIEW_EFFORT, reviewOptions, usedHeroes } from '../box/equipBatch'
 import { hallRanking } from '../box/trophyHall'
 import { projectStats } from '../box/stats'
 import type { Hero } from '../box/model'
@@ -16,6 +16,8 @@ import { usePlan, TRACKED_STATS, type PlanEntry } from './plan'
 import { useAscend } from './AscendCoach'
 import { useHallCosts, useTrophyWallet } from './trophyWallet'
 import { remember } from './coachMemory'
+import { useFillOptimizer } from './useOptimizer'
+import type { OptimizeOptions } from '../box/optimizer'
 
 const objKey = (name: string) => `nexo.coach.objective.${name}`
 const readObj = (name: string) => { try { return localStorage.getItem(objKey(name)) ?? 'general' } catch { return 'general' } }
@@ -23,6 +25,8 @@ const readObj = (name: string) => { try { return localStorage.getItem(objKey(nam
 export type CoachState = {
   options: ObjectiveOption[]; objectiveId: string; setObjective: (id: string) => void
   plan: CoachPlan | null; computing: boolean
+  /** Revisión completa del equipo (optimizador con conjuntos) en curso. */
+  reviewing: { done: number; total: number; label: string } | null
 }
 
 export function useCoachPlan(): CoachState {
@@ -65,8 +69,40 @@ export function useCoachPlan(): CoachState {
     return () => { live = false }
   }, [wiki.data, codes]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Revisión completa del equipo de los Invokers del objetivo en el worker del optimizador (con conjuntos); contra un
+  // jefe o piso, con el índice del simulador como en Objetivo. Nunca toca a los que usas, equipos activos ni plan.
+  const review = useFillOptimizer(box)
+  const reserved = useMemo(() => {
+    const r = new Set<string>()
+    for (const e of planEntries) {
+      for (const g of Object.values(e.target?.relics ?? e.relics)) if (g !== null) r.add(`relic${g}`)
+      for (const g of Object.values(e.target?.accessories ?? e.accessories)) if (g !== null) r.add(`accessory${g}`)
+    }
+    return r
+  }, [planEntries])
+  const reviewKey = `${account?.record.id}|${objective?.id}|${[...reserved].sort().join(',')}|${[...important].sort().join(',')}|${!!kits.data}`
+  const [ranKey, setRanKey] = useState('')
+  useEffect(() => {
+    if (!account || !objective) return
+    const protect = new Set([...used.map(u => u.hero.id), ...important, ...objective.team.map(h => h.id)])
+    const members = objective.team.filter(h => h.basis && h.gearBonus).slice(0, 12).map(h => {
+      const kit = (kits.data as Record<string, Kit> | undefined)?.[h.code]
+      if (objective.stage && kit) {
+        const levels = skillLevels(h), mix = profileOf(h, kit, levels).mix
+        const options: OptimizeOptions = { objective: 'sim', weights: { damage: 10 }, sim: { kit, levels, settings: { duration: 180, targetRes: objective.stage.res }, mix }, pool: 'all',
+          protectedHeroes: new Set([...protect].filter(id => id !== h.id)), reserved, changeCost: REVIEW_EFFORT.balanced, moveAversion: 0.35 }
+        return { heroId: h.id, options }
+      }
+      return { heroId: h.id, options: reviewOptions(h, reserved, protect, 'balanced') }
+    })
+    if (!members.length) return
+    setRanKey(reviewKey)
+    review.run(members)
+  }, [reviewKey]) // eslint-disable-line react-hooks/exhaustive-deps
+  const builds = review.state.status === 'done' && ranKey === reviewKey ? review.state.result : null
+
   const [state, setState] = useState<{ key: string; plan: CoachPlan } | null>(null)
-  const key = `${account?.record.id}|${objective?.id}|${planEntries.length}|${[...important].sort().join(',')}|${wallet?.bronze},${wallet?.silver},${wallet?.gold}|${JSON.stringify(costs)}|${texts?.size}|${!!kits.data}|${!!ascend}`
+  const key = `${account?.record.id}|${objective?.id}|${builds ? `b${ranKey}` : 'nb'}|${planEntries.length}|${[...important].sort().join(',')}|${wallet?.bronze},${wallet?.silver},${wallet?.gold}|${JSON.stringify(costs)}|${texts?.size}|${!!kits.data}|${!!ascend}`
   useEffect(() => {
     if (!account || !objective) return
     const id = setTimeout(() => {
@@ -83,7 +119,7 @@ export function useCoachPlan(): CoachState {
         index: account.index, objective, used: new Set(used.map(u => u.hero.id)),
         protect: new Set([...important, ...objective.team.map(h => h.id)]), reserved,
         kits: kits.data as Record<string, Kit> | undefined, skillText: texts,
-        hall: { options: hallRanking(account.box, used).options, wallet: wallet ? { bronze: wallet.bronze, silver: wallet.silver, gold: wallet.gold } : null, costs }, ascend: asc,
+        hall: { options: hallRanking(account.box, used).options, wallet: wallet ? { bronze: wallet.bronze, silver: wallet.silver, gold: wallet.gold } : null, costs }, ascend: asc, builds,
       })
       setState({ key, plan })
       // Recuerda las primeras recomendaciones de esta caja para comprobarlas en la siguiente.
@@ -92,7 +128,8 @@ export function useCoachPlan(): CoachState {
     return () => clearTimeout(id)
   }, [key]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  return { options, objectiveId: options.some(o => o.id === objectiveId) ? objectiveId : 'general', setObjective, plan: state?.plan ?? null, computing: !state || state.key !== key }
+  const reviewing = review.state.status === 'running' ? review.state.progress ?? { done: 0, total: objective?.team.length ?? 0, label: '' } : null
+  return { options, objectiveId: options.some(o => o.id === objectiveId) ? objectiveId : 'general', setObjective, plan: state?.plan ?? null, computing: !state || state.key !== key, reviewing }
 }
 
 /** Entrada del Plan para un cambio de piezas del Coach (se suma a lo que ya tuviera ese Invoker en el plan). */
