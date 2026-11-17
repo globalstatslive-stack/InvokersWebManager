@@ -1642,3 +1642,11 @@ details.panel > summary { cursor: pointer; font-family: var(--display); font-wei
 .mini-step .ch-chips { margin-top: 8px; }
 .sl-same { margin-top: 0; }
 .ch-chip.big { color: #1b1406; background: linear-gradient(180deg, #f8e2a4, #c99a42); border-color: transparent; font-weight: 650; }
+.batch-mode { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; }
+.batch-mode .chip, .batch-opts .chip { min-height: 34px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg-2); color: var(--text-2); font: 600 13px var(--sans); cursor: pointer; }
+.batch-mode .chip.on, .batch-opts .chip.on { border-color: var(--gold); color: var(--gold-2); background: #e2bd6b14; }
+.batch-opts { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 10px; }
+.batch-opts label { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--text-2); }
+.batch-opts select { min-height: 36px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg-2); color: var(--text); padding: 4px 8px; font: 600 13.5px var(--sans); }
+.batch-opts .chips-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.review-link { width: 100%; margin: 0 0 12px; }

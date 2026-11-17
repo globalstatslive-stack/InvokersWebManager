@@ -6,6 +6,7 @@ import { usedHeroes } from '../box/equipBatch'
 import { useAccount, type Account } from './account'
 import { usePlan, type PlanEntry } from './plan'
 import { useActiveTeams } from './activeTeams'
+import { useTeamReview, type TeamReview } from './teamReview'
 
 export type GearCoach = { ctx: CoachContext; advice: GearAdvice[]; byKey: Map<string, GearAdvice>; counts: Record<Verdict, number> }
 const cache = new Map<string, GearCoach>()
@@ -38,6 +39,27 @@ export function coachFor(account: Account, plan: PlanEntry[], active: Set<number
   return out
 }
 
+/** Coherencia con el optimizador: una pieza que la revisión completa de tus Invokers más usados pondría en uno de ellos
+ * no se aconseja vender ni dejar guardada; se aconseja equiparla en ese Invoker (aunque sola aporte poco: a veces vale
+ * por el conjunto que completa con otras). */
+export function withReview(coach: GearCoach, review: TeamReview | null): GearCoach {
+  if (!review) return coach
+  let changed = false
+  const advice = coach.advice.map(a => {
+    const use = review.uses[`${a.gear.kind}${a.gear.id}`]
+    if (!use || a.gear.equippedHeroId === use.heroId || !(['sell', 'keep', 'test', 'done'] as Verdict[]).includes(a.verdict)) return a
+    changed = true
+    const pct = `${(100 * use.gain).toFixed(1).replace('.', ',')} %`
+    return { ...a, verdict: 'equip' as Verdict, title: `Equípala en ${use.heroName}`, priority: Math.max(a.priority, 60),
+      why: `La revisión completa de tus Invokers más usados (optimizador con conjuntos) la pone en ${use.heroName}: con ${use.changes === 1 ? 'este cambio' : `sus ${use.changes} cambios`}, +${pct}. Aunque comparada sola parezca poco, encaja con el resto.` }
+  })
+  if (!changed) return coach
+  advice.sort((x, y) => y.priority - x.priority)
+  const counts = { upgrade: 0, replace: 0, test: 0, equip: 0, keep: 0, sell: 0, done: 0 } as Record<Verdict, number>
+  for (const a of advice) counts[a.verdict]++
+  return { ...coach, advice, byKey: new Map(advice.map(a => [`${a.gear.kind}${a.gear.id}`, a])), counts }
+}
+
 /** El cálculo tarda unos cientos de milisegundos con cajas grandes: se hace tras el primer pintado. */
 export function useGearCoach(): GearCoach | null {
   const { account } = useAccount()
@@ -50,6 +72,8 @@ export function useGearCoach(): GearCoach | null {
     const id = setTimeout(() => setState({ key, coach: coachFor(account, plan, active.heroes) }), 0)
     return () => clearTimeout(id)
   }, [key, account, plan, active.heroes])
+  const { review } = useTeamReview()
+  const coach = state && (state.key === key || state.coach.ctx.index === account?.index) ? state.coach : null
   // Mientras se recalcula (p. ej., al cambiar el plan), se sigue mostrando el último resultado de esta misma caja.
-  return state && (state.key === key || state.coach.ctx.index === account?.index) ? state.coach : null
+  return useMemo(() => coach ? withReview(coach, review) : null, [coach, review])
 }

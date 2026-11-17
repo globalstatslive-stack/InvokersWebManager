@@ -16,7 +16,7 @@ import { usedHeroes } from '../box/equipBatch'
 /** Un paso del coach: qué hacer (título), por qué en una frase, y una mini-lección opcional para quien empieza. */
 export type CoachAction = { id: string; icon: typeof ListChecks; title: string; why: ReactNode; learn?: ReactNode; items?: ReactNode[]; cta?: { label: string; to: string; before?: () => void }; extra?: ReactNode; urgent?: boolean }
 const slotName = (s: string) => t(SLOT_LABEL, s).toLowerCase()
-const pieceLine = (a: GearAdvice, text: string) => <><b>{a.owner?.name ?? a.best?.hero.name ?? a.gear.slot}</b> · {slotName(a.gear.slot)} {a.gear.rank}★ +{a.gear.level}: {text}</>
+const pieceLine = (a: GearAdvice, text: string) => <><b>{a.owner?.name ?? a.best?.hero.name ?? (a.title.startsWith('Equípala en ') ? a.title.slice(12) : a.gear.slot)}</b> · {slotName(a.gear.slot)} {a.gear.rank}★ +{a.gear.level}: {text}</>
 const plural = (n: number, one: string, many = `${one}s`) => `${fmtInt(n)} ${n === 1 ? one : many}`
 
 type NextBoss = { slug: string; name: string; record: number; stages: number }
@@ -76,7 +76,7 @@ export function useCoachActions(): { actions: CoachAction[]; ready: boolean } {
       if (equip.length) out.push({ id: 'equip', icon: PackageCheck, title: `Equipa ${plural((equipImp.length ? equipImp : equip).length, 'pieza libre que ya mejora', 'piezas libres que ya mejoran')} a ${equipImp.length ? 'tus equipos' : 'tus Invokers'}`,
         why: 'Es la mejora más barata: las tienes en el inventario y ponerlas no gasta recursos de subida.',
         learn: 'Equipar una pieza libre en un hueco es gratis. Lo que cuesta oro es desequipar una pieza que ya lleva alguien, así que conviene ponerlas solo en los Invokers que usas. Desde la lista puedes preparar un lote con todas y añadirlo al Plan.',
-        items: (equipImp.length ? equipImp : equip).slice(0, 3).map(a => pieceLine(a, gainText(a.best!))), cta: { label: 'Equipar todo de una vez', to: '/asesor/piezas/equip' } })
+        items: (equipImp.length ? equipImp : equip).slice(0, 3).map(a => pieceLine(a, a.best ? gainText(a.best) : a.title)), cta: { label: 'Equipar todo de una vez', to: '/asesor/piezas/equip' } })
     }
     // Subir de estrellas al Invoker que más rinde.
     const top6 = ascend?.six[0], top5 = ascend?.five[0]
