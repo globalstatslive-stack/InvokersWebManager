@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Copy } from 'lucide-react'
+import { Check, Copy, ExternalLink } from 'lucide-react'
+import { PORTAL_BOX } from './linkRefresh'
 
 /** Nombre del archivo de Account Stats que acompaña a la caja enviada por el marcador. */
 export const STATS_FILE = 'nexo-account-stats.json'
@@ -54,6 +55,54 @@ export function bookmarklet(app: string): string {
 
 const APP = () => `${location.origin}${location.pathname}`
 
+// ───────── Asistente para Android ─────────
+const MARKLET_KEY = 'nexo.marklet'
+/** Última caja recibida del marcador: `form` (versión 0.23.1 o posterior, misma pestaña) o `popup` (versión anterior). */
+export type MarkletStatus = { at: string; how: 'form' | 'popup' }
+export function markletSeen(how: MarkletStatus['how']) { try { localStorage.setItem(MARKLET_KEY, JSON.stringify({ at: new Date().toISOString(), how })) } catch { /* sin almacenamiento */ } }
+export function markletStatus(): MarkletStatus | null { try { const v = localStorage.getItem(MARKLET_KEY); return v ? JSON.parse(v) as MarkletStatus : null } catch { return null } }
+const isAndroid = () => /Android/i.test(navigator.userAgent)
+const inApp = () => typeof matchMedia === 'function' && matchMedia('(display-mode: standalone)').matches
+
+/** Instalador paso a paso del marcador en Chrome para Android, que comprueba que funciona: cuando llega una caja del
+ * marcador, el paso 3 queda marcado. Los navegadores no dejan que una web cree marcadores, así que los pasos 1 y 2 los
+ * hace el jugador; el asistente los reduce a copiar, pegar y probar. */
+function MarkletWizard({ code }: { code: string }) {
+  const [copied, setCopied] = useState<boolean | null>(null)
+  const status = markletStatus(), ok = status?.how === 'form', old = status?.how === 'popup'
+  const copy = async () => { try { await navigator.clipboard.writeText(code); setCopied(true) } catch { setCopied(false) } }
+  const when = status ? new Date(status.at).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : ''
+  return <details className="mk-wizard" open={isAndroid() && !ok}>
+    <summary>Instalarlo en el móvil (Chrome para Android): asistente en 3 pasos{ok ? ' · funciona' : ''}</summary>
+    {ok && <p className="note ok"><Check size={14} /> Tu marcador funciona: última caja recibida el {when}.</p>}
+    {old && <p className="note warn">Tu marcador es de antes de la versión 0.23.1: abre una ventana nueva, que Chrome para Android bloquea. Repite los pasos 1 y 2 para sustituir su código.</p>}
+    <ol className="mk-steps">
+      <li className={copied ? 'done' : ''}><b>Copia el código.</b>{' '}
+        <button className="btn small" onClick={copy}>{copied ? <><Check size={14} /> Copiado</> : <><Copy size={14} /> Copiar código</>}</button>
+        {copied === false && <span className="fine"> No se pudo copiar: usa el botón «Copiar código» de arriba.</span>}</li>
+      <li><b>Crea el marcador en Chrome.</b><ol type="a">
+        <li>Toca ⋮ (arriba a la derecha) y la estrella ☆: aparece un aviso de marcador guardado.</li>
+        <li>Toca «Editar» en ese aviso. Si ya se fue: ⋮ → ★ (estrella rellena) → editar.</li>
+        <li>Nombre: <b>nexo</b>. En la URL, borra lo que haya, mantén pulsado y elige «Pegar»: debe empezar por <code>javascript:</code>.</li>
+        <li>Vuelve atrás (←): queda guardado.</li>
+      </ol></li>
+      <li className={ok ? 'done' : ''}><b>Pruébalo.</b>{' '}
+        <button className="btn small primary" onClick={() => window.open(PORTAL_BOX, '_blank')}><ExternalLink size={14} /> Abrir mi caja en invokers.com</button>{' '}
+        Allí toca la barra de direcciones, escribe <b>nexo</b> y toca la sugerencia con la estrella ★ (no la búsqueda de Google). Nexo se abre en esa pestaña con tu caja y este paso queda marcado.</li>
+    </ol>
+    {inApp() && <p className="fine">Estás en la app instalada: invokers.com se abrirá dentro de la app, sin barra de direcciones. Toca ⋮ → «Abrir en Chrome» y usa allí el marcador.</p>}
+    <details className="mk-help"><summary>Si algo falla</summary><ul>
+      <li><b>No aparece la sugerencia:</b> el nombre debe ser exactamente «nexo»; escribe despacio, Chrome tarda unos segundos en ofrecer un marcador nuevo.</li>
+      <li><b>Se abre una búsqueda:</b> tocaste la búsqueda; toca la fila con la estrella ★.</li>
+      <li><b>No pasa nada:</b> abre el marcador y mira su URL. Si no empieza por <code>javascript:</code>, Chrome no guardó el código: repite el paso 2.</li>
+      <li><b>«Usa este marcador en una página de invokers.com»:</b> estabas en otra web.</li>
+      <li><b>Pide iniciar sesión:</b> entra en invokers.com y vuelve a tocarlo.</li>
+    </ul></details>
+    <p className="fine"><b>Atajo sin los pasos 1 y 2:</b> si usas Chrome en un ordenador con la misma cuenta de Google y la sincronización activada, arrastra allí el botón ⚡ Nexo a la barra de marcadores: aparecerá solo en el móvil.</p>
+    <p className="fine"><b>¿Prefieres no instalar nada?</b> Con tu enlace guardado, «Actualizar desde invokers.com» (en Inicio) abre tu caja del portal; pulsa «Refresh link» y vuelve a Nexo: la importa sola. Es la instantánea del enlace, sin Account Stats.</p>
+  </details>
+}
+
 /** Botón para arrastrar a la barra de marcadores, copiar el código y pasos para Android. */
 export function MarkletInstall({ label = '⚡ Nexo', onStatus }: { label?: string; onStatus?: (s: string) => void }) {
   const marklet = useMemo(() => bookmarklet(APP()), [])
@@ -69,12 +118,6 @@ export function MarkletInstall({ label = '⚡ Nexo', onStatus }: { label?: strin
       <button className="btn" onClick={copy}><Copy size={16} /> Copiar código</button>
     </div>
     {msg && !onStatus && <p className="fine" role="status">{msg}</p>}
-    <details><summary>Instalarlo en el móvil (Chrome para Android)</summary><ol>
-      <li>Pulsa «Copiar código».</li>
-      <li>En Chrome, guarda cualquier página como marcador (⋮ → ☆) y edítalo: nombre <b>nexo</b>; en la dirección, borra lo que haya y pega el código (empieza por <code>javascript:</code>).</li>
-      <li>Abre invokers.com <b>en Chrome</b> con tu sesión iniciada, escribe <b>nexo</b> en la barra de direcciones y toca el marcador en las sugerencias (desde la lista de marcadores Chrome no lo ejecuta). Nexo se abre en esa misma pestaña con tu caja.</li>
-    </ol>
-      <p className="fine">Si «Enviar a invokers.com» se abre dentro de la app de Nexo, sin barra de direcciones, toca ⋮ → «Abrir en Chrome» y usa allí el marcador. ¿Lo instalaste antes de la versión 0.23.1? Copia el código otra vez y sustitúyelo: el anterior abría una ventana nueva, que Chrome para Android bloquea.</p>
-    </details>
+    <MarkletWizard code={marklet} />
   </div>
 }

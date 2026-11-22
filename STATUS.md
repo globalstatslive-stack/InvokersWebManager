@@ -70,6 +70,16 @@
 
 - Equipo para un jefe elige por encaje con el jefe, no por el equipamiento actual: nota oficial, habilidades que pide, elemento y tolerancia innata del kit, más el desarrollo que las piezas no cambian (estrellas, nivel, despertar, habilidades). El poder actual, la tolerancia de conjuntos, la PREC y la RES pasan a «A mejorar con equipamiento», con acceso a Objetivo. Opción «Priorizar a los que ya tengo equipados» para el criterio anterior.
 
+## Versión 0.25
+
+Android: actualizar casi automático.
+
+- **Análisis**: en Android no hay extensiones fiables (Chrome no las admite; Firefox solo instala archivos firmados desde un menú de depuración, más fiable en Nightly; Edge solo tiene un truco en Canary), una web no puede crear marcadores ni pulsar «Refresh link» por ti (hace falta tu sesión en invokers.com), y la caja en vivo solo se puede leer desde una página de invokers.com (marcador). Lo automatizable es todo lo demás.
+- **Actualizar desde invokers.com** (`src/ui/linkRefresh.ts`): con el enlace guardado, el botón de Inicio abre tu caja del portal; pulsas «Refresh link» y vuelves; al volver (pestaña, app instalada o pestaña personalizada de Android) Nexo lee el enlace e importa la caja **solo si la instantánea es nueva**. El botón «Actualizar» ya no duplica importaciones iguales: avisa de que el enlace no ha cambiado y ofrece abrir el portal. Los avisos pueden llevar un botón de acción.
+- **Asistente del marcador en Android**: 3 pasos (copiar el código, crear el marcador con los toques exactos de Chrome, probarlo con un botón que abre tu caja), abierto por defecto en Android hasta que funciona. Detecta que funciona cuando llega una caja del marcador, avisa si el marcador es anterior a la 0.23.1, explica qué hacer dentro de la app instalada y propone el atajo de la sincronización de Chrome desde un ordenador.
+- **Compartir un enlace con Nexo**: el receptor de la PWA acepta también texto o enlaces (`url`, `text`, `title`); si contiene un enlace de caja de invokers.com, lo guarda y lo importa por el proxy. Android tarda unos días en ofrecer Nexo para enlaces en «Compartir» (actualiza la app instalada a partir del manifiesto).
+- Pruebas: `linkRefresh.test.ts`; e2e del flujo «Actualizar desde invokers.com» (importa una instantánea nueva y no duplica la misma) y del asistente; `share-e2e` con un enlace compartido y con un texto sin enlace.
+
 ## Versión 0.24
 
 Promesas y revisión de los optimizadores (caso: un legendario nuevo de tier S a nivel 1 que Nexo no proponía equipar).

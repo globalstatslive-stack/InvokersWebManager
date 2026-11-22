@@ -20,5 +20,19 @@ try {
   await page.locator('.account-strip').waitFor()
   await page.reload()
   await page.locator('.account-strip').waitFor()
-  console.log('PWA share target: la caja compartida se importa automáticamente y persiste tras recargar.')
+  // Un enlace de caja compartido desde otra app (Compartir → Nexo): se guarda y se importa por el proxy (simulado).
+  const shared = { ...sampleBox(), sharing: { snapshotAt: '2026-11-20T10:00:00Z', expiresAt: '2026-11-27T10:00:00Z' } }
+  await page.context().route('https://nexo-proxy.globalstatslive.workers.dev/**', r => r.fulfill({ contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify(shared) }))
+  const linkUrl = await page.evaluate(async () => {
+    const body = new FormData()
+    body.append('title', 'Mi caja'); body.append('text', 'Mira mi caja: https://invokers.com/lamb/?b=prueba-abc')
+    return (await fetch('./share', { method: 'POST', body })).url
+  })
+  assert(linkUrl.includes('shared=1'), `El receptor no aceptó el enlace: ${linkUrl}`)
+  await page.goto(root + '?shared=1')
+  await page.waitForFunction(() => localStorage.getItem('nexo.link') === 'https://invokers.com/lamb/?b=prueba-abc', null, { timeout: 20000 })
+  await page.locator('.account-strip', { hasText: '20 nov' }).waitFor({ timeout: 20000 })
+  const bad = await page.evaluate(async () => (await fetch('./share', { method: 'POST', body: (() => { const f = new FormData(); f.append('text', 'sin enlace'); return f })() })).url)
+  assert(bad.includes('share_error=1'), 'un texto sin enlace de caja no debe aceptarse')
+  console.log('PWA share target: la caja compartida (archivo o enlace) se importa automáticamente y persiste tras recargar.')
 } finally { await browser.close() }

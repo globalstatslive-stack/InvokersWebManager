@@ -225,6 +225,8 @@ try {
   const received = portal
   await received.locator('.account-strip').waitFor({ timeout: 20000 })
   assert.equal(opened.length, 0, 'el marcador no debe abrir otra pestaña')
+  // El asistente de Android sabe que el marcador funciona (la caja llegó por el receptor, en la misma pestaña).
+  assert.equal(await received.evaluate(() => JSON.parse(localStorage.getItem('nexo.marklet') || 'null')?.how), 'form', 'el asistente no registró el marcador')
   assert.equal(await received.evaluate(n => JSON.parse(localStorage.getItem(`nexo.accountStats.${n}`) || '[]').length, name), 1, 'no se guardaron las Account Stats')
   // La otra ventana de Nexo abierta (como la app instalada) ve la importación nueva sin recargarla.
   await page.evaluate(() => { location.hash = '#/datos' })
@@ -254,6 +256,31 @@ try {
   await planPage.getByRole('status').getByText(/guardado y cargado/).waitFor()
   await received.evaluate(() => { location.hash = '#/datos' })
   assert.ok(await received.locator('.records li').count() >= 2, 'el marcador no guardó una segunda importación')
+  // 5c) Actualizar desde invokers.com (sin instalar nada): abre el portal; al volver a Nexo, lee el enlace guardado
+  // (proxy simulado) e importa solo si la instantánea es más nueva; si no, avisa de pulsar «Refresh link».
+  if (!process.env.NEXO_BOX_JSON) {
+    const newer = { ...JSON.parse(json), sharing: { snapshotAt: '2030-01-02T10:00:00Z', expiresAt: '2030-01-09T10:00:00Z' } }
+    await context.route('https://nexo-proxy.globalstatslive.workers.dev/**', r => r.fulfill({ contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify(newer) }))
+    await received.evaluate(() => { localStorage.setItem('nexo.link', 'https://invokers.com/lamb/?b=prueba-abc'); location.hash = '#/' })
+    const refreshOnce = async () => {
+      const portalTab = context.waitForEvent('page')
+      await received.getByRole('button', { name: 'Actualizar desde invokers.com' }).click()
+      const tab = await portalTab
+      assert.ok(tab.url().startsWith('https://invokers.com/hub/box/'), `abre ${tab.url()}`)
+      await tab.close()
+      await received.bringToFront()
+      await received.evaluate(() => window.dispatchEvent(new Event('focus')))
+    }
+    await refreshOnce()
+    await received.locator('.toast', { hasText: 'Caja actualizada desde tu enlace' }).waitFor({ timeout: 20000 })
+    await received.locator('.account-strip', { hasText: '2 ene 2030' }).waitFor({ timeout: 20000 })
+    // La misma instantánea otra vez: no se duplica la importación y se ofrece abrir el portal.
+    await refreshOnce()
+    await received.locator('.toast', { hasText: 'Refresh link' }).waitFor({ timeout: 20000 })
+    await received.locator('.toast').getByRole('button', { name: 'Abrir invokers.com' }).waitFor()
+    await received.locator('.toast').getByRole('button', { name: 'Cerrar' }).click()
+    await received.evaluate(() => { location.hash = '#/datos' })
+  }
   // 6) Borrado.
   received.once('dialog', d => d.accept())
   await received.getByRole('button', { name: 'Borrar todos los datos' }).click()
