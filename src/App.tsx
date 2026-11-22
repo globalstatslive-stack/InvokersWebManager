@@ -33,7 +33,8 @@ import { folderPreference, readFolder } from './folderSync'
 import { DataPage } from './ui/DataPage'
 import { fmtInt } from './box/i18n'
 import { saveAccountStats } from './ui/coachMemory'
-import { STATS_FILE } from './ui/Marklet'
+import { markletSeen, STATS_FILE } from './ui/Marklet'
+import { clearRefresh, isNewer, lastLinkSnapshot, pendingRefresh, rememberLinkSnapshot, snapshotLabel, snapshotOf, startLinkRefresh } from './ui/linkRefresh'
 
 /** Lateral reducido a lo que se usa a diario. Titanes y récords viven como pestañas de Colección;
  * la enciclopedia es un grupo plegable; importar e historial, accesos discretos al pie. */
@@ -70,13 +71,13 @@ export default function App() {
   const [account, setAccount] = useState<Account>()
   const [previous, setPrevious] = useState<Account>()
   const [loading, setLoading] = useState(true)
-  const [toast, setToast] = useState<{ text: string; bad?: boolean }>()
+  const [toast, setToast] = useState<{ text: string; bad?: boolean; action?: { label: string; run: () => void } }>()
   const [menu, setMenu] = useState(false)
   const [syncing, setSyncing] = useState(false)
   const [wikiPinned, setWikiPinned] = useState<boolean | null>(null)
   const started = useRef(false)
 
-  useEffect(() => { if (!toast || toast.bad) return; const id = setTimeout(() => setToast(undefined), 7000); return () => clearTimeout(id) }, [toast])
+  useEffect(() => { if (!toast || toast.bad || toast.action) return; const id = setTimeout(() => setToast(undefined), 7000); return () => clearTimeout(id) }, [toast])
   useEffect(() => { const f = () => { setRoute(readRoute()); setMenu(false) }; addEventListener('hashchange', f); return () => removeEventListener('hashchange', f) }, [])
   const go = useCallback((path: string) => { location.hash = path; scrollTo({ top: 0 }) }, [])
   const reload = useCallback(async () => {
@@ -97,6 +98,8 @@ export default function App() {
     if (record.source !== 'official-link' && !record.collection) throw Error(record.interpretationError ?? 'Los archivos no contienen una colección completa.')
     await accountFrom(record, [record, ...records]).then(a => { if (!a) throw Error('La caja no contiene datos utilizables.') })
     await saveImport(record)
+    // Instantánea del enlace importada (para no volver a importar la misma al actualizar).
+    if (record.source === 'official-link' && files.length === 1) rememberLinkSnapshot(snapshotOf(await files[0].text()))
     await reload()
     imports?.postMessage('imported')
     const s = record.summary
@@ -116,13 +119,19 @@ export default function App() {
         try {
           const stats = shared.files.find(f => f.name === STATS_FILE), files = shared.files.filter(f => f !== stats)
           if (stats && files.length === 1 && stats.size < 2 * 1024 * 1024) saveAccountStats(await files[0].text(), await stats.text())
+          // La caja del marcador llega con este nombre: así el asistente sabe que el marcador funciona.
+          if (files.length === 1 && files[0].name === 'caja-invokers.json') markletSeen('form')
           if (files.length) await importFiles(files)
         } finally { await clearSharedFiles(shared.receivedAt) }
+      } else if (shared?.link) {
+        // Enlace de caja compartido con Nexo desde otra app (Compartir → Nexo): se guarda y se importa.
+        try { localStorage.setItem(LINK_KEY, shared.link) } catch { /* sin almacenamiento */ }
+        try { await importFiles([await fetchBox(shared.link)]) } finally { await clearSharedFiles(shared.receivedAt) }
       }
       if (location.search) history.replaceState(null, '', location.pathname + location.hash)
       // Carpeta recordada con «Actualizar al abrir Nexo»: solo si el navegador conserva el permiso.
       const pref = await folderPreference().catch(() => undefined)
-      if (pref?.auto && !shared?.files.length) await readFolder(pref, false).then(files => importFiles(files)).catch(() => undefined)
+      if (pref?.auto && !shared?.files.length && !shared?.link) await readFolder(pref, false).then(files => importFiles(files)).catch(() => undefined)
     })().catch(e => setToast({ text: `Error al abrir los datos: ${e instanceof Error ? e.message : e}`, bad: true })).finally(() => setLoading(false))
   }, [reload, importFiles])
 
@@ -141,13 +150,43 @@ export default function App() {
       ;(e.source as Window | null)?.postMessage('nexo-ack', e.origin)
       if (e.data.json.length > 20 * 1024 * 1024) return
       if (typeof e.data.stats === 'string' && e.data.stats.length < 2 * 1024 * 1024) saveAccountStats(e.data.json, e.data.stats)
+      if (!document.documentElement.dataset.nexoExtension) markletSeen('popup')
       importFiles([new File([e.data.json], 'caja-invokers.json', { type: 'application/json' })]).catch(err => setToast({ text: err instanceof Error ? err.message : String(err), bad: true }))
     }
     addEventListener('message', onMessage)
     return () => removeEventListener('message', onMessage)
   }, [importFiles])
 
-  /** Actualiza desde la última fuente disponible: carpeta recordada o enlace con proxy. */
+  /** Lee el enlace guardado e importa la caja solo si su instantánea es más nueva que la última importada. Si no ha
+   * cambiado, ofrece abrir invokers.com para pulsar «Refresh link» (al volver, se comprueba solo). */
+  const checking = useRef(false)
+  const checkLink = useCallback(async (from: 'button' | 'return'): Promise<void> => {
+    const link = stored(LINK_KEY)
+    if (!link || !proxyUrl() || checking.current) return
+    checking.current = true
+    try {
+      const file = await fetchBox(link), snap = snapshotOf(await file.text())
+      if (isNewer(snap, lastLinkSnapshot())) {
+        clearRefresh()
+        await importFiles([file])
+        setToast({ text: `Caja actualizada desde tu enlace: instantánea del ${snapshotLabel(snap)}.` })
+        return
+      }
+      setToast(from === 'return'
+        ? { text: `Tu enlace sigue con la instantánea del ${snapshotLabel(snap)}. En invokers.com pulsa «Refresh link» y vuelve: Nexo la importará sola.`, action: { label: 'Abrir invokers.com', run: () => startLinkRefresh() } }
+        : { text: `Ya tienes la última instantánea de tu enlace (${snapshotLabel(snap)}). Para traer lo de ahora, pulsa «Refresh link» en invokers.com y vuelve: Nexo la importará sola.`, action: { label: 'Abrir invokers.com', run: () => startLinkRefresh() } })
+    } finally { checking.current = false }
+  }, [importFiles])
+  // Al volver a Nexo tras «Actualizar desde invokers.com» (pestaña, app o pestaña personalizada de Android).
+  useEffect(() => {
+    const onBack = () => {
+      if (document.visibilityState !== 'visible' || !pendingRefresh()) return
+      void checkLink('return').catch(e => setToast({ text: e instanceof Error ? e.message : String(e), bad: true }))
+    }
+    document.addEventListener('visibilitychange', onBack); window.addEventListener('focus', onBack)
+    return () => { document.removeEventListener('visibilitychange', onBack); window.removeEventListener('focus', onBack) }
+  }, [checkLink])
+
   /** Actualiza desde todas las fuentes configuradas: primero el enlace (poder y estadísticas base) y después la carpeta del juego (equipo actual). */
   async function sync() {
     const link = stored(LINK_KEY), pref = await folderPreference().catch(() => undefined)
@@ -156,7 +195,7 @@ export default function App() {
     setSyncing(true)
     try {
       let failed: unknown
-      if (viaLink) await fetchBox(link).then(f => importFiles([f])).catch(e => { failed = e })
+      if (viaLink) await checkLink('button').catch(e => { failed = e })
       if (pref) await importFiles(await readFolder(pref, true))
       else if (failed) throw failed
     }
@@ -242,9 +281,9 @@ export default function App() {
           {account ? <button className="btn small" onClick={sync} disabled={syncing} title="Actualizar la cuenta"><RefreshCw size={15} className={syncing ? 'spin' : ''} /><span className="hide-sm">Actualizar</span></button>
             : <a className="btn small primary" href="#/importar"><Download size={15} />Importar caja</a>}
         </header>
-        {toast && <div className={`toast ${toast.bad ? 'bad' : ''}`} role="status"><span>{toast.text}</span><button className="icon-btn" aria-label="Cerrar" onClick={() => setToast(undefined)}><X size={16} /></button></div>}
+        {toast && <div className={`toast ${toast.bad ? 'bad' : ''}`} role="status"><span>{toast.text}</span>{toast.action && <button className="btn small primary" onClick={() => { toast.action!.run(); setToast(undefined) }}>{toast.action.label}</button>}<button className="icon-btn" aria-label="Cerrar" onClick={() => setToast(undefined)}><X size={16} /></button></div>}
         <main className="content">{loading ? <div className="loading">Cargando tu cuenta…</div> : <Suspense fallback={<div className="loading" role="status">Cargando…</div>}>{page}</Suspense>}</main>
-        <footer className="foot">Nexo · versión 0.24 · No afiliado a Hitzone. Tus importaciones se guardan solo en este navegador.</footer>
+        <footer className="foot">Nexo · versión 0.25 · No afiliado a Hitzone. Tus importaciones se guardan solo en este navegador.</footer>
       </div>
       <nav className="bottom-nav">{[...NAV, WIKI_HOME].filter(n => MOBILE.includes(n.path)).map(n => <a key={n.path} href={`#${n.path}`} className={active(n.path) ? 'on' : ''}><n.icon size={20} /><span>{n.label}</span></a>)}
         <button onClick={() => setMenu(true)}><Menu size={20} /><span>Más</span></button></nav>

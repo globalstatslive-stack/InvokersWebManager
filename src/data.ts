@@ -172,7 +172,8 @@ export async function clearImports(): Promise<void> {
   } finally { db.close() }
 }
 
-export type SharedBatch = { id: 'latest'; files: File[]; receivedAt: string }
+/** Lo recibido por «Compartir» (o por el marcador): archivos o un enlace de caja de invokers.com. */
+export type SharedBatch = { id: 'latest'; files: File[]; receivedAt: string; link?: string }
 export async function readSharedFiles(): Promise<SharedBatch | undefined> {
   const db = await openDatabase()
   try {

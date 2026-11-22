@@ -1,12 +1,13 @@
 import { lazy, Suspense, useMemo } from 'react'
-import { AlertTriangle, ArrowRight, Clock, Gem, LayoutGrid, Lightbulb, ListChecks, Target, Wand2, Zap } from 'lucide-react'
+import { AlertTriangle, ArrowRight, Clock, Gem, LayoutGrid, Lightbulb, ListChecks, RefreshCw, Target, Wand2, Zap } from 'lucide-react'
 import { useAccount } from './account'
 import { fmtPower, StalePowerNote } from './common'
 import { GameCard, GameImg } from './Art'
 import { fmtInt } from '../box/i18n'
-import { ImportPage } from './ImportPage'
+import { ImportPage, LINK_KEY } from './ImportPage'
 import { progressOf, usePlan } from './plan'
 import { useActiveTeams } from './activeTeams'
+import { startLinkRefresh } from './linkRefresh'
 const CoachCard = lazy(() => import('./CoachHome').then(m => ({ default: m.CoachHomeCard })))
 const Prospect = lazy(() => import('./ProspectCard').then(m => ({ default: m.ProspectNotice })))
 const CoachQuick = lazy(() => import('./CoachNow').then(m => ({ default: m.CoachQuick })))
@@ -29,6 +30,7 @@ export function Dashboard() {
   const done = plan.filter(e => progressOf(e, account.index.heroes.get(e.heroId)).done).length
   const days = box.expiresAt ? Math.ceil((Date.parse(box.expiresAt) - Date.now()) / 86400000) : null
   const official = account.record.source === 'official-link'
+  const hasLink = (() => { try { return !!localStorage.getItem(LINK_KEY) } catch { return false } })()
   return <div className="dash v2">
     <section className="account-strip hero-profile">
       <span className="avatar-ring big">{box.profile.avatar ? <GameImg path={box.profile.avatar} alt="" className="avatar" /> : <span className="avatar" />}<span className="lv">{box.profile.level}</span></span>
@@ -37,10 +39,11 @@ export function Dashboard() {
         <h1>{box.profile.name}</h1>
         <p className="power-line"><Zap size={18} aria-hidden /><b>{fmtInt(box.profile.totalPower || box.heroes.reduce((s, h) => s + h.power, 0))}</b><span>de poder · {box.heroes.length} Invokers · {box.titans.length} Titanes</span></p>
         <p className="muted"><Clock size={13} aria-hidden /> {official ? `Instantánea del ${date(box.snapshotAt ?? account.record.importedAt)}` : `Carpeta del juego leída el ${date(account.record.importedAt)}`}</p>
+        {hasLink && <p className="refresh-row"><button className="btn small" onClick={() => startLinkRefresh()}><RefreshCw size={14} /> Actualizar desde invokers.com</button><small>Pulsa «Refresh link» allí y vuelve: Nexo la importa sola.</small></p>}
       </div>
       {days !== null && <span className={`live-pill ${days <= 2 ? 'warn' : ''}`}><i />{days > 0 ? `Enlace activo · ${days} día${days > 1 ? 's' : ''}` : 'Enlace caducado'}</span>}
     </section>
-    {days !== null && days <= 2 && <p className="note warn"><AlertTriangle size={15} /> Pulsa «Refresh link» en invokers.com para renovar el enlace otra semana y vuelve a importarlo.</p>}
+    {days !== null && days <= 2 && <p className="note warn"><AlertTriangle size={15} /> Pulsa «Refresh link» en invokers.com para renovar el enlace otra semana{hasLink ? ': «Actualizar desde invokers.com» lo abre y, al volver, Nexo importa la caja.' : ' y vuelve a importarlo.'}</p>}
 
     <section className="next-grid">
       <button className="next-card primary" onClick={() => go('/objetivo')}>
