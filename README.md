@@ -4,7 +4,7 @@
 
 Herramienta de fans independiente para gestionar tu cuenta de **Invokers: Titan Legacy** con los retratos, Titanes y objetos reales del juego. La idea central: **elige qué quieres superar, descubre qué cambiar, cuánto cuesta y cómo afecta a tus otros equipos**. El código y el diseño son propios; no incorpora código ni recursos de GGNoLuck. Las ilustraciones se publican conforme a la política oficial de contenido de fans.
 
-## Versión 0.23: qué incluye
+## Versión 0.23.1: qué incluye
 
 | Sección | Qué hace |
 |---|---|
@@ -44,6 +44,8 @@ Conforme a la política de contenido de fans de invokers.com, Nexo usa los datos
 El enlace es una **instantánea**: Nexo guarda la caja tal como estaba al importarla y no se sincroniza sola. Para actualizar, pulsa «Refresh link» en el portal (renueva la instantánea y el plazo) y vuelve a importar. El enlace caduca a la semana; Inicio muestra cuántos días quedan. Si una actualización falla o la caja no es válida, se conserva la última caja válida.
 
 **Privacidad.** El portal no envía cabeceras CORS, así que la caja pasa por el proxy de Nexo en Cloudflare Workers (`proxy/cloudflare-worker.js`, `https://nexo-proxy.globalstatslive.workers.dev`): procesa la caja en tránsito, solo reenvía `/api/lamb/<código>`, solo responde a la web de Nexo y no la guarda, aunque Cloudflare puede registrar metadatos técnicos de la petición. La caja se guarda solo en tu navegador (IndexedDB, hasta cinco importaciones). Nexo no escribe nada en el juego.
+
+**Caja en vivo con el marcador «Nexo» (también en Chrome para Android)**: en invokers.com, con tu sesión iniciada, toca el marcador (en el móvil, escribe su nombre en la barra de direcciones y elígelo en las sugerencias). Lee tu caja en vivo y tus Account Stats y abre Nexo **en la misma pestaña** con todo importado: el marcador envía la caja como archivo al receptor de Nexo (su service worker, el mismo de «Compartir»), sin ventanas emergentes ni mensajes entre pestañas, que Chrome para Android bloquea; no pasa por ningún servidor. La app instalada, si está abierta, se actualiza sola. Chrome para Android no admite extensiones: ahí el marcador sustituye a la extensión.
 
 **Alternativas**: carpeta del juego en PC/Mac (`%USERPROFILE%\AppData\LocalLow\Hit_Zone\Invokers` o `~/Library/Application Support/Hit_Zone/Invokers`, leída localmente) o pegar los datos.
 

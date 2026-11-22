@@ -33,6 +33,7 @@ import { folderPreference, readFolder } from './folderSync'
 import { DataPage } from './ui/DataPage'
 import { fmtInt } from './box/i18n'
 import { saveAccountStats } from './ui/coachMemory'
+import { STATS_FILE } from './ui/Marklet'
 
 /** Lateral reducido a lo que se usa a diario. Titanes y récords viven como pestañas de Colección;
  * la enciclopedia es un grupo plegable; importar e historial, accesos discretos al pie. */
@@ -58,6 +59,10 @@ const MOBILE = ['/', '/asesor', '/coleccion', '/wiki']
 const OFFICIAL_ORIGINS = ['https://invokers.com', 'https://www.invokers.com']
 const readRoute = () => (location.hash.replace(/^#/, '') || '/').split('?')[0]
 const stored = (k: string) => { try { return localStorage.getItem(k) ?? '' } catch { return '' } }
+
+/** Avisa a las demás ventanas de Nexo (p. ej., la app instalada mientras el marcador abre Nexo en una pestaña de
+ * Chrome) de que hay una importación nueva, para que la muestren sin cerrarlas. */
+const imports = typeof BroadcastChannel === 'undefined' ? null : new BroadcastChannel('nexo-imports')
 
 export default function App() {
   const [route, setRoute] = useState(readRoute)
@@ -93,6 +98,7 @@ export default function App() {
     await accountFrom(record, [record, ...records]).then(a => { if (!a) throw Error('La caja no contiene datos utilizables.') })
     await saveImport(record)
     await reload()
+    imports?.postMessage('imported')
     const s = record.summary
     setToast({ text: s ? `Cuenta de ${s.name} importada: ${s.heroes} Invokers, ${s.titans} Titanes y ${s.gear} piezas.` : `${record.collection?.invokers.length ?? 0} Invokers importados desde los snapshots.` })
     go('/')
@@ -104,8 +110,15 @@ export default function App() {
     ;(async () => {
       await reload()
       if (new URLSearchParams(location.search).has('share_error')) setToast({ text: 'No se pudieron recibir los archivos compartidos.', bad: true })
+      // Archivos recibidos por «Compartir» o por el marcador (que los envía al mismo receptor del service worker).
       const shared = await readSharedFiles()
-      if (shared?.files.length) { await importFiles(shared.files); await clearSharedFiles(shared.receivedAt) }
+      if (shared?.files.length) {
+        try {
+          const stats = shared.files.find(f => f.name === STATS_FILE), files = shared.files.filter(f => f !== stats)
+          if (stats && files.length === 1 && stats.size < 2 * 1024 * 1024) saveAccountStats(await files[0].text(), await stats.text())
+          if (files.length) await importFiles(files)
+        } finally { await clearSharedFiles(shared.receivedAt) }
+      }
       if (location.search) history.replaceState(null, '', location.pathname + location.hash)
       // Carpeta recordada con «Actualizar al abrir Nexo»: solo si el navegador conserva el permiso.
       const pref = await folderPreference().catch(() => undefined)
@@ -113,7 +126,15 @@ export default function App() {
     })().catch(e => setToast({ text: `Error al abrir los datos: ${e instanceof Error ? e.message : e}`, bad: true })).finally(() => setLoading(false))
   }, [reload, importFiles])
 
-  // Recibe la caja enviada por el marcador desde invokers.com.
+  // Otra ventana de Nexo ha importado una caja: se muestra aquí también.
+  useEffect(() => {
+    if (!imports) return
+    const onImported = () => { reload().catch(() => undefined) }
+    imports.addEventListener('message', onImported)
+    return () => imports.removeEventListener('message', onImported)
+  }, [reload])
+
+  // Recibe la caja enviada por la extensión (o por un marcador anterior a la 0.23.1) desde invokers.com.
   useEffect(() => {
     const onMessage = (e: MessageEvent) => {
       if (!OFFICIAL_ORIGINS.includes(e.origin) || typeof e.data !== 'object' || e.data?.type !== 'nexo-box' || typeof e.data.json !== 'string') return
@@ -223,7 +244,7 @@ export default function App() {
         </header>
         {toast && <div className={`toast ${toast.bad ? 'bad' : ''}`} role="status"><span>{toast.text}</span><button className="icon-btn" aria-label="Cerrar" onClick={() => setToast(undefined)}><X size={16} /></button></div>}
         <main className="content">{loading ? <div className="loading">Cargando tu cuenta…</div> : <Suspense fallback={<div className="loading" role="status">Cargando…</div>}>{page}</Suspense>}</main>
-        <footer className="foot">Nexo · versión 0.23 · No afiliado a Hitzone. Tus importaciones se guardan solo en este navegador.</footer>
+        <footer className="foot">Nexo · versión 0.23.1 · No afiliado a Hitzone. Tus importaciones se guardan solo en este navegador.</footer>
       </div>
       <nav className="bottom-nav">{[...NAV, WIKI_HOME].filter(n => MOBILE.includes(n.path)).map(n => <a key={n.path} href={`#${n.path}`} className={active(n.path) ? 'on' : ''}><n.icon size={20} /><span>{n.label}</span></a>)}
         <button onClick={() => setMenu(true)}><Menu size={20} /><span>Más</span></button></nav>

@@ -70,6 +70,15 @@
 
 - Equipo para un jefe elige por encaje con el jefe, no por el equipamiento actual: nota oficial, habilidades que pide, elemento y tolerancia innata del kit, más el desarrollo que las piezas no cambian (estrellas, nivel, despertar, habilidades). El poder actual, la tolerancia de conjuntos, la PREC y la RES pasan a «A mejorar con equipamiento», con acceso a Objetivo. Opción «Priorizar a los que ya tengo equipados» para el criterio anterior.
 
+## Versión 0.23.1
+
+Marcador fiable en Chrome para Android.
+
+- El marcador ya no abre una ventana nueva ni pasa la caja por mensajes entre pestañas (Chrome para Android bloquea la ventana emergente o congela la pestaña de invokers.com y la caja no llegaba). Ahora lee la caja y las Account Stats y abre Nexo **en la misma pestaña** con un formulario al receptor `share` del service worker (el mismo de «Compartir»); la caja va como archivo y no pasa por ningún servidor.
+- Nexo separa las Account Stats del archivo de la caja, vacía siempre la bandeja de recibidos (también si la caja no es válida) y avisa a sus otras ventanas abiertas (la app instalada) para que muestren la importación sin recargar.
+- Pasos de instalación en Android más precisos (sugerencias de la barra de direcciones; «Abrir en Chrome» si invokers.com se abre dentro de la app) y aviso de volver a copiar el código si se instaló antes.
+- e2e: el marcador abre Nexo en la misma pestaña (sin pestañas nuevas), con Account Stats, y la otra ventana de Nexo ve la importación; probado también en la build de producción y con un Pixel 7 emulado.
+
 ## Versión 0.23
 
 Revisión completa del equipo de tus Invokers más usados.
