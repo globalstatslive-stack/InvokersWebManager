@@ -1,17 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Copy } from 'lucide-react'
 
+/** Nombre del archivo de Account Stats que acompaña a la caja enviada por el marcador. */
+export const STATS_FILE = 'nexo-account-stats.json'
+
 /** Marcador «Nexo»: solo actúa cuando el jugador lo pulsa en una página de invokers.com, con su sesión.
  * - Con `#nexo-plan=` en la dirección (enlace «Enviar a invokers.com» del Plan): valida el plan, pide confirmación,
  *   lo guarda como preset (POST /api/box/presets), abre la pestaña Presets del optimizador oficial y pulsa «Load».
  *   No equipa nada: equipar se confirma en el portal («Equip all» o «Apply»), que muestra el oro antes.
- * - En cualquier otra página de invokers.com: envía la caja (en vivo o del enlace compartido) a Nexo. Con la caja en
- *   vivo (tu sesión) envía también tus Account Stats (`/api/profile/account-stats`, lo que muestra la página oficial).
+ * - En cualquier otra página de invokers.com: envía la caja (en vivo o del enlace compartido) a Nexo, que se abre en la
+ *   misma pestaña (formulario al receptor `share` del service worker; funciona igual en Chrome para Android). Con la
+ *   caja en vivo (tu sesión) envía también tus Account Stats (`/api/profile/account-stats`, lo que muestra la página oficial).
  * Código en una sola línea con `;` para que sobreviva al pegarlo como dirección de un marcador. */
 export function bookmarklet(app: string): string {
-  const origin = new URL(app).origin
   const code = [
-    `(async()=>{const A=${JSON.stringify(app)},O=${JSON.stringify(origin)};`,
+    `(async()=>{const A=${JSON.stringify(app)};`,
     `if(!/^https:\\/\\/(www\\.)?invokers\\.com$/.test(location.origin)){alert('Nexo: usa este marcador en una página de invokers.com.');return}`,
     `const T=e=>(e.textContent||'').trim(),W=(f,ms)=>new Promise(r=>{const t0=Date.now(),i=setInterval(()=>{const v=f();if(v||Date.now()-t0>ms){clearInterval(i);r(v||null)}},250)});`,
     `const toast=s=>{const d=document.createElement('div');d.textContent=s;d.setAttribute('role','status');d.style.cssText='position:fixed;z-index:2147483647;left:50%;bottom:28px;transform:translateX(-50%);max-width:90vw;padding:12px 18px;border-radius:12px;font:600 14px system-ui,sans-serif;color:#1b1406;background:#f0cf83;box-shadow:0 10px 30px #0008';document.body.appendChild(d);setTimeout(()=>d.remove(),9000)};`,
@@ -31,13 +34,19 @@ export function bookmarklet(app: string): string {
     `if(tab){tab.click();const li=await W(()=>[...document.querySelectorAll('.opt-preset')].find(e=>{const h=e.querySelector('h4');return h&&T(h)===N}),8000),b=li&&[...li.querySelectorAll('button')].find(b=>/^load$/i.test(T(b)));`,
     `if(b){b.click();toast('Nexo: «'+N+'» guardado y cargado. Revisa las builds y pulsa «Equip all»: el portal te muestra el oro antes de confirmar.');return}}`,
     `alert('Nexo: «'+N+'» está guardado en tus presets. La página se recargará: abre la pestaña Presets y pulsa «Load».');location.reload();return}`,
-    `const b=new URLSearchParams(location.search).get('b');const w=window.open(A+'#/recibir','nexo');`,
+    `const b=new URLSearchParams(location.search).get('b');toast('Nexo: leyendo tu caja…');`,
     `try{const r=await fetch(b?'/api/lamb/'+encodeURIComponent(b):'/api/box',{credentials:'same-origin'});`,
-    `if(r.status===401){w&&w.close();alert('Nexo: inicia sesión en invokers.com para enviar tu caja en vivo.');return}if(!r.ok)throw Error('HTTP '+r.status);const d=await r.text();`,
+    `if(r.status===401){alert('Nexo: inicia sesión en invokers.com para enviar tu caja en vivo.');return}if(!r.ok)throw Error('HTTP '+r.status);const d=await r.text();`,
     // Account Stats solo con tu sesión y tu caja en vivo (un enlace compartido puede ser de otra cuenta).
     `let st=null;if(!b){try{const q=await fetch('/api/profile/account-stats',{credentials:'same-origin'});if(q.ok)st=await q.text()}catch(e){}}`,
-    `if(!w){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([d],{type:'application/json'}));a.download='caja-invokers.json';a.click();alert('Nexo: se ha descargado caja-invokers.json. Impórtalo en Nexo.');return}`,
-    `let k=0;const t=setInterval(()=>{if(++k>80)clearInterval(t);w.postMessage({type:'nexo-box',json:d,stats:st},O)},400);addEventListener('message',e=>{if(e.origin===O&&e.data==='nexo-ack')clearInterval(t)})`,
+    // Nexo se abre en esta misma pestaña con la caja como archivo: un formulario al receptor de Nexo (`share`, lo
+    // atiende su service worker, como «Compartir»). Sin ventanas emergentes ni mensajes entre pestañas, que Chrome
+    // para Android bloquea o congela. Nada pasa por ningún servidor: el service worker lo guarda en el navegador.
+    `const fs=[new File([d],'caja-invokers.json',{type:'application/json'})];if(st)fs.push(new File([st],${JSON.stringify(STATS_FILE)},{type:'application/json'}));`,
+    `let dt=null;try{dt=new DataTransfer();fs.forEach(f=>dt.items.add(f))}catch(e){dt=null}`,
+    `if(!dt){const a=document.createElement('a');a.href=URL.createObjectURL(fs[0]);a.download='caja-invokers.json';a.click();alert('Nexo: se ha descargado caja-invokers.json. Impórtalo en Nexo.');return}`,
+    `const f=document.createElement('form'),i=document.createElement('input');f.method='post';f.enctype='multipart/form-data';f.action=new URL('share',A).href;f.style.display='none';`,
+    `i.type='file';i.name='snapshots';i.multiple=true;i.files=dt.files;f.appendChild(i);document.body.appendChild(f);toast('Nexo: abriendo Nexo con tu caja…');f.submit()`,
     `}catch(e){alert('Nexo: no se pudo leer la caja. '+e.message)}})()`,
   ].join('')
   return `javascript:${encodeURIComponent(code)}`
@@ -62,8 +71,10 @@ export function MarkletInstall({ label = '⚡ Nexo', onStatus }: { label?: strin
     {msg && !onStatus && <p className="fine" role="status">{msg}</p>}
     <details><summary>Instalarlo en el móvil (Chrome para Android)</summary><ol>
       <li>Pulsa «Copiar código».</li>
-      <li>Guarda cualquier página como marcador (☆), edítalo, llámalo <b>nexo</b> y pega el código en la dirección.</li>
-      <li>En la página de invokers.com, escribe <b>nexo</b> en la barra de direcciones y toca el marcador que aparece.</li>
-    </ol></details>
+      <li>En Chrome, guarda cualquier página como marcador (⋮ → ☆) y edítalo: nombre <b>nexo</b>; en la dirección, borra lo que haya y pega el código (empieza por <code>javascript:</code>).</li>
+      <li>Abre invokers.com <b>en Chrome</b> con tu sesión iniciada, escribe <b>nexo</b> en la barra de direcciones y toca el marcador en las sugerencias (desde la lista de marcadores Chrome no lo ejecuta). Nexo se abre en esa misma pestaña con tu caja.</li>
+    </ol>
+      <p className="fine">Si «Enviar a invokers.com» se abre dentro de la app de Nexo, sin barra de direcciones, toca ⋮ → «Abrir en Chrome» y usa allí el marcador. ¿Lo instalaste antes de la versión 0.23.1? Copia el código otra vez y sustitúyelo: el anterior abría una ventana nueva, que Chrome para Android bloquea.</p>
+    </details>
   </div>
 }

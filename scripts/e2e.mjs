@@ -182,20 +182,39 @@ try {
   // 4) Persistencia tras recargar (el plan también se conserva).
   await page.reload()
   await page.locator('.plan-row').first().waitFor()
-  // 5) Marcador mágico: una página simulada de invokers.com envía la caja a la web.
-  await context.route('https://invokers.com/**', r => new URL(r.request().url()).pathname.startsWith('/api/lamb/')
-    ? r.fulfill({ contentType: 'application/json', body: json }) : r.fulfill({ contentType: 'text/html', body: '<p>caja</p>' }))
+  // 5) Marcador mágico: una página simulada de invokers.com (caja en vivo y Account Stats inventadas) envía la caja a
+  // Nexo, que se abre en la misma pestaña: formulario al receptor del service worker, sin ventanas emergentes ni
+  // mensajes entre pestañas (lo que falla en Chrome para Android).
+  const statsFixture = { authenticated: true, playerId: 'p', general: { profileName: name, totalBattles: 1234, arenaBattlesWon: 56, highestArenaLeague: 'Gold I', mostUsedInvokers: [] }, battles: { totalBattles: 1234, arena: { currentLeague: 'Silver II' } } }
+  await context.route('https://invokers.com/**', r => {
+    const path = new URL(r.request().url()).pathname
+    if (path.startsWith('/api/lamb/') || path === '/api/box') return r.fulfill({ contentType: 'application/json', body: json })
+    if (path === '/api/profile/account-stats') return r.fulfill({ contentType: 'application/json', body: JSON.stringify(statsFixture) })
+    return r.fulfill({ contentType: 'text/html', body: '<p>caja</p>' })
+  })
   await page.evaluate(() => { location.hash = '#/importar' })
   await page.getByRole('tab', { name: /Con tu enlace/ }).click()
   await page.evaluate(() => document.querySelector('details.other-ways')?.setAttribute('open', ''))
   await page.waitForSelector('a.bookmarklet[href^="javascript:"]', { state: 'attached' })
   const code = decodeURIComponent((await page.locator('a.bookmarklet').getAttribute('href')).replace(/^javascript:/, ''))
+  // El receptor es el service worker de Nexo (en `npm run dev` no se registra solo: se registra aquí).
+  await page.evaluate(async () => { if (!navigator.serviceWorker.controller) await navigator.serviceWorker.register(new URL('sw.js', document.baseURI).toString()) })
+  await page.waitForFunction(() => !!navigator.serviceWorker.controller, null, { timeout: 15000 })
+  const recordsBefore = await page.evaluate(async () => (await new Promise(res => { const q = indexedDB.open('invokers-web-manager'); q.onsuccess = () => { const t = q.result.transaction('imports').objectStore('imports').count(); t.onsuccess = () => { res(t.result); q.result.close() } } })))
   const portal = await context.newPage()
-  await portal.goto('https://invokers.com/lamb/?b=prueba-abc')
-  const popup = context.waitForEvent('page')
-  await portal.evaluate(code)
-  const received = await popup
+  portal.on('pageerror', e => errors.push(String(e)))
+  await portal.goto('https://invokers.com/hub/my-box/')
+  const opened = []
+  context.on('page', p => opened.push(p))
+  await portal.evaluate(code).catch(() => {})
+  await portal.waitForURL(u => u.href.startsWith(root), { timeout: 20000 })
+  const received = portal
   await received.locator('.account-strip').waitFor({ timeout: 20000 })
+  assert.equal(opened.length, 0, 'el marcador no debe abrir otra pestaña')
+  assert.equal(await received.evaluate(n => JSON.parse(localStorage.getItem(`nexo.accountStats.${n}`) || '[]').length, name), 1, 'no se guardaron las Account Stats')
+  // La otra ventana de Nexo abierta (como la app instalada) ve la importación nueva sin recargarla.
+  await page.evaluate(() => { location.hash = '#/datos' })
+  await page.waitForFunction(n => document.querySelectorAll('.records li').length >= n, recordsBefore + 1, { timeout: 15000 })
   // 5b) El marcador guarda el plan como preset en el portal (API y optimizador simulados), tras confirmar,
   // abre la pestaña Presets y pulsa «Load» en ese preset, sin recargar.
   let presetBody
