@@ -1,4 +1,4 @@
-const CACHE = 'invokers-shell-v7';
+const CACHE = 'invokers-shell-v8';
 const BASE = new URL('./', self.registration.scope);
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll([BASE.href, new URL('manifest.webmanifest', BASE).href, new URL('icon-192.png', BASE).href, new URL('icon-512.png', BASE).href])));
@@ -20,12 +20,12 @@ function openDatabase() {
     request.onerror = () => reject(request.error);
   });
 }
-async function saveShared(files) {
+async function saveShared(files, link) {
   const db = await openDatabase();
   try {
     await new Promise((resolve, reject) => {
       const tx = db.transaction('share-inbox', 'readwrite');
-      tx.objectStore('share-inbox').put({ id: 'latest', files, receivedAt: new Date().toISOString() });
+      tx.objectStore('share-inbox').put({ id: 'latest', files, link, receivedAt: new Date().toISOString() });
       tx.oncomplete = resolve;
       tx.onerror = () => reject(tx.error);
       tx.onabort = () => reject(tx.error);
@@ -39,6 +39,14 @@ self.addEventListener('fetch', event => {
       try {
         const form = await event.request.formData();
         const files = form.getAll('snapshots').filter(value => value instanceof File);
+        // Sin archivos: un enlace de caja compartido desde otra app (Compartir → Nexo).
+        if (!files.length) {
+          const text = ['url', 'text', 'title'].map(k => form.get(k)).filter(v => typeof v === 'string').join(' ');
+          const link = /https:\/\/(?:www\.)?invokers\.com\/lamb\/\?b=[A-Za-z0-9_-]{1,120}/.exec(text);
+          if (!link) throw new Error('Nada que importar');
+          await saveShared([], link[0]);
+          return Response.redirect(new URL('?shared=1', BASE).href, 303);
+        }
         if (!files.length || files.length > 100 || files.some(file => !(/\.(dat|json)$/i.test(file.name)) || file.size > 100 * 1024 * 1024) || files.reduce((sum, file) => sum + file.size, 0) > 250 * 1024 * 1024) throw new Error('Lote de snapshots no válido');
         await saveShared(files);
         return Response.redirect(new URL('?shared=1', BASE).href, 303);
