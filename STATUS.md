@@ -70,6 +70,20 @@
 
 - Equipo para un jefe elige por encaje con el jefe, no por el equipamiento actual: nota oficial, habilidades que pide, elemento y tolerancia innata del kit, más el desarrollo que las piezas no cambian (estrellas, nivel, despertar, habilidades). El poder actual, la tolerancia de conjuntos, la PREC y la RES pasan a «A mejorar con equipamiento», con acceso a Objetivo. Opción «Priorizar a los que ya tengo equipados» para el criterio anterior.
 
+## Versión 0.24
+
+Promesas y revisión de los optimizadores (caso: un legendario nuevo de tier S a nivel 1 que Nexo no proponía equipar).
+
+- **Diagnóstico**: todos los optimizadores consideraban «Invokers que usas» solo a los de nivel 30 o más que están en tus récords. Un legendario recién conseguido quedaba fuera de todo (Coach, revisión del equipo, equipar en lote) y, peor, se trataba como material: el Coach proponía quitarle el casco 5★ +20 para Ozmol y el escudo para Grimnall.
+- **Promesas** (`src/box/prospects.ts`): épicos y legendarios en S+, S o A+ de la tier list oficial sin ninguna copia en tus equipos, primero los nuevos desde la importación anterior y en los que ya has invertido. Para cada una: jefes de tus récords donde mejor nota oficial tiene (con la nota más baja de tu equipo allí), XP hasta su tope (tabla oficial), base estimada en el tope, equipo para ese nivel con el optimizador (conjuntos incluidos; nunca toca a los que usas, equipos activos, plan ni otras promesas), al Plan con un toque, y qué habilidad subir primero según su combate simulado.
+  - **Base estimada en el tope**: el máximo oficial de su ficha (6★, nivel 60, despertar completo) por la mediana de base/máximo de tus Invokers de las mismas estrellas que ya están en su tope, con el despertar más parecido. El juego no publica cuánto sube cada nivel: se presenta como estimación, con las referencias. Con tu caja coincide con lo esperado (p. ej., 0,63–0,73 según el despertar).
+  - **Protección**: las promesas no ceden piezas en el Coach, la revisión del equipo, equipar en lote, Objetivo ni el Optimizador (casilla «ni a tus promesas»).
+  - En **Coach › Hoy** (tras el siguiente paso) y un aviso en **Inicio**.
+- **Optimizador**: «Calcular para su nivel tope (estimado)» por debajo del tope (activado al llegar desde una promesa); la lista de campeones se agrupa en los que usas, promesas y el resto.
+- **Vínculos de Titán**: se valoraban con el daño por golpe, que no ve la velocidad (un vínculo de velocidad de combo o de habilidad valía 0). Ahora, con ficha, con el combate simulado del Invoker; y si el Titán propuesto pegaría bastante menos al invocarlo (ATQ del Titán sobre la base del Invoker: menos del 75 %), se avisa y la confianza baja.
+- **Datos revisados**: enciclopedia y fichas al día (17 nov, incluye Aethis), fichas de habilidades de los 242 Invokers, tier lists oficiales (general y por jefe), jefes y agujas; la caja ya se aprovecha entera (sala de trofeos, curvas de valoración, récords).
+- Pruebas: `prospects.test.ts` (qué cuenta como promesa, nueva, jefes donde encaja, XP, base estimada, recálculo con sala de trofeos y piezas) y del motor (el vínculo de velocidad cuenta con ficha; aviso de invocación). El e2e añade una promesa inventada y comprueba que el Coach la propone sin quitarle piezas.
+
 ## Versión 0.23.1
 
 Marcador fiable en Chrome para Android.

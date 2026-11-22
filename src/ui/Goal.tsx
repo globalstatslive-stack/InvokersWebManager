@@ -12,6 +12,7 @@ import type { Hero } from '../box/model'
 import { useActiveTeams, teamKey } from './activeTeams'
 import { entryFrom, reservedBy, usePlan } from './plan'
 import { useTeamOptimizer } from './useOptimizer'
+import { useProspects } from './prospects'
 import type { TeamResult, TeamVariant } from '../box/optimize.worker'
 
 type GoalState = { boss: string; stage: number; team: number[]; requireAcc: boolean; requireTol: boolean; pool: Pool; budget: string }
@@ -60,6 +61,7 @@ function GoalFlow({ catalog, kits, go }: { catalog: BossCatalog; kits: Record<st
   const active = useActiveTeams(box)
   const { plan, upsert } = usePlan(box)
   const { state, run, cancel } = useTeamOptimizer(box)
+  const prospects = useProspects().ids
   const [picked, setPicked] = useState('balanced')
   const [message, setMessage] = useState('')
   const [adding, setAdding] = useState('')
@@ -69,7 +71,8 @@ function GoalFlow({ catalog, kits, go }: { catalog: BossCatalog; kits: Record<st
     const minimums: Record<string, number> = {}
     if (g.requireAcc && profile?.needsAccuracy) minimums.accuracy = stage.accGoal
     if (g.requireTol) for (const c of boss.corruptions) minimums[toleranceKey(c.key)] = stage.tolGoal / 100
-    const protectedHeroes = new Set([...active.heroes].filter(id => !team.some(m => m.id === id)))
+    // Equipos activos y promesas (tier alto que aún no usas): no ceden piezas salvo que estén en este equipo.
+    const protectedHeroes = new Set([...active.heroes, ...prospects].filter(id => !team.some(m => m.id === id)))
     const reserved = reservedBy(plan.filter(e => !team.some(m => m.id === e.heroId)), -1)
     return { heroId: h.id, options: profile && kit && h.basis
       ? { objective: 'sim' as const, weights: { damage: 10 }, sim: { kit, levels: skillLevels(h), settings: { duration: 180, targetRes: stage.res }, mix: profile.mix }, pool: g.pool, minimums, protectedHeroes, reserved, moveAversion: 0.35 }

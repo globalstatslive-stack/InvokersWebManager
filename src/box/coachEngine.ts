@@ -21,7 +21,7 @@ import { canBind, type Box, type Gear, type Hero, type Titan } from './model'
 import { activeSetBonuses, BoxIndex, projectStats, type Stats } from './stats'
 import { valueOf } from './usefulness'
 import { PRESETS, presetFor, STAT_SCALE, type BuildResult } from './optimizer'
-import { indexOf, landChance, profileOf, simulate, skillLevels, SKILL_KINDS, type Kit, type Profile } from './combat'
+import { DEFAULT_SIM, indexOf, landChance, profileOf, simulate, skillLevels, SKILL_KINDS, type Kit, type Profile } from './combat'
 import { changeSummary, levelChanges, type SkillChange, type SkillLevelText } from './skillDiff'
 import { bossSlugOf, toleranceKey } from './goal'
 import { heroWeight, type HallOption, type HallCosts, type Wallet } from './trophyHall'
@@ -489,6 +489,22 @@ export function boundBonus(hero: Hero, titan: Titan | null | undefined, mode: st
 }
 const addStats = (a: Stats, b: Stats) => { const o = { ...a }; for (const [k, v] of Object.entries(b)) o[k] = (o[k] ?? 0) + v; return o }
 
+/** Valor de un Invoker con unas estadísticas, para comparar vínculos de Titán: con su ficha, su combate simulado
+ * (cuenta la velocidad de combo y de habilidad, que el daño por golpe no ve); sin ficha, el valor de su perfil. */
+export function boundJudge(inp: EngineInput, h: Hero, obj: Objective): { value: (s: Stats) => number; simulated: boolean } {
+  const kit = inp.kits?.[h.code], p = profileFor(h, inp.kits)
+  if (!kit || !p) return { value: s => heroValue(h, s, obj, p), simulated: false }
+  const levels = skillLevels(h), settings = { duration: DEFAULT_SIM.duration, targetRes: obj.stage?.res ?? DEFAULT_SIM.targetRes }
+  const ref = { sim: simulate(inp.index.box, kit, levels, h.stats, settings), stats: h.stats }
+  return { value: s => indexOf(p.mix, { sim: simulate(inp.index.box, kit, levels, s, settings), stats: s }, ref), simulated: true }
+}
+/** ATQ del Titán al invocarlo: la base del Invoker vinculado más su % de Titán, más su ATQ plano (guía oficial). */
+export function invokeAttack(hero: Hero, titan: Titan): number {
+  const pctAtk = titan.boundBonuses.filter(b => b.stat === 'attack' && b.mode === 'percent').reduce((s, b) => s + b.value, 0)
+  const flat = titan.flatBonuses.filter(b => b.stat === 'attack').reduce((s, b) => s + b.value, 0)
+  return (hero.basis?.attack ?? 0) * (1 + pctAtk) + flat
+}
+
 /** Reparto de Titanes del equipo del objetivo: el que más aporta a cada Invoker en ese modo. */
 function titanActions(inp: EngineInput): CoachAction[] {
   const { index, objective: obj } = inp
@@ -499,10 +515,11 @@ function titanActions(inp: EngineInput): CoachAction[] {
   const team = obj.team
   // Valor con cada Titán, relativo al vínculo actual.
   const gain = new Map<string, number>()
+  const judges = new Map(team.map(h => [h.id, boundJudge(inp, h, obj)]))
   for (const h of team) {
-    const p = profileFor(h, inp.kits), cur = byId.get(obj.titans.get(h.id) ?? -1)
-    const v0 = heroValue(h, addStats(h.stats, boundBonus(h, cur, obj.mode)), obj, p)
-    for (const ti of titans) gain.set(`${h.id}:${ti.id}`, rel(heroValue(h, addStats(h.stats, boundBonus(h, ti, obj.mode)), obj, p), v0))
+    const cur = byId.get(obj.titans.get(h.id) ?? -1), judge = judges.get(h.id)!
+    const v0 = judge.value(addStats(h.stats, boundBonus(h, cur, obj.mode)))
+    for (const ti of titans) if (canBind(ti, h)) gain.set(`${h.id}:${ti.id}`, rel(judge.value(addStats(h.stats, boundBonus(h, ti, obj.mode))), v0))
   }
   // Asignación voraz: el mayor aporte ponderado primero, un Titán por Invoker y solo los que se le pueden vincular
   // (su facción o Dragones). Entre copias iguales, la de más rango y nivel (sus estadísticas al invocarlo son mayores).
@@ -517,8 +534,8 @@ function titanActions(inp: EngineInput): CoachAction[] {
   const holder = new Map(team.filter(h => curOf(h) !== null).map(h => [curOf(h)!, h]))
   const changed = team.filter(h => (finalOf(h)?.id ?? null) !== curOf(h))
   const gainOf = (h: Hero) => {
-    const p = profileFor(h, inp.kits), cur = byId.get(curOf(h) ?? -1)
-    return rel(heroValue(h, addStats(h.stats, boundBonus(h, finalOf(h), obj.mode)), obj, p), heroValue(h, addStats(h.stats, boundBonus(h, cur, obj.mode)), obj, p))
+    const judge = judges.get(h.id)!, cur = byId.get(curOf(h) ?? -1)
+    return rel(judge.value(addStats(h.stats, boundBonus(h, finalOf(h), obj.mode))), judge.value(addStats(h.stats, boundBonus(h, cur, obj.mode))))
   }
   // Cambios en cadena (un Titán pasa de un Invoker del equipo a otro) se proponen juntos y se juzgan por el neto.
   const group = new Map<number, number>()
@@ -540,21 +557,27 @@ function titanActions(inp: EngineInput): CoachAction[] {
     const sBefore = addStats(h.stats, boundBonus(h, cur, obj.mode)), sAfter = addStats(h.stats, bonus)
     const chain = members.length > 1
     const others = per.filter(x => x.hero.id !== h.id)
+    const simulated = judges.get(h.id)!.simulated
+    // La invocación (12–14 s, una o dos veces por combate) usa las estadísticas del Titán sobre la base del Invoker: si el
+    // propuesto pega mucho menos al invocarlo, se avisa y baja la confianza (el vínculo sí actúa todo el combate).
+    const atkNew = invokeAttack(h, ti), atkCur = cur ? invokeAttack(h, cur) : 0
+    const weaker = !!cur && atkCur > 0 && atkNew < 0.75 * atkCur
     out.push({
       id: `titan:${members.map(m => `${m.id}-${finalOf(m)?.id ?? 0}`).sort().join(',')}:${obj.id}`, kind: 'titan',
       title: chain ? `Reorganiza los Titanes de ${members.map(m => m.name).join(' y ')} en «${obj.label}»` : `Vincula a ${ti.name} con ${h.name} en «${obj.label}»`,
       hero: h, heroes: members, titan: ti,
       impact: 100 * total, perHero: per.map(x => ({ hero: x.hero, gain: x.gain })),
-      effect: `${pctText(best.gain)} para ${h.name}: ${breakdown(h, sBefore, sAfter, obj, p)} (${ti.bound!.mode === 'percent' ? `${Math.round(100 * nv.value)} % de ${STAT_LABEL[stat] ?? stat}, +${fmtInt(Math.round(bonus[stat] ?? 0))}` : `+${fmtInt(nv.value)} ${STAT_LABEL[stat] ?? stat}`} en combate)${others.length ? `; ${others.map(x => `${x.hero.name} ${pctText(x.gain)}`).join(', ')}` : ''}`,
+      effect: `${pctText(best.gain)} para ${h.name}: ${simulated ? 'su combate simulado (velocidades incluidas)' : breakdown(h, sBefore, sAfter, obj, p)} (${ti.bound!.mode === 'percent' ? `${Math.round(100 * nv.value)} % de ${STAT_LABEL[stat] ?? stat}, +${fmtInt(Math.round(bonus[stat] ?? 0))}` : `+${fmtInt(nv.value)} ${STAT_LABEL[stat] ?? stat}`} en combate)${others.length ? `; ${others.map(x => `${x.hero.name} ${pctText(x.gain)}`).join(', ')}` : ''}`,
       why: [
         `Vínculo de ${ti.name} (${ti.faction === 'Dragons' ? 'Dragón: se vincula a cualquier facción' : `${ti.faction}, como ${h.name}`}, ${ti.rank}★ nivel ${ti.level}): ${STAT_LABEL[stat] ?? stat} ${nv.label}.`,
         cur && cv ? `Ahora lleva a ${cur.name}: ${STAT_LABEL[cur.bound!.stat] ?? cur.bound!.stat} ${cv.label}, que le aporta menos.` : 'Ahora no tiene Titán vinculado en ese récord.',
         ...(chain ? [`${ti.name} lo lleva ahora ${holder.get(ti.id)?.name ?? 'otro Invoker'}: el cambio se propone junto y compensa en total (${pctText(total)} ponderado en el equipo).`] : []),
         'Solo se proponen Titanes de la facción del Invoker o Dragones (los únicos que el juego deja vincular).',
+        ...(weaker ? [`Ojo: al invocarlo, ${ti.name} (${ti.rank}★ nivel ${ti.level}) pegaría bastante menos que ${cur!.name} (ATQ ≈ ${fmtInt(Math.round(atkNew))} frente a ${fmtInt(Math.round(atkCur))}, sobre la base de ${h.name}). El vínculo actúa todo el combate; la invocación, 12–14 s. Compruébalo con tu tiempo en el récord.`] : []),
       ],
       needs: 'Nada: cambiar el vínculo en la formación es gratis',
       cost: { kind: 'free', text: 'Gratis' }, availability: 'now',
-      confidence: nv.sure ? 'media' : 'baja', confidenceWhy: 'Valores del vínculo de la caja; que el % se aplique sobre la base es un supuesto (como el resto de % del juego).',
+      confidence: nv.sure && !weaker ? 'media' : 'baja', confidenceWhy: `Valores del vínculo de la caja; que el % se aplique sobre la base es un supuesto (como el resto de % del juego).${simulated ? ' El valor sale de su combate simulado (cuenta las velocidades).' : ''}${weaker ? ' Baja porque el Titán propuesto pega bastante menos al invocarlo.' : ''}`,
       significant: best.gain >= 0.03, score: 0,
       how: [`En el juego: prepara el equipo de ${obj.label}${members.map(m => ` → ${m.name}: ${nameOf(finalOf(m))}`).join(';')}.`],
       details: members.map(m => ({ label: m.name, value: `${nameOf(byId.get(curOf(m) ?? -1))} → ${nameOf(finalOf(m))} (${pctText(gainOf(m))})`, good: gainOf(m) >= 0 })),

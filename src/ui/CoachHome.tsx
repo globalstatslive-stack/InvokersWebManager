@@ -10,6 +10,7 @@ import { Portrait } from './Art'
 import { entryFromAction, useCoachPlan } from './useCoachPlan'
 import { accountStatsOf, forget, useReview } from './coachMemory'
 import { CoachNow, Fronts, UrgentNotices } from './CoachNow'
+import { ProspectCard } from './ProspectCard'
 
 const KIND: Record<ActionKind, { icon: typeof Gem; label: string }> = {
   gear: { icon: Gem, label: 'Piezas' }, trapped: { icon: Gem, label: 'Piezas desaprovechadas' }, upgrade: { icon: Gem, label: 'Subir pieza' },
@@ -232,9 +233,10 @@ export function CoachHome() {
       {s.computing && !s.reviewing && <p className="fine ch-busy"><Loader2 size={14} className="spin" /> Recalculando…</p>}
       {s.reviewing && <p className="fine ch-busy" role="status"><Loader2 size={14} className="spin" /> Revisando el equipo completo con el optimizador (conjuntos incluidos){s.reviewing.label ? `: ${s.reviewing.label}, ${s.reviewing.done + 1} de ${s.reviewing.total}` : ''}…</p>}
       <NextStep plan={s.plan} />
+      <ProspectCard />
       <Priorities plan={s.plan} />
       <Synergy plan={s.plan} />
-    </> : <section className="panel step-card loading"><Loader2 size={18} className="spin" /> Analizando tu cuenta: piezas, habilidades, Titanes, despertar y sala de trofeos…</section>}
+    </> : <><section className="panel step-card loading"><Loader2 size={18} className="spin" /> Analizando tu cuenta: piezas, habilidades, Titanes, despertar y sala de trofeos…</section><ProspectCard /></>}
     <SinceLast />
     <HowItDecides />
     <h2 className="coach-h">Tu cuenta por frentes</h2>

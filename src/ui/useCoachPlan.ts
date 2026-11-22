@@ -17,6 +17,7 @@ import { useAscend } from './AscendCoach'
 import { useHallCosts, useTrophyWallet } from './trophyWallet'
 import { remember } from './coachMemory'
 import { useFillOptimizer } from './useOptimizer'
+import { useProspects } from './prospects'
 import type { OptimizeOptions } from '../box/optimizer'
 
 const objKey = (name: string) => `nexo.coach.objective.${name}`
@@ -39,6 +40,8 @@ export function useCoachPlan(): CoachState {
   const ascend = useAscend()
   const { wallet } = useTrophyWallet(name, records)
   const { costs } = useHallCosts()
+  // Promesas (Invokers de tier alto que aún no usas): nunca se les quitan piezas.
+  const prospects = useProspects().ids
   const [objectiveId, setId] = useState(() => readObj(name))
   useEffect(() => { setId(readObj(name)) }, [name])
   const setObjective = (id: string) => { setId(id); try { localStorage.setItem(objKey(name), id) } catch { /* sin almacenamiento */ } }
@@ -80,11 +83,11 @@ export function useCoachPlan(): CoachState {
     }
     return r
   }, [planEntries])
-  const reviewKey = `${account?.record.id}|${objective?.id}|${[...reserved].sort().join(',')}|${[...important].sort().join(',')}|${!!kits.data}`
+  const reviewKey = `${account?.record.id}|${objective?.id}|${[...reserved].sort().join(',')}|${[...important].sort().join(',')}|${[...prospects].sort().join(',')}|${!!kits.data}`
   const [ranKey, setRanKey] = useState('')
   useEffect(() => {
     if (!account || !objective) return
-    const protect = new Set([...used.map(u => u.hero.id), ...important, ...objective.team.map(h => h.id)])
+    const protect = new Set([...used.map(u => u.hero.id), ...important, ...prospects, ...objective.team.map(h => h.id)])
     const members = objective.team.filter(h => h.basis && h.gearBonus).slice(0, 12).map(h => {
       const kit = (kits.data as Record<string, Kit> | undefined)?.[h.code]
       if (objective.stage && kit) {
@@ -102,7 +105,7 @@ export function useCoachPlan(): CoachState {
   const builds = review.state.status === 'done' && ranKey === reviewKey ? review.state.result : null
 
   const [state, setState] = useState<{ key: string; plan: CoachPlan } | null>(null)
-  const key = `${account?.record.id}|${objective?.id}|${builds ? `b${ranKey}` : 'nb'}|${planEntries.length}|${[...important].sort().join(',')}|${wallet?.bronze},${wallet?.silver},${wallet?.gold}|${JSON.stringify(costs)}|${texts?.size}|${!!kits.data}|${!!ascend}`
+  const key = `${account?.record.id}|${objective?.id}|${builds ? `b${ranKey}` : 'nb'}|${planEntries.length}|${[...important].sort().join(',')}|${wallet?.bronze},${wallet?.silver},${wallet?.gold}|${JSON.stringify(costs)}|${texts?.size}|${!!kits.data}|${!!ascend}|${[...prospects].sort().join(',')}`
   useEffect(() => {
     if (!account || !objective) return
     const id = setTimeout(() => {
@@ -117,7 +120,7 @@ export function useCoachPlan(): CoachState {
       })) : null
       const plan = planFor({
         index: account.index, objective, used: new Set(used.map(u => u.hero.id)),
-        protect: new Set([...important, ...objective.team.map(h => h.id)]), reserved,
+        protect: new Set([...important, ...prospects, ...objective.team.map(h => h.id)]), reserved,
         kits: kits.data as Record<string, Kit> | undefined, skillText: texts,
         hall: { options: hallRanking(account.box, used).options, wallet: wallet ? { bronze: wallet.bronze, silver: wallet.silver, gold: wallet.gold } : null, costs }, ascend: asc, builds,
       })

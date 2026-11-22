@@ -9,6 +9,7 @@ import { useActiveTeams } from './activeTeams'
 import { entryFrom, PORTAL_TEAM, reservedBy, usePlan } from './plan'
 import { useGearCoach } from './coach'
 import { useFillOptimizer } from './useOptimizer'
+import { useProspects } from './prospects'
 import { GearIcon, Portrait } from './Art'
 
 const pct = (x: number) => `+${(100 * x).toFixed(1).replace('.', ',')} %`
@@ -54,6 +55,8 @@ export function EquipBatch() {
   const inPlan = useMemo(() => new Set(plan.map(e => e.heroId)), [plan])
   const important = useMemo(() => new Set([...active.heroes, ...inPlan]), [active.heroes, inPlan])
   const { used, skipped } = useMemo(() => usedHeroes(box, important), [box, important])
+  // Promesas (tier alto que aún no usas, como un legendario nuevo): no ceden piezas.
+  const prospects = useProspects().ids
   const pending = useMemo(() => used.filter(u => !inPlan.has(u.hero.id)), [used, inPlan])
   const members = useMemo(() => mode === 'review' ? pending.slice(0, count) : pending, [pending, mode, count])
   // Nunca se tocan las piezas reservadas en el plan ni las que el coach aconseja guardar.
@@ -70,7 +73,7 @@ export function EquipBatch() {
     setAdded(null); setOff(new Set()); setRanMode(mode)
     // Revisión: nunca toca a los Invokers que usas, equipos activos ni plan; sí usa piezas libres (también las que el
     // coach aconseja guardar: equiparlas no las gasta) y las de Invokers que no usas.
-    const protect = new Set([...used.map(u => u.hero.id), ...important])
+    const protect = new Set([...used.map(u => u.hero.id), ...important, ...prospects])
     const planReserved = reservedBy(plan, -1)
     run(members.map(u => ({ heroId: u.hero.id, options: mode === 'review' ? reviewOptions(u.hero, planReserved, protect, effort) : fillOptions(u.hero, reserved) })))
   }

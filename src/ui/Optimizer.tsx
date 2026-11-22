@@ -9,7 +9,10 @@ import { PRESETS, presetFor, STAT_SCALE, type Change, type OptimizeOptions, type
 import { activeSetBonuses, addBonus, rating, type Stats } from '../box/stats'
 import { ASSUMPTIONS, DEFAULT_SIM, EFFECT_LABEL, indexOf, loadKits, profileOf, simulate, skillLevels, type Kit, type Mix, type SimResult } from '../box/combat'
 import { useActiveTeams } from './activeTeams'
+import { useCapProjection, useProspects } from './prospects'
+import { withBasis } from '../box/prospects'
 import { useOptimizer } from './useOptimizer'
+import { usedHeroes } from '../box/equipBatch'
 import type { Box, Gear, Hero } from '../box/model'
 
 const EFFORT_COST = { min: 12, balanced: 3, max: 0 } as const
@@ -151,11 +154,24 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
   const { plan, upsert, remove } = usePlan(box)
   const reserved = useMemo(() => reservedBy(plan, hero.id), [plan, hero.id])
   const teamIds = active.heroes
+  const prospects = useProspects().ids
+  // Lista de campeones: primero los que usas, después tus promesas y el resto (ordenados por poder).
+  const groups = useMemo(() => {
+    const used = new Set([...usedHeroes(box, new Set()).used.map(u => u.hero.id), ...teamIds])
+    return [{ label: 'Los que usas', list: heroes.filter(h => used.has(h.id)) }, { label: 'Promesas', list: heroes.filter(h => !used.has(h.id) && prospects.has(h.id)) },
+      { label: 'El resto', list: heroes.filter(h => !used.has(h.id) && !prospects.has(h.id)) }]
+  }, [box, heroes, teamIds, prospects])
+  // Por debajo de su tope de nivel, las piezas planas pesan de más (su base es pequeña): se puede calcular con la base
+  // estimada en el tope, que es la que tendrá cuando lo subas (desde las promesas del Coach llega activado).
+  const projection = useCapProjection(hero, box)
+  const [atCap, setAtCap] = useState(() => /[?&]tope=1/.test(location.hash))
+  const shown = useMemo(() => atCap && projection ? withBasis(hero, projection.basis, box, index.equipped(hero)) : hero, [atCap, projection, hero, box, index])
+  const optBox = useMemo(() => shown === hero ? box : { ...box, heroes: box.heroes.map(h => h.id === hero.id ? shown : h) }, [shown, hero, box])
   const mode: Objective = objective === 'sim' && !(kit && mix) ? 'damage' : objective
   const settings = useMemo(() => ({ duration, targetRes }), [duration, targetRes])
   const opts = useMemo((): OptimizeOptions | null => {
     if (kit === undefined) return null
-    const protectedHeroes = new Set(protectTeams ? [...teamIds].filter(id => id !== hero.id) : [])
+    const protectedHeroes = new Set(protectTeams ? [...teamIds, ...prospects].filter(id => id !== hero.id) : [])
     const w = mode === 'sim' ? { ...weights, damage: 10 } : mode === 'damage' ? { damage: 10, ...weights } : weights
     return {
       objective: mode, weights: w, pool, protectedHeroes, moveAversion: effort === 'max' ? 0 : 0.35, changeCost: EFFORT_COST[effort],
@@ -163,8 +179,8 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
       maxLevel, reserved, alternatives: 7,
       sim: mode === 'sim' && kit && mix ? { kit, levels, settings, mix } : undefined,
     }
-  }, [kit, protectTeams, teamIds, hero.id, mode, weights, pool, effort, reqSet, reqPieces, minimums, maxLevel, reserved, levels, settings, mix])
-  const { state: calc, last: full, cancel } = useOptimizer(box, hero.id, opts)
+  }, [kit, protectTeams, teamIds, prospects, hero.id, mode, weights, pool, effort, reqSet, reqPieces, minimums, maxLevel, reserved, levels, settings, mix])
+  const { state: calc, last: full, cancel } = useOptimizer(optBox, hero.id, opts)
   useEffect(() => setSel(0), [full])
   if (!full) return <div className="loading" role="status"><Loader2 className="spin" size={18} /> {calc.status === 'error' ? `No se pudo calcular: ${calc.message}` : `Calculando la build de ${hero.name}…`}{calc.status === 'running' && <button className="btn small" onClick={cancel}>Cancelar</button>}</div>
   const proposals = full.alternatives ?? [full]
@@ -188,11 +204,15 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
       <Portrait c={hero} size="lg" />
       <div className="champion-main">
         <label className="field"><span>Campeón</span>
-          <select value={hero.id} onChange={e => onHero(Number(e.target.value))}>{heroes.map(h => <option key={h.id} value={h.id}>{h.name} · {h.rank}★ Nv.{h.level} · {fmtPower(h)}</option>)}</select>
+          <select value={hero.id} onChange={e => onHero(Number(e.target.value))}>{groups.map(g => g.list.length > 0 && <optgroup key={g.label} label={g.label}>{g.list.map(h => <option key={h.id} value={h.id}>{h.name} · {h.rank}★ Nv.{h.level} · {fmtPower(h)}</option>)}</optgroup>)}</select>
         </label>
         <h2>{hero.fullName}</h2>
         <small><Stars n={hero.rank} /> · nivel {hero.level} · despertar {hero.awakeLevel} · habilidades {levels.slice(1, 4).join('/')} · definitiva {levels[4]}</small>
         {hero.powerStale && <StalePowerNote />}
+        {projection && <div className="cap-proj">
+          <label className="check"><input type="checkbox" checked={atCap} onChange={e => setAtCap(e.target.checked)} /> Calcular para su nivel tope ({projection.cap}) con la base estimada</label>
+          <p className="fine">ATQ base {fmtInt(hero.basis?.attack ?? 0)} → ≈{fmtInt(projection.basis.attack)} · VIDA {fmtInt(hero.basis?.health ?? 0)} → ≈{fmtInt(projection.basis.health)} · DEF {fmtInt(hero.basis?.defense ?? 0)} → ≈{fmtInt(projection.basis.defense)}. Estimación: su máximo oficial por la proporción de tus Invokers de {hero.rank}★ que ya están en su tope ({projection.refs.slice(0, 3).join(', ')}). {atCap ? 'Las estadísticas de abajo son las que tendría a ese nivel.' : 'A su nivel actual, las piezas de ATQ, VIDA o DEF planas parecen mejores de lo que serán cuando lo subas.'}</p>
+        </div>}
         {profile ? <div className="tags">
           {scaleLabel && <span className="tag-strong">Su daño escala con {scaleLabel}</span>}
           {profile.needsAccuracy && <span className="tag-strong warn">Necesita precisión: {profile.accuracySkills.length} habilidades</span>}
@@ -235,7 +255,7 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
         </details>
         <h3 className="sub">Piezas disponibles</h3>
         <Chips label="Origen" value={pool} onChange={setPool} options={[{ id: 'free', label: 'Solo libres' }, { id: 'unlocked', label: '+ no bloqueados' }, { id: 'all', label: 'Todas' }]} />
-        <label className="check"><input type="checkbox" checked={protectTeams} onChange={e => setProtectTeams(e.target.checked)} /> No tocar a Invokers de equipos activos ({teamIds.size})</label>
+        <label className="check"><input type="checkbox" checked={protectTeams} onChange={e => setProtectTeams(e.target.checked)} /> No tocar a Invokers de equipos activos ({teamIds.size}){prospects.size > 0 ? ` ni a tus promesas (${prospects.size})` : ''}</label>
         {active.teams.length === 0 && <p className="hint">No has marcado equipos activos. <button className="link" onClick={() => go('/objetivo')}>Elegirlos</button></p>}
         <h3 className="sub">Cambios</h3>
         <Chips label="Cambios" value={effort} onChange={setEffort} options={[{ id: 'min', label: 'Mínimos' }, { id: 'balanced', label: 'Equilibrio' }, { id: 'max', label: 'Máximo beneficio' }]} />
@@ -255,7 +275,7 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
         </div>)}
           <div className="min-row add">
             <select value={newMin} onChange={e => setNewMin(e.target.value)} aria-label="Estadística mínima">{CORE_STATS.filter(s => minimums[s] === undefined).map(s => <option key={s} value={s}>{STAT_LABEL[s]}</option>)}</select>
-            <button className="btn small" onClick={() => setMinimums({ ...minimums, [newMin]: Math.round(hero.stats[newMin] ?? 0) })}><Plus size={15} /> Mínimo</button>
+            <button className="btn small" onClick={() => setMinimums({ ...minimums, [newMin]: Math.round(shown.stats[newMin] ?? 0) })}><Plus size={15} /> Mínimo</button>
           </div>
         </div>
       </aside>
@@ -304,12 +324,12 @@ function OptimizerFor({ hero, heroes, onHero }: { hero: Hero; heroes: Hero[]; on
             <div><small>Propuestos</small>{setsAfter.length ? setsAfter.map(s => <span key={s.set} className="set-chip on"><SetIcon set={s.set} />{t(SET_LABEL, s.set)} ×{s.pieces}</span>) : <span className="muted">Ninguno</span>}</div>
           </div>
           <div className="row-actions">
-            <button className="btn primary" disabled={!result.changes.length || !result.feasible || !result.minimumsMet} title={!result.feasible || !result.minimumsMet ? 'Esta propuesta no cumple las restricciones' : undefined} onClick={() => { const c = upsert(entryFrom(hero, result)); setPlanMsg(c.length ? `No se añadió: ${c.length} piezas ya están reservadas en tu plan para otro Invoker.` : 'Añadido a tu plan.') }}><ListPlus size={16} /> {inPlan ? 'Actualizar en el plan' : 'Añadir al plan'}</button>
+            <button className="btn primary" disabled={!result.changes.length || !result.feasible || !result.minimumsMet} title={!result.feasible || !result.minimumsMet ? 'Esta propuesta no cumple las restricciones' : undefined} onClick={() => { const c = upsert(entryFrom(hero, result, shown !== hero ? `A nivel ${projection?.cap} (base estimada)` : undefined)); setPlanMsg(c.length ? `No se añadió: ${c.length} piezas ya están reservadas en tu plan para otro Invoker.` : 'Añadido a tu plan.') }}><ListPlus size={16} /> {inPlan ? 'Actualizar en el plan' : 'Añadir al plan'}</button>
             {inPlan && <button className="btn" onClick={() => remove(hero.id)}>Quitar del plan</button>}
             <span className="gold"><Coins size={16} /> ~{fmtInt(result.goldCost)} oro · {result.changes.length} cambios</span>
           </div>
         </section>
-        {simMode && kit && mix && <CombatPanel box={box} hero={hero} kit={kit} levels={levels} stats={result.after} mix={mix} settings={settings} before={result.simBefore!} sim={result.sim!} />}
+        {simMode && kit && mix && <CombatPanel box={box} hero={shown} kit={kit} levels={levels} stats={result.after} mix={mix} settings={settings} before={result.simBefore!} sim={result.sim!} />}
         {!simMode && <section className="panel"><div className="dmg-strip">
           <span><small>Daño efectivo por golpe</small><b>{fmtInt(result.damageBefore)}</b><ArrowRight size={16} /><b className={result.damageAfter > result.damageBefore + 0.5 ? 'up' : result.damageAfter < result.damageBefore - 0.5 ? 'down' : ''}>{fmtInt(result.damageAfter)}</b></span>
         </div></section>}
