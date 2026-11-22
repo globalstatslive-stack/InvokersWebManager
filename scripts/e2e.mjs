@@ -6,7 +6,14 @@ import { chromium } from 'playwright'
 import { sampleBox } from './sample-box.mjs'
 
 const root = process.env.INVOKERS_TEST_URL || 'http://127.0.0.1:5173/'
-const json = process.env.NEXO_BOX_JSON ? readFileSync(process.env.NEXO_BOX_JSON, 'utf8') : JSON.stringify(sampleBox())
+const F = 2 ** 32
+// Caja sintética más una promesa inventada: un legendario de tier S (código del catálogo público) a nivel 1, fuera de
+// tus equipos, que el Coach debe proponer desarrollar sin quitarle nada.
+const sample = sampleBox()
+sample.heroes.push({ heroId: 3, character: { name: 'Aethis the Sorrow', shortName: 'Aethis', portraitUrl: '/game-assets/0.62.1655/characters/Lightseekers/LTS038/portrait.webp', rarity: 'Legendary', element: 'Water', class: 'MeleeAttacker', faction: 'Lightseekers' },
+  rank: 5, level: 1, maxLevel: 50, awakeLevel: 0, locked: false, power: 500, battles: 0, totalExperience: 0, skillLevels: [], relicIdBySlot: {}, accessoryIdBySlot: {},
+  stats: { health: 900, attack: 90, defense: 70, criticalRate: 0.05, criticalDamage: 0.5 }, gearBonus: {}, basis: { health: 900 * F, attack: 90 * F, defense: 70 * F, criticalRate: 0.05 * F, criticalDamage: 0.5 * F }, activeSets: [] })
+const json = process.env.NEXO_BOX_JSON ? readFileSync(process.env.NEXO_BOX_JSON, 'utf8') : JSON.stringify(sample)
 const executablePath = [process.env.CHROMIUM_PATH ?? '', '/opt/pw-browsers/chromium', '/usr/bin/chromium'].find(p => p && existsSync(p))
 const browser = await chromium.launch({ ...(executablePath ? { executablePath } : {}), args: ['--no-sandbox', '--disable-dev-shm-usage'] })
 const context = await browser.newContext({ viewport: { width: Number(process.env.NEXO_WIDTH || 390), height: 844 } })
@@ -55,6 +62,13 @@ try {
     // Se deja el plan como estaba para no mezclar esta prueba con las siguientes.
     await page.evaluate(([k, v]) => { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v) }, [planKey, savedPlan])
     await page.reload(); await page.locator('.step-card h2').waitFor({ timeout: 30000 })
+  }
+  // Promesas: el legendario nuevo de tier S aparece con qué hacer (sin caja real, la promesa es la inventada).
+  if (!process.env.NEXO_BOX_JSON) {
+    await page.locator('.prospects .pr-item', { hasText: 'Aethis' }).waitFor({ timeout: 20000 })
+    await page.waitForFunction(() => /cambio|nada mejor/.test(document.querySelector('.prospects .pr-steps li:nth-child(2)')?.textContent || ''), null, { timeout: 60000 })
+    assert.ok((await page.locator('.prospects').innerText()).includes('Tier S oficial'), 'la promesa no muestra su tier')
+    assert.ok(!(await page.locator('.coach-home').innerText()).includes('que lleva Aethis'), 'el Coach propone quitarle piezas a una promesa')
   }
   await page.locator('.ch-how-decides summary').click()
   assert.ok((await page.locator('.ch-how-decides').innerText()).includes('Puntuación'))

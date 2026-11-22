@@ -8,6 +8,7 @@ import { ImportPage } from './ImportPage'
 import { progressOf, usePlan } from './plan'
 import { useActiveTeams } from './activeTeams'
 const CoachCard = lazy(() => import('./CoachHome').then(m => ({ default: m.CoachHomeCard })))
+const Prospect = lazy(() => import('./ProspectCard').then(m => ({ default: m.ProspectNotice })))
 const CoachQuick = lazy(() => import('./CoachNow').then(m => ({ default: m.CoachQuick })))
 
 const date = (s: string | null) => s ? new Intl.DateTimeFormat('es-ES', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(s)) : '—'
@@ -60,6 +61,7 @@ export function Dashboard() {
     </section>
 
     <Suspense fallback={null}><CoachCard /></Suspense>
+    <Suspense fallback={null}><Prospect /></Suspense>
 
     <section className="panel">
       <div className="panel-title"><h2>Tus más fuertes</h2><button className="link" onClick={() => go('/coleccion')}>Ver todos <ArrowRight size={15} /></button></div>

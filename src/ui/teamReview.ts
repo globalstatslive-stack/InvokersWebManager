@@ -12,6 +12,7 @@ import { BoxIndex } from '../box/stats'
 import { useAccount } from './account'
 import { useActiveTeams } from './activeTeams'
 import { reservedBy, usePlan } from './plan'
+import { useProspects } from './prospects'
 
 export const REVIEW_COUNT = 20
 export type PieceUse = { heroId: number; heroName: string; gain: number; changes: number }
@@ -67,10 +68,11 @@ export function useTeamReview(enabled = true): { review: TeamReview | null; prog
   const { account } = useAccount()
   const active = useActiveTeams(account?.box)
   const { plan } = usePlan(account?.box)
+  const prospects = useProspects().ids
   const [, force] = useState(0)
   useEffect(() => { const f = () => force(x => x + 1); listeners.add(f); return () => { listeners.delete(f) } }, [])
   const reserved = reservedBy(plan, -1)
-  const key = account ? `${account.record.id}|${[...reserved].sort().join(',')}|${[...active.heroes].sort().join(',')}` : ''
+  const key = account ? `${account.record.id}|${[...reserved].sort().join(',')}|${[...active.heroes].sort().join(',')}|${[...prospects].sort().join(',')}` : ''
   const saved = account ? read(account.record.id) : null
   const fresh = saved?.key === key ? saved : null
   useEffect(() => {
@@ -78,7 +80,8 @@ export function useTeamReview(enabled = true): { review: TeamReview | null; prog
     const important = new Set([...active.heroes, ...plan.map(e => e.heroId)])
     const { used } = usedHeroes(account.box, important), teams = usedHeroes(account.box, new Set()).used
     const pool = [...used, ...teams.filter(u => !used.some(x => x.hero.id === u.hero.id))]
-    const protect = new Set([...pool.map(u => u.hero.id), ...important])
+    // Las promesas (tier alto que aún no usas) tampoco ceden piezas.
+    const protect = new Set([...pool.map(u => u.hero.id), ...important, ...prospects])
     const members = pool.filter(u => !plan.some(e => e.heroId === u.hero.id)).slice(0, REVIEW_COUNT).map(u => ({ heroId: u.hero.id, options: reviewOptions(u.hero, reserved, protect, 'balanced') }))
     if (members.length) start(account.box, account.record.id, key, members)
   }, [enabled, key, !!fresh]) // eslint-disable-line react-hooks/exhaustive-deps

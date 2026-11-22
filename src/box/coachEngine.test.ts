@@ -4,7 +4,7 @@ import { BoxIndex } from './stats'
 import { usedHeroes } from './equipBatch'
 import { fichaLevel, skillLevels, type Kit } from './combat'
 import { bossSlugOf } from './goal'
-import { boundValue, isApplied, objectiveOptions, planFor, resolveObjective, scoreOf, UNQUANTIFIED_CAP, type CatalogBoss, type EngineInput } from './coachEngine'
+import { boundJudge, boundValue, invokeAttack, isApplied, objectiveOptions, planFor, resolveObjective, scoreOf, UNQUANTIFIED_CAP, type CatalogBoss, type EngineInput } from './coachEngine'
 
 const F = 2 ** 32
 const stats = { attack: 1000, health: 6000, defense: 500, criticalRate: 0.2, criticalDamage: 0.5, accuracy: 100, resistance: 50, comboSpeed: 10, skillSpeed: 10, skillRecovery: 10, manaGeneration: 10 }
@@ -134,6 +134,26 @@ describe('Coach: acciones, prioridad y comprobación', () => {
     const objD = resolveObjective(withDragon, objectiveOptions(withDragon, { bosses }).find(x => x.label.startsWith('Farmear'))!.choice, usedHeroes(withDragon, new Set()).used, { bosses })
     const dragon = planFor({ ...base(objD), index: new BoxIndex(withDragon) }).actions.find(a => a.kind === 'titan' && a.hero?.name === 'ATACANTE')
     expect(dragon?.titan?.name).toBe('DRAGON')
+  })
+  it('vínculo de Titán: con ficha se valora con el combate simulado, que sí ve la velocidad', () => {
+    const obj = farm(), h = box.heroes[0]
+    const sim = boundJudge(base(obj), h, obj), plain = boundJudge(base(obj, { kits: {} }), h, obj)
+    const faster = { ...h.stats, skillSpeed: (h.stats.skillSpeed ?? 0) + 80, comboSpeed: (h.stats.comboSpeed ?? 0) + 80 }
+    expect(sim.simulated).toBe(true)
+    expect(sim.value(faster)).toBeGreaterThan(sim.value(h.stats))
+    // Sin ficha, el daño por golpe no cambia con la velocidad (por eso antes un vínculo de velocidad valía 0).
+    expect(plain.simulated).toBe(false)
+    expect(plain.value(faster)).toBeCloseTo(plain.value(h.stats))
+  })
+  it('vínculo de Titán: avisa si el propuesto pega mucho menos al invocarlo', () => {
+    const strong = { ...titan(7, 'GENERAL', 'attack', 'percent', 'General', 0.2, 0.2, 0.2), stats: { boundBonuses: [{ stat: 'attack', mode: 'percent', value: 2, raw: 0 }], flatBonuses: [{ stat: 'attack', mode: 'flat', value: 100, raw: 0 }] } }
+    const b2 = parseOfficialBox({ ...fixture(), titans: [strong, fixture().titans[1], fixture().titans[2]] })
+    expect(invokeAttack(b2.heroes[0], b2.titans[0])).toBeCloseTo(800 * 3 + 100)
+    const o2 = resolveObjective(b2, objectiveOptions(b2, { bosses }).find(x => x.label.startsWith('Farmear'))!.choice, usedHeroes(b2, new Set()).used, { bosses })
+    const t = planFor({ ...base(o2), index: new BoxIndex(b2) }).actions.find(a => a.kind === 'titan' && a.hero?.name === 'ATACANTE')!
+    expect(t.titan?.name).toBe('JEFES')
+    expect(t.why.some(w => /pegaría bastante menos que GENERAL/.test(w))).toBe(true)
+    expect(t.confidence).toBe('baja')
   })
   it('puntuación: el oro resta según la cantidad y lo que no tiene cifra tiene un tope', () => {
     const a = { impact: 10, confidence: 'alta' as const, availability: 'now' as const }
